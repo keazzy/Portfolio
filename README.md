@@ -1,2 +1,2 @@
-# portfolio
- Portfolio inspired by Kelvinblaze
+# Portfolio
+ Run npm install Portfolio inspired by github.com/kelvinblaze

@@ -41,7 +41,7 @@ body {
 }
 
 .topbar__name {
-  font: 400 12px/1.2 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: rgba(0, 0, 0, 0.85);
 }
 
@@ -53,7 +53,7 @@ body {
 }
 
 .topbar__link {
-  font: 400 12px/1.2 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: rgba(0, 0, 0, 0.85);
   text-decoration: none;
 }
@@ -90,7 +90,7 @@ body {
 
 .sidebar__title {
   margin: 18px 0 12px;
-  font: 400 12px/1.2 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: rgba(0, 0, 0, 0.85);
 }
 
@@ -141,10 +141,7 @@ body {
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  display: grid;
-  place-items: center;
-  font: 600 14px/1 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  color: var(--ink);
+  object-fit: cover;
 }
 
 .case__logo--kinfolk {
@@ -162,18 +159,18 @@ body {
 
 .case__title {
   margin: 0;
-  font: 600 20px/1.2 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 600 1.25rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
 .case__role {
   margin-top: 4px;
-  font: 500 14px/1.2 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 500 0.75rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: rgba(0, 0, 0, 0.85);
 }
 
 .case__tags {
   margin-top: 4px;
-  font: 400 12px/1.2 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--muted);
 }
 
@@ -186,7 +183,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.4);
-  font: 400 12px/1 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
   text-decoration: none;
 }
@@ -197,7 +194,7 @@ body {
 
 .case__lede {
   margin: 0 0 24px;
-  font: 400 12px/1.5 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.875rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
 }
 
@@ -217,13 +214,13 @@ body {
   margin: 0 0 16px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border);
-  font: 400 12px/1.5 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: rgba(0, 0, 0, 0.7);
 }
 
 .case__section p {
   margin: 0 0 20px;
-  font: 400 12px/1.5 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.875rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
 }
 
@@ -290,7 +287,7 @@ body {
   border: none;
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  font-size: 28px;
+  font-size: 1.75rem;
   line-height: 1;
   border-radius: 50%;
   cursor: pointer;
@@ -332,7 +329,7 @@ body {
 }
 
 .blockquote__text {
-  font: 400 12px/1.5 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.875rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
 }
 
@@ -370,22 +367,23 @@ body {
 }
 
 .stats-grid__value {
-  font: 500 36px/1.2 Aeonik, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 500 2.25rem/1.65 Aeonik, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   margin-bottom: 4px;
 }
 
 .stats-grid__label {
-  font: 400 12px/1.4 Aeonik, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Aeonik, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
 .item__icon {
   width: 36px;
   height: 36px;
   border-radius: 999px;
+  object-fit: cover;
   border: 1.44px solid var(--border);
   display: grid;
   place-items: center;
-  font: 600 14px/1 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 600 0.75rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
   overflow: hidden;
 }
@@ -420,7 +418,7 @@ body {
 }
 
 .item__name {
-  font: 500 14px/1.2 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 500 0.75rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
   white-space: nowrap;
   overflow: hidden;
@@ -429,7 +427,7 @@ body {
 
 .item__tags {
   margin-top: 4px;
-  font: 400 12px/1.2 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
@@ -445,13 +443,13 @@ body {
 }
 
 .note__main {
-  font: 400 14px/1.35 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.875rem/1.65 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
 }
 
 .note__sub {
   margin-top: 10px;
-  font: 400 12px/1.35 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--muted-2);
 }
 
@@ -472,14 +470,14 @@ body {
   padding: 0 14px;
   border-radius: 999px;
   background: var(--pill);
-  font: 400 12px/1 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
   margin-bottom: 14px;
 }
 
 .headline {
   margin: 6px 0 18px;
-  font: 600 40px/1.08 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 600 2.5rem/1.2 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -502,7 +500,7 @@ body {
 
 .lede {
   margin: 0;
-  font: 400 14px/1.5 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.875rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
   max-width: 760px;
 }
@@ -527,7 +525,7 @@ body {
 .stat__value {
   position: relative;
   display: inline-block;
-  font: 600 36px/1.05 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 600 2.25rem/1.2 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -548,7 +546,7 @@ body {
 
 .stat__label {
   margin-top: 7px;
-  font: 400 16px/1.35 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 1rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
 }
 
@@ -561,7 +559,7 @@ body {
 
 .bio {
   padding-top: 12px;
-  font: 400 14px/1.5 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.875rem/1.65 Instrument Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
 .bio p {
@@ -579,14 +577,102 @@ body {
 
 .footer {
   margin-top: 22px;
-  font: 400 12px/1.2 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font: 400 0.75rem/1.65 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: rgba(0, 0, 0, 0.75);
 }
 
 @media (max-width: 940px) {
+  .page {
+    padding-top: 0;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    padding: 16px 0 12px;
+    margin-bottom: 0;
+  }
+
   .layout {
-    grid-template-columns: 1fr;
-    gap: 28px;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 0;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 48px;
+    z-index: 99;
+    background: var(--bg);
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar__section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 0.625rem;
+  }
+
+  .sidebar__section:first-child .sidebar__title {
+    display: block;
+    width: 100%;
+    margin: 0 0 12px;
+    padding: 0;
+    font: 500 0.6875rem/1.65 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    color: rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .sidebar__section:not(:first-child) .sidebar__title {
+    display: none;
+  }
+
+  .item {
+    margin: 0;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 20px;
+  }
+
+  .item__icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+
+  .item__meta {
+    display: block;
+  }
+
+  .item__name {
+    display: block;
+    font-size: 12px;
+  }
+
+  .item__tags {
+    display: none;
+  }
+
+  .note {
+    display: none;
+  }
+
+  .content {
+    padding: 0;
+  }
+
+  .case {
+    max-width: 100%;
   }
 
   .stats {
@@ -595,6 +681,10 @@ body {
 
   .headline {
     font-size: 32px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -608,11 +698,51 @@ body {
     flex-direction: column;
   }
 
+  .topbar__nav {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .sidebar {
+    padding: 12px 0;
+  }
+
+  .item {
+    padding: 6px 10px;
+  }
+
   .headline {
     font-size: 28px;
   }
 
   .hero {
     height: 220px;
+  }
+
+  .case__header {
+    grid-template-columns: 40px 1fr;
+    gap: 10px;
+  }
+
+  .case__brand {
+    width: 40px;
+    height: 40px;
+  }
+
+  .case__visit {
+    display: none;
+  }
+}
+
+/* Mobile credit section at bottom */
+@media (max-width: 940px) {
+  .footer::before {
+    content: "Design inspired by Chris Lee. All content belongs to Adeleke.";
+    display: block;
+    margin-bottom: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font: 400 0.6875rem/1.65 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    color: rgba(0, 0, 0, 0.5);
   }
 }

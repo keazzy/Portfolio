@@ -196,5 +196,54 @@ function setupNavigation() {
   });
 }
 
+// Count-up animation for stat values
+function animateCountUp() {
+  const stats = document.querySelectorAll('.stat__value[data-count]');
+  
+  stats.forEach((stat) => {
+    const target = parseFloat(stat.dataset.count);
+    const prefix = stat.dataset.prefix || '';
+    const suffix = stat.dataset.suffix || '';
+    const isDecimal = target % 1 !== 0;
+    const duration = 1500;
+    const startTime = performance.now();
+    
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Ease out cubic
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const current = target * easeOut;
+      
+      // Get the highlight span
+      const highlight = stat.querySelector('.stat__highlight');
+      const highlightHtml = highlight ? highlight.outerHTML : '';
+      
+      if (isDecimal) {
+        stat.innerHTML = highlightHtml + prefix + current.toFixed(2) + suffix;
+      } else {
+        stat.innerHTML = highlightHtml + prefix + Math.round(current) + suffix;
+      }
+      
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    }
+    
+    requestAnimationFrame(update);
+  });
+}
+
 // Initialize navigation
 setupNavigation();
+
+// Run count animation after content loads
+const observer = new MutationObserver(() => {
+  const stats = document.querySelectorAll('.stat__value[data-count]');
+  if (stats.length > 0) {
+    animateCountUp();
+  }
+});
+
+observer.observe(document.getElementById('content-area'), { childList: true });

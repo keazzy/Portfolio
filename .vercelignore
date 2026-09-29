@@ -1,0 +1,18 @@
+# Images and videos are served from Sanity's CDN; the originals only feed scripts/import-seed.ts.
+assets
+public/assets
+
+# Legacy static site (still live from `main`) and the concept prototypes.
+index.html
+impulse.html
+kinfolk.html
+script.js
+styles.css
+partials
+concepts
+
+# Local-only
+.claude
+.windsurf
+.env*.local
+.DS_Store

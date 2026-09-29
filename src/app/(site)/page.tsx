@@ -3,6 +3,10 @@ import { Header, Hero, Sections } from '@/components/sections';
 import { ShotViewer } from '@/components/shots';
 import { getPortfolio } from '@/lib/content';
 
+// Safety net: <SanityLive> refreshes open pages instantly on publish; this makes sure
+// the page is also re-checked (at most once a minute, on the next visit) if nobody had it open.
+export const revalidate = 60;
+
 export default async function Home() {
   const portfolio = await getPortfolio();
   const { settings } = portfolio;

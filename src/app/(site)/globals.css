@@ -347,3 +347,13 @@ html { scroll-behavior: smooth; }
 .projects--cards .list a { grid-template-columns: 48px 1fr auto; padding: 16px; border: 1px solid var(--rule); border-radius: 14px; background: #fffdf9; }
 .projects--cards .list li:first-child a, .projects--cards .list a { border-top: 1px solid var(--rule); }
 .projects--cards .list img, .projects--cards .list__blank { width: 48px; height: 48px; border-radius: 12px; }
+
+/* Draft preview pill */
+.draft-badge {
+  position: fixed; left: 50%; bottom: 16px; z-index: 900; transform: translateX(-50%);
+  padding: 8px 14px; border-radius: 999px;
+  background: var(--ink); color: var(--paper);
+  font: 500 12.5px var(--sans); text-decoration: none;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.4);
+}
+.draft-badge span { text-decoration: underline; text-underline-offset: 3px; }

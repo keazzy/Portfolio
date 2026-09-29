@@ -3,7 +3,7 @@
 /*
   Small client-only pieces: the aurora, the live clock and the sticky company tabs.
 */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { mount, type AuroraTheme } from '@/lib/aurora';
 import type { Accent } from '@/lib/types';
 
@@ -94,5 +94,20 @@ export function CompanyTabs({ label, tabs }: { label: string; tabs: Tab[] }) {
         ))}
       </div>
     </nav>
+  );
+}
+
+/* ---------- "Previewing drafts" pill (only outside the Studio's preview frame) ---------- */
+
+const noopSubscribe = () => () => {};
+
+export function DraftModeBadge() {
+  // Inside Presentation the site is framed and the Studio already shows the draft state.
+  const framed = useSyncExternalStore(noopSubscribe, () => window.self !== window.top, () => true);
+  if (framed) return null;
+  return (
+    <a className="draft-badge" href="/api/draft-mode/disable">
+      Previewing drafts · <span>Exit</span>
+    </a>
   );
 }

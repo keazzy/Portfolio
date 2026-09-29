@@ -1,3 +1,4 @@
+import { stegaClean } from 'next-sanity';
 import type { Paragraph, Span } from './types';
 
 const isExternal = (href: string) => /^https?:\/\//.test(href);
@@ -27,7 +28,8 @@ export function portableTextToParagraphs(blocks: PTBlock[] | null | undefined): 
     .map((b) =>
       (b.children || []).map((c) => {
         const link = (c.marks || []).map((k) => b.markDefs?.find((d) => d._key === k && d._type === 'link')).find(Boolean);
-        return link?.href ? { text: c.text, href: link.href, external: isExternal(link.href) } : { text: c.text };
+        const href = link?.href ? stegaClean(link.href) : undefined;
+        return href ? { text: c.text, href, external: isExternal(href) } : { text: c.text };
       }),
     )
     .filter((p) => p.some((s) => s.text.trim()));

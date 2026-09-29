@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
+import { VisualEditing } from 'next-sanity/visual-editing';
 import { Geist_Mono, Inter, Newsreader } from 'next/font/google';
+import { draftMode } from 'next/headers';
+import { DraftModeBadge } from '@/components/client';
 import { getPortfolio } from '@/lib/content';
+import { isSanityConfigured } from '@/sanity/env';
+import { SanityLive } from '@/sanity/live';
 import './globals.css';
 import './viewer.css';
 
@@ -19,9 +24,19 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SiteLayout({ children }: LayoutProps<'/'>) {
   const { settings } = await getPortfolio();
+  const { isEnabled: isDraftMode } = await draftMode();
   return (
     <html lang="en" data-accent={settings.accent} className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {isSanityConfigured && <SanityLive />}
+        {isDraftMode && (
+          <>
+            <VisualEditing />
+            <DraftModeBadge />
+          </>
+        )}
+      </body>
     </html>
   );
 }

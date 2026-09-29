@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portfolio Concepts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg: #f3f3ef; --card: #fff; --ink: #151714; --ink-2: #5d635c; --ink-3: #969c95; --rule: #e3e4df; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.55 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    main { max-width: 1180px; margin: 0 auto; padding: 64px 24px 80px; }
+    h1 { margin: 0 0 8px; font-size: 34px; font-weight: 600; letter-spacing: -0.03em; }
+    .lede { margin: 0 0 40px; color: var(--ink-2); max-width: 640px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    a.card { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--rule); border-radius: 16px; overflow: hidden; color: inherit; text-decoration: none; transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms ease; }
+    @media (hover: hover) and (pointer: fine) { a.card:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -24px rgba(0,0,0,.35); } }
+    a.card:active { transform: scale(0.99); }
+    .swatch { height: 150px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+    .swatch b { font-size: 26px; letter-spacing: -0.03em; line-height: 1; }
+    .swatch span { font: 12px 'Geist Mono', monospace; opacity: .7; }
+    .a .swatch { background: #f5f3ee; color: #1a1c19; border-bottom: 1px solid var(--rule); }
+    .a .swatch { background: linear-gradient(#f7e3d4, #f5f3ee 75%); }
+    .a .swatch b { font-family: Georgia, serif; font-weight: 400; font-style: italic; color: #b5441b; font-size: 30px; }
+    .b .swatch { background: #0d0e0d; color: #e9ece8; background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1.2px); background-size: 16px 16px; }
+    .b .swatch b { color: #9fc4a6; }
+    .c .swatch { background: #d2dbd0; color: #0f1f16; }
+    .c .swatch b { font-size: 34px; letter-spacing: -0.05em; }
+    .body { padding: 18px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    .body p { margin: 0; color: var(--ink-2); }
+    .body h3 { margin: 0; font: 500 11px 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+    ul { margin: 0; padding-left: 18px; color: var(--ink-2); }
+    li { margin: 2px 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chips span { font-size: 12px; padding: 2px 9px; border-radius: 999px; background: var(--bg); color: var(--ink-2); }
+    .open { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--rule); font-weight: 500; }
+    .shared { margin-top: 40px; padding: 20px; border-radius: 16px; border: 1px dashed #cfd1ca; color: var(--ink-2); }
+    .shared b { color: var(--ink); }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Three directions, same content</h1>
+    <p class="lede">Each concept uses your real work and copy from one shared content file, so you’re comparing layout and feel rather than words. Click any shot to open the detail sidebar. Use the arrow keys to move between shots and frames, and Esc to close.</p>
+
+    <div class="grid">
+      <a class="card a" href="a-ledger.html">
+        <div class="swatch"><b>trustworthy.</b><span>A · Ledger · editorial</span></div>
+        <div class="body">
+          <p>Calm, editorial and serif-led. Your career reads like a financial statement, a nod to the fintech thread in your work. Try the accent switcher at the bottom left: Ember, Iris or Claret.</p>
+          <h3>Borrowed</h3>
+          <div class="chips"><span>Rachel’s headline + “from”</span><span>Benji’s summary</span><span>Chris’s rails + sidebar</span></div>
+          <h3>Own twist</h3>
+          <ul><li><b>Picked from C:</b> “From” list, polaroid and the big “Say hello” email</li><li>Sticky company tabs that fill as you read</li><li>Spec sheet with dotted leaders in the sidebar</li></ul>
+          <span class="open">Open concept A (chosen) →</span>
+        </div>
+      </a>
+
+      <a class="card b" href="b-inspector.html">
+        <div class="swatch"><b>Inspector</b><span>B · tool-native · dark</span></div>
+        <div class="body">
+          <p>The portfolio as a design tool: layers, a canvas and an inspector. It’s the most “product designer” option and the most interactive.</p>
+          <h3>Borrowed</h3>
+          <div class="chips"><span>Chris’s interaction focus</span><span>Savee’s info rail</span><span>Shater’s toggles</span></div>
+          <h3>Own twist</h3>
+          <ul><li>Your bio is the inspector’s “About” layer</li><li><b>Colour palette sampled live</b> from each shot, click to copy</li><li>A multiplayer cursor that shows visitors where to start</li><li>Present mode = the inspector goes fullscreen</li></ul>
+          <span class="open">Open concept B →</span>
+        </div>
+      </a>
+
+      <a class="card c" href="c-index.html">
+        <div class="swatch"><b>money &amp; AI.</b><span>C · Index · your sage, evolved</span></div>
+        <div class="body">
+          <p>Keeps your sage-green identity and makes it bolder: a typographic poster, an index of every shot, and more personality.</p>
+          <h3>Borrowed</h3>
+          <div class="chips"><span>Shater’s personality</span><span>Benji’s local time</span><span>Rachel’s status labels</span></div>
+          <h3>Own twist</h3>
+          <ul><li>Hover any row: a preview trails your cursor</li><li>Filter by company or theme (Fintech, AI, Motion…)</li><li>Your current site’s highlighted stats, refined</li><li>Day/night icon on your Nigeria clock</li></ul>
+          <span class="open">Open concept C →</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="shared">
+      <b>Same across all three (and what your editor will control):</b> your intro and summary, work history, companies (logo, role, dates, summary, impact numbers) and shots. A shot is a title, description, contribution, platform, status, year and one or more images or videos. Also side projects, Webflow sites, and an “Updated” date that stamps itself when you publish. Every shot has a shareable link like <code>#/work/halvest/onboarding</code>.
+    </div>
+    <div class="shared" style="margin-top:12px">
+      <b>Aurora curtain at the top of each:</b> a WebGL port of Nathan Schroeder’s <a href="https://github.com/SchroederNathan/react-native-motion/blob/main/apps/expo/components/animations/aurora-curtain/aurora-curtain.tsx" target="_blank" rel="noopener">aurora-curtain</a> shader, recoloured per concept: warm Ember light on A’s paper (Iris and Claret via its accent switcher), the original violet on B’s dark canvas (sage in light mode), and pale daylight on C’s sage. Scroll or pull up past the top of the page and the curtain follows you down, then springs back.
+    </div>
+  </main>
+</body>
+</html>

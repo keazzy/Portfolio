@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Adeleke Abdulazeez — Concept A · Ledger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/viewer.css" />
+  <style>
+    :root {
+      --paper: #f5f3ee;
+      --paper-2: #ebe8e0;
+      --ink: #1a1c19;
+      --ink-2: rgba(26, 28, 25, 0.66);
+      --ink-3: rgba(26, 28, 25, 0.44);
+      --rule: rgba(26, 28, 25, 0.12);
+      /* Accent palettes — Ember is the default; Iris and Claret via the switcher. */
+      --accent: #b5441b;
+      --accent-soft: #f7e2d5;
+      --serif: 'Newsreader', Georgia, serif;
+      --sans: 'Inter', system-ui, sans-serif;
+      --mono: 'Geist Mono', ui-monospace, monospace;
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+      --gutter: 32px;
+      --maxw: 1120px;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 400 15px/1.6 var(--sans);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; }
+    img, video { display: block; max-width: 100%; }
+    :root[data-accent='iris'] { --accent: #5b3fd0; --accent-soft: #e8e3fa; }
+    :root[data-accent='claret'] { --accent: #8e2a3b; --accent-soft: #f3dde0; }
+    ::selection { background: var(--accent-soft); }
+    .aurora { z-index: -1; }
+
+    /* Concept-only palette switcher */
+    .palette {
+      position: fixed; left: 16px; bottom: 16px; z-index: 60;
+      display: flex; align-items: center; gap: 4px;
+      padding: 4px 4px 4px 12px; border-radius: 999px;
+      background: color-mix(in srgb, #fff 78%, transparent);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      box-shadow: 0 0 0 1px var(--rule), 0 10px 30px -12px rgba(0, 0, 0, 0.25);
+      font: 500 11px var(--mono); color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .palette span { margin-right: 6px; }
+    .palette button {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 28px; padding: 0 10px 0 8px; border: 0; border-radius: 999px;
+      background: transparent; color: var(--ink-2); cursor: pointer;
+      font: 500 12px var(--sans); letter-spacing: 0; text-transform: none;
+      transition: background-color 150ms ease, color 150ms ease, transform 120ms ease;
+    }
+    .palette button i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+    .palette button[aria-pressed='true'] { background: var(--ink); color: var(--paper); }
+    @media (hover: hover) and (pointer: fine) { .palette button:not([aria-pressed='true']):hover { background: var(--paper-2); color: var(--ink); } }
+    .palette button:active { transform: scale(0.96); }
+    @media (max-width: 640px) { .palette span { display: none; } }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
+    .mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.01em; }
+    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+    .link {
+      text-decoration: underline;
+      text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transition: text-decoration-color 150ms ease, color 150ms ease;
+    }
+    @media (hover: hover) and (pointer: fine) { .link:hover { text-decoration-color: var(--ink); color: var(--ink); } }
+
+    /* ---------- header ---------- */
+    .top { display: flex; align-items: center; justify-content: space-between; height: 64px; font-size: 13px; }
+    .top__name { font-weight: 500; text-decoration: none; }
+    .top nav { display: flex; gap: 20px; color: var(--ink-2); }
+    .top nav a { text-decoration: none; transition: color 150ms ease; }
+    @media (hover: hover) and (pointer: fine) { .top nav a:hover { color: var(--ink); } }
+
+    /* ---------- hero ---------- */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) 210px;
+      grid-template-areas: 'h h h' 's f p';
+      gap: 0 56px;
+      align-items: start;
+      padding: 14vh 0 64px;
+    }
+    .hero__summary { grid-area: s; }
+    .hero h1 {
+      grid-area: h;
+      max-width: 15.5em;
+      margin: 0 0 44px;
+      font: 400 clamp(40px, 5vw, 58px)/1.06 var(--serif);
+      letter-spacing: -0.02em;
+      font-variation-settings: 'opsz' 72;
+      text-wrap: balance;
+    }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .summary { max-width: 540px; color: var(--ink-2); }
+    .summary p { margin: 0 0 12px; }
+    .summary a { color: var(--ink); }
+    .stamp { margin-top: 20px; display: flex; gap: 14px; flex-wrap: wrap; color: var(--ink-3); }
+    .stamp span::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: 1px; }
+    .stamp span + span::before { background: var(--ink-3); }
+
+    /* Work history: "From" list + polaroid (picked from concept C) */
+    .from { grid-area: f; }
+    .from ol { list-style: none; margin: 10px 0 0; padding: 0; }
+    .from li { border-top: 1px solid var(--rule); }
+    .from a { display: grid; grid-template-columns: 84px 1fr; gap: 8px; padding: 9px 0; text-decoration: none; }
+    .from .y { font: 12px/1.9 var(--mono); color: var(--ink-3); }
+    .from b { display: block; font-weight: 500; font-size: 15px; }
+    .from em { display: block; font-style: normal; font-size: 13.5px; color: var(--ink-3); }
+    @media (hover: hover) and (pointer: fine) {
+      .from a:hover b { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; text-decoration-color: var(--accent); }
+    }
+    .from a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+
+    .polaroid {
+      grid-area: p;
+      justify-self: end;
+      width: 200px; margin: 6px 0 0; padding: 8px 8px 12px;
+      background: #fffdf8; border-radius: 3px;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 18px 40px -18px rgba(40, 30, 20, 0.45);
+      transform: rotate(3deg);
+      transition: transform 500ms cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+    @media (hover: hover) and (pointer: fine) { .polaroid:hover { transform: rotate(0deg) translateY(-4px) scale(1.02); } }
+    .polaroid img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: grayscale(1) contrast(1.05); border-radius: 1px; }
+    .polaroid figcaption { margin-top: 8px; font: italic 400 17px/1.1 var(--serif); color: #2d2a26; }
+
+    /* ---------- sticky company tabs ---------- */
+    .tabs {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 50;
+      background: color-mix(in srgb, var(--paper) 88%, transparent);
+      -webkit-backdrop-filter: saturate(1.4) blur(12px);
+      backdrop-filter: saturate(1.4) blur(12px);
+      border-bottom: 1px solid var(--rule);
+      transform: translateY(-100%);
+      transition: transform 280ms var(--ease);
+    }
+    .tabs.is-on { transform: none; }
+    .tabs .wrap { display: flex; align-items: stretch; gap: 4px; height: 52px; overflow-x: auto; scrollbar-width: none; }
+    .tabs .wrap::-webkit-scrollbar { display: none; }
+    .tab {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 14px;
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 12.5px;
+      color: var(--ink-3);
+      transition: color 150ms ease;
+    }
+    .tab small { font-family: var(--mono); font-size: 10.5px; }
+    .tab.is-active { color: var(--ink); }
+    .tab i { position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px; background: var(--rule); overflow: hidden; }
+    .tab i b { position: absolute; inset: 0; background: var(--ink); transform-origin: left; transform: scaleX(var(--p, 0)); }
+    .tab--name { color: var(--ink); font-weight: 500; margin-right: auto; padding-left: 0; }
+
+    /* ---------- company sections ---------- */
+    .co { padding: 72px 0 40px; border-top: 1px solid var(--rule); scroll-margin-top: 40px; }
+    .co__head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 64px; }
+    .co__logo { width: 40px; height: 40px; border-radius: 11px; border: 1px solid var(--rule); background: #fff; object-fit: cover; margin-bottom: 18px; }
+    .co__name { margin: 0; font: 400 28px/1.2 var(--serif); letter-spacing: -0.01em; }
+    .co__name em { font-style: italic; color: var(--ink-2); }
+    .co__role { margin-top: 2px; color: var(--ink-2); font: 400 17px/1.4 var(--serif); }
+    .co__meta { margin-top: 14px; color: var(--ink-3); display: grid; gap: 2px; }
+    .co__summary { margin: 0 0 22px; font: 400 20px/1.5 var(--serif); color: var(--ink); text-wrap: pretty; }
+    .impact { display: flex; gap: 0; border-top: 1px solid var(--rule); }
+    .impact div { flex: 1; padding: 12px 16px 0 0; }
+    .impact div + div { padding-left: 16px; border-left: 1px solid var(--rule); }
+    .impact b { display: block; font: 500 20px/1.2 var(--mono); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+    .impact span { font-size: 12px; color: var(--ink-3); }
+    .co__links { margin-top: 18px; display: flex; gap: 18px; font-size: 13px; color: var(--ink-2); }
+
+    .rail-bar { display: flex; justify-content: flex-end; gap: 6px; margin: 36px 0 12px; }
+    .rbtn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--rule); background: transparent; color: var(--ink);
+      display: grid; place-items: center; cursor: pointer;
+      transition: background-color 150ms ease, transform 150ms ease, opacity 150ms ease;
+    }
+    .rbtn:disabled { opacity: 0.3; cursor: default; }
+    @media (hover: hover) and (pointer: fine) { .rbtn:not(:disabled):hover { background: var(--paper-2); } }
+    .rbtn:active:not(:disabled) { transform: scale(0.94); }
+
+    .rail {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: max(var(--gutter), calc((100vw - var(--maxw)) / 2 + var(--gutter)));
+      padding: 0 var(--gutter) 8px max(var(--gutter), calc((100vw - var(--maxw)) / 2 + var(--gutter)));
+      margin: 0;
+      scrollbar-width: none;
+    }
+    .rail::-webkit-scrollbar { display: none; }
+    .rail::after { content: ''; flex: 0 0 1px; }
+    .card {
+      flex: none;
+      scroll-snap-align: start;
+      display: block;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      text-align: left;
+      font: inherit;
+      cursor: zoom-in;
+    }
+    .card__media {
+      position: relative;
+      height: var(--rail-h, 380px);
+      aspect-ratio: var(--ar);
+      max-width: calc(100vw - 2 * var(--gutter));
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--paper-2);
+      box-shadow: inset 0 0 0 1px var(--rule);
+      transition: transform 200ms var(--ease);
+    }
+    .card__media img, .card__media video { width: 100%; height: 100%; object-fit: cover; }
+    .card__media::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px var(--rule); pointer-events: none; }
+    .card:active .card__media { transform: scale(0.985); }
+    .chip {
+      position: absolute; left: 10px; top: 10px; z-index: 1;
+      padding: 3px 8px; border-radius: 999px;
+      background: rgba(26, 28, 25, 0.72); color: #fff;
+      font: 500 10.5px/1.4 var(--mono);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    }
+    .card__cap { display: flex; justify-content: space-between; gap: 16px; padding: 10px 2px 0; font-size: 13px; }
+    .card__cap span:last-child { color: var(--ink-3); font-family: var(--mono); font-size: 11.5px; white-space: nowrap; }
+    @media (hover: hover) and (pointer: fine) {
+      .card:hover .card__cap span:first-child { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    }
+    .card:focus-visible { outline: none; }
+    .card:focus-visible .card__media { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink); }
+
+    /* ---------- side projects + webflow ---------- */
+    .section { padding: 72px 0; border-top: 1px solid var(--rule); }
+    .section h2 { margin: 0 0 24px; font: 400 28px/1.2 var(--serif); letter-spacing: -0.01em; }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+    .list { list-style: none; margin: 0; padding: 0; }
+    .list a { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--rule); text-decoration: none; }
+    .list img { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--rule); }
+    .list b { font-weight: 500; font-size: 14px; }
+    .list small { display: block; color: var(--ink-3); font-size: 12px; }
+    .list em { font-style: normal; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
+    @media (hover: hover) and (pointer: fine) { .list a:hover b { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; } }
+
+    /* Say hello (picked from concept C) */
+    .hello { padding: 112px 0 0; border-top: 1px solid var(--rule); }
+    .hello .eyebrow { margin: 0 0 18px; }
+    .hello__mail {
+      display: inline-block; max-width: 100%;
+      font: 400 min(96px, calc((min(100vw, var(--maxw)) - 2 * var(--gutter)) / 10.9))/1.02 var(--serif);
+      letter-spacing: -0.035em; font-variation-settings: 'opsz' 72;
+      text-decoration: none; overflow-wrap: anywhere;
+    }
+    .hello__mail em { font-style: italic; color: var(--accent); letter-spacing: -0.01em; }
+    .hello__mail span {
+      background-image: linear-gradient(var(--ink), var(--ink));
+      background-size: 0% 2px; background-position: 0 94%; background-repeat: no-repeat;
+      transition: background-size 400ms var(--ease);
+    }
+    @media (hover: hover) and (pointer: fine) { .hello__mail:hover span { background-size: 100% 2px; } }
+    .hello__foot {
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px 28px;
+      margin-top: 64px; padding: 26px 0 44px; border-top: 1px solid var(--rule);
+      color: var(--ink-3); font-size: 13px;
+    }
+    .hello__foot nav { display: flex; gap: 18px; }
+    .hello__foot nav a { text-decoration: none; color: var(--ink-2); transition: color 150ms ease; }
+    @media (hover: hover) and (pointer: fine) { .hello__foot nav a:hover { color: var(--ink); } }
+    .hello__foot span:last-child { text-align: right; }
+
+    /* ---------- viewer theme ---------- */
+    .vw--a {
+      --vw-panel-w: 420px;
+      --vw-backdrop: rgba(24, 27, 23, 0.62);
+      --vw-backdrop-blur: 10px;
+      --vw-panel-bg: #fbfaf6;
+      --vw-panel-ink: var(--ink);
+      --vw-panel-muted: var(--ink-3);
+      --vw-line: var(--rule);
+      --vw-frame-ring: #fff;
+      --vw-font: var(--sans);
+    }
+    .pa-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); margin-top: 12px; }
+    .pa-eyebrow img { width: 20px; height: 20px; border-radius: 6px; border: 1px solid var(--rule); }
+    .pa-title { margin: 14px 0 12px; font: 400 30px/1.12 var(--serif); letter-spacing: -0.015em; text-wrap: balance; }
+    .pa-desc { margin: 0 0 24px; color: var(--ink-2); font-size: 15px; line-height: 1.6; text-wrap: pretty; }
+    .spec { margin: 0 0 26px; }
+    .spec div { display: flex; align-items: baseline; gap: 8px; padding: 6px 0; font-size: 13.5px; }
+    .spec dt { color: var(--ink-3); }
+    .spec div::after { content: none; }
+    .spec .dots { flex: 1; border-bottom: 1px dotted color-mix(in srgb, var(--ink) 30%, transparent); transform: translateY(-4px); }
+    .spec dd { margin: 0; text-align: right; }
+    .pa-frame { margin: -10px 0 24px; color: var(--ink-3); }
+    .pa-impact { border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; background: #fff; }
+    .pa-impact .eyebrow { margin-bottom: 8px; }
+    .pa-impact div { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; font-size: 13px; }
+    .pa-impact b { font: 500 13px var(--mono); }
+    .pa-next {
+      display: flex; align-items: center; gap: 12px; width: 100%;
+      padding: 10px; margin-bottom: 20px;
+      border: 1px solid var(--rule); border-radius: 12px; background: transparent;
+      font: inherit; color: inherit; text-align: left; cursor: pointer;
+      transition: background-color 150ms ease;
+    }
+    @media (hover: hover) and (pointer: fine) { .pa-next:hover { background: var(--paper-2); } }
+    .pa-next .thumb { width: 64px; height: 44px; border-radius: 7px; overflow: hidden; flex: none; background: var(--paper-2); }
+    .pa-next .thumb img, .pa-next .thumb video { width: 100%; height: 100%; object-fit: cover; }
+    .pa-next small { display: block; color: var(--ink-3); font-size: 11.5px; }
+    .pa-next b { font-weight: 500; font-size: 13.5px; }
+    .pa-visit { font-size: 13.5px; }
+    .kbd { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--ink-3); font: 11px var(--mono); }
+    .kbd kbd { font: inherit; padding: 1px 5px; border: 1px solid var(--rule); border-radius: 4px; background: #fff; color: var(--ink-2); margin-right: 4px; }
+
+    /* ---------- responsive ---------- */
+    @media (max-width: 1080px) {
+      .hero { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-areas: 'h h' 's f' 's p'; }
+      .polaroid { justify-self: start; width: 176px; margin-top: 28px; }
+    }
+    @media (max-width: 960px) {
+      .hero { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'h' 's' 'f' 'p'; gap: 44px; padding-top: 8vh; }
+      .polaroid { justify-self: end; margin: 0 10px 0 0; }
+      .co__head { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    }
+    @media (max-width: 640px) {
+      :root { --gutter: 18px; }
+      .top nav a:not(.keep) { display: none; }
+      .from a { grid-template-columns: 76px 1fr; }
+      .polaroid { display: none; }
+      .hero { grid-template-areas: 'h' 's' 'f'; padding-bottom: 40px; }
+      .hello { padding-top: 80px; }
+      .hello__foot { grid-template-columns: 1fr; text-align: left; }
+      .hello__foot span:last-child { text-align: left; }
+      .hero h1 { margin-bottom: 32px; }
+      .co { --rail-h: 250px; padding-top: 40px; }
+      .impact b { font-size: 16px; }
+      .cols { grid-template-columns: 1fr; gap: 40px; }
+      .rail-bar { display: none; }
+      .co__summary { font-size: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tabs { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="tabs" aria-label="Companies"><div class="wrap" id="tabs"></div></nav>
+
+  <div class="wrap">
+    <header class="top">
+      <a class="top__name" href="#">Adeleke Abdulazeez</a>
+      <nav>
+        <a href="#work">Work</a>
+        <a class="keep" href="https://instantfind.me/adelekeazeez" target="_blank" rel="noopener">CV ↗</a>
+        <a class="keep" href="mailto:delekeazzy1@gmail.com">Email</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>I’m Adeleke, a product designer who makes money and AI feel <em>trustworthy</em>.</h1>
+      <div class="hero__summary">
+        <div class="summary" id="summary"></div>
+        <div class="stamp mono"><span id="updated"></span><span id="clock"></span></div>
+      </div>
+      <nav class="from" aria-label="Work history">
+        <div class="eyebrow">From</div>
+        <ol id="from"></ol>
+      </nav>
+      <figure class="polaroid">
+        <img src="../assets/Hero-image.avif" alt="Stage at a Halvest event under an ‘A New Dawn’ banner" />
+        <figcaption>Halvest, a new dawn</figcaption>
+      </figure>
+    </section>
+  </div>
+
+  <main id="work"></main>
+
+  <div class="wrap">
+    <section class="section" id="side">
+      <div class="cols">
+        <div>
+          <h2>Side projects</h2>
+          <ul class="list" id="sideList"></ul>
+        </div>
+        <div>
+          <h2>Webflow sites</h2>
+          <ul class="list" id="webflowList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="hello" id="contact">
+      <p class="eyebrow">Say hello</p>
+      <a class="hello__mail" href="mailto:delekeazzy1@gmail.com"><span>delekeazzy1<em>@</em>gmail.com</span></a>
+      <div class="hello__foot">
+        <span id="updatedFoot"></span>
+        <nav id="socials" aria-label="Elsewhere"></nav>
+        <span>© 2026 Adeleke Abdulazeez</span>
+      </div>
+    </section>
+  </div>
+
+  <script src="shared/data.js"></script>
+  <script src="shared/viewer.js"></script>
+  <script src="shared/aurora.js"></script>
+  <script>
+    const P = window.PORTFOLIO;
+    // Aurora curtain, tinted to the accent: warm light, violet haze or rose on the paper.
+    const ACCENTS = {
+      ember:  { label: 'Ember',  swatch: '#b5441b', aurora: { tintA: [0.95, 0.52, 0.22], tintB: [1.0, 0.70, 0.36], gain: 0.42, grain: 0.6 } },
+      iris:   { label: 'Iris',   swatch: '#5b3fd0', aurora: { tintA: [0.49, 0.38, 0.93], tintB: [0.64, 0.56, 1.0],  gain: 0.36, grain: 0.6 } },
+      claret: { label: 'Claret', swatch: '#8e2a3b', aurora: { tintA: [0.62, 0.18, 0.28], tintB: [0.80, 0.36, 0.44], gain: 0.32, grain: 0.6 } },
+    };
+    const fromUrl = new URLSearchParams(location.search).get('accent');
+    let accent = ACCENTS[fromUrl] ? fromUrl : (() => { try { return localStorage.getItem('a-accent'); } catch { return null; } })();
+    if (!ACCENTS[accent]) accent = 'ember';
+    document.documentElement.dataset.accent = accent;
+    const aurora = Aurora.mount(document.body, { theme: ACCENTS[accent].aurora });
+
+    const pal = document.createElement('div');
+    pal.className = 'palette';
+    pal.setAttribute('role', 'group');
+    pal.setAttribute('aria-label', 'Accent colour (concept only)');
+    pal.innerHTML = '<span>Accent</span>' + Object.entries(ACCENTS).map(([k, a]) =>
+      `<button data-accent="${k}" aria-pressed="${k === accent}" style="--c:${a.swatch}"><i></i>${a.label}</button>`).join('');
+    document.body.appendChild(pal);
+    pal.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-accent]');
+      if (!b) return;
+      accent = b.dataset.accent;
+      document.documentElement.dataset.accent = accent;
+      pal.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      aurora.setTheme(ACCENTS[accent].aurora);
+      try { localStorage.setItem('a-accent', accent); } catch {}
+    });
+    const $ = (s, r = document) => r.querySelector(s);
+    const arrow = (d) => `<svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="${d < 0 ? 'M10 3.5 5.5 8l4.5 4.5' : 'M6 3.5 10.5 8 6 12.5'}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+    /* Summary + stamp */
+    $('#summary').innerHTML = P.site.summary.map((p) => `<p>${P.richText(p, 'link')}</p>`).join('');
+    $('#updated').textContent = 'Updated ' + P.updatedLabel();
+    P.startClock($('#clock'), (t) => `${t} in Nigeria`);
+    $('#updatedFoot').textContent = 'Updated ' + P.updatedLabel();
+    $('#socials').innerHTML = P.site.links.map((l) => `<a href="${l.href}" target="_blank" rel="noopener">${l.label} ↗</a>`).join('');
+
+    /* Work history: year, company, role. Rows jump to the company's work. */
+    $('#from').innerHTML = P.companies.map((c) =>
+      `<li><a href="#${c.id}"><span class="y">${c.years}</span><span><b>${c.name}</b><em>${c.role}</em></span></a></li>`).join('')
+      + `<li><a href="#side"><span class="y">Ongoing</span><span><b>Side projects</b><em>iOS apps · Webflow</em></span></a></li>`;
+    document.querySelectorAll('.from a').forEach((a) => a.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelector(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+
+    /* Companies + rails */
+    $('#work').innerHTML = P.companies.map((c) => `
+      <section class="co" id="${c.id}" aria-labelledby="h-${c.id}">
+        <div class="wrap">
+          <div class="co__head">
+            <div>
+              <img class="co__logo" src="${P.asset(c.logo)}" alt="" />
+              <h2 class="co__name" id="h-${c.id}">${c.name}${c.product ? ` <em>· ${c.product}</em>` : ''}</h2>
+              <div class="co__role">${c.role}</div>
+              <div class="co__meta mono"><span>${c.tags.join(' · ')}</span><span>${c.years}</span></div>
+            </div>
+            <div>
+              <p class="co__summary">${c.summary}</p>
+              <div class="impact">${c.impact.map((i) => `<div><b>${i.value}</b><span>${i.label}</span></div>`).join('')}</div>
+              <div class="co__links"><a class="link" href="${c.url}" target="_blank" rel="noopener">Visit ${c.url.replace(/^https?:\/\/(www\.)?/, '')} ↗</a></div>
+            </div>
+          </div>
+          <div class="rail-bar">
+            <button class="rbtn" data-rail="${c.id}" data-dir="-1" aria-label="Scroll ${c.name} work left">${arrow(-1)}</button>
+            <button class="rbtn" data-rail="${c.id}" data-dir="1" aria-label="Scroll ${c.name} work right">${arrow(1)}</button>
+          </div>
+        </div>
+        <div class="rail" id="rail-${c.id}">
+          ${c.shots.map((s) => {
+            const m = s.media[0];
+            return `
+            <button class="card" data-shot="${s.index}" aria-label="${s.title}. Open details">
+              <div class="card__media" style="--ar:${m.w}/${m.h}">
+                ${s.media.length > 1 ? `<span class="chip">${s.media.length} frames</span>` : ''}
+                ${P.mediaHTML(m, { autoplay: false })}
+              </div>
+              <div class="card__cap"><span>${s.title}</span><span>${[s.status, s.year].filter(Boolean).join(' · ')}</span></div>
+            </button>`;
+          }).join('')}
+        </div>
+      </section>`).join('');
+
+    /* Rail arrows */
+    function updateRailButtons(rail) {
+      const id = rail.id.replace('rail-', '');
+      const [prev, next] = document.querySelectorAll(`[data-rail="${id}"]`);
+      prev.disabled = rail.scrollLeft < 4;
+      next.disabled = rail.scrollLeft + rail.clientWidth > rail.scrollWidth - 4;
+    }
+    document.querySelectorAll('.rail').forEach((rail) => {
+      updateRailButtons(rail);
+      rail.addEventListener('scroll', () => updateRailButtons(rail), { passive: true });
+    });
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-rail]');
+      if (!b) return;
+      const rail = document.getElementById('rail-' + b.dataset.rail);
+      rail.scrollBy({ left: +b.dataset.dir * rail.clientWidth * 0.7, behavior: 'smooth' });
+    });
+
+    /* Only play videos that are on screen */
+    const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+      const v = en.target;
+      if (en.isIntersecting) v.play().catch(() => {}); else v.pause();
+    }), { threshold: 0.35 });
+    document.querySelectorAll('.card video').forEach((v) => io.observe(v));
+
+    /* Side projects + webflow */
+    const listItem = (x) => `<li><a href="${x.href}" target="_blank" rel="noopener"><img src="${P.asset(x.logo)}" alt="" /><span><b>${x.name}</b>${x.note ? ` <small style="display:inline">(${x.note})</small>` : ''}<small>${x.tags.join(' · ')}</small></span><em>${x.status} ↗</em></a></li>`;
+    $('#sideList').innerHTML = P.sideProjects.map(listItem).join('');
+    $('#webflowList').innerHTML = P.webflow.map(listItem).join('');
+
+    /* Sticky company tabs with per-section progress */
+    $('#tabs').innerHTML = `<a class="tab tab--name" href="#">Adeleke</a>` + P.companies.map((c) =>
+      `<a class="tab" href="#${c.id}" data-tab="${c.id}"><span>${c.name}</span><small>${c.years}</small><i><b></b></i></a>`).join('');
+    const tabsBar = $('.tabs');
+    const sections = P.companies.map((c) => document.getElementById(c.id));
+    let ticking = false;
+    function onScroll() {
+      ticking = false;
+      tabsBar.classList.toggle('is-on', window.scrollY > document.querySelector('#work').offsetTop - 80);
+      const mid = window.innerHeight * 0.35;
+      sections.forEach((sec) => {
+        const r = sec.getBoundingClientRect();
+        const p = Math.min(1, Math.max(0, (mid - r.top) / r.height));
+        const tab = document.querySelector(`[data-tab="${sec.id}"]`);
+        tab.querySelector('b').style.setProperty('--p', p.toFixed(3));
+        tab.classList.toggle('is-active', r.top <= mid && r.bottom > mid);
+      });
+    }
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+    onScroll();
+
+    /* Viewer */
+    const specRow = (k, v) => v ? `<div><dt>${k}</dt><span class="dots"></span><dd>${v}</dd></div>` : '';
+    const viewer = Viewer.create({
+      theme: 'a',
+      originRadius: 12,
+      mediaRadius: 12,
+      getOrigin: (shot) => document.querySelector(`.card[data-shot="${shot.index}"] .card__media`),
+      onChange: (shot) => {
+        if (!shot) return;
+        // Keep the card for the current shot in view behind the viewer, so closing lands on it.
+        const card = document.querySelector(`.card[data-shot="${shot.index}"]`);
+        const rail = card.parentElement;
+        const r = card.getBoundingClientRect(), rr = rail.getBoundingClientRect();
+        if (r.left < rr.left || r.right > rr.right) rail.scrollLeft += r.left - rr.left - 32;
+        const sec = card.closest('.co');
+        const sr = sec.getBoundingClientRect();
+        if (sr.bottom < 120 || sr.top > window.innerHeight - 120) card.scrollIntoView({ block: 'center', behavior: 'instant' });
+      },
+      renderPanel: (s, frame) => {
+        const c = s.company;
+        const next = P.allShots[(s.index + 1) % P.allShots.length];
+        return `
+          <div class="pa-eyebrow"><img src="${P.asset(c.logo)}" alt="" />${c.name}${c.product ? ' · ' + c.product : ''}<span style="color:var(--ink-3)">· ${c.years}</span></div>
+          <h2 class="pa-title">${s.title}</h2>
+          <p class="pa-desc">${s.desc}</p>
+          ${s.media.length > 1 ? `<p class="pa-frame mono">Frame <span data-frame-num>${frame + 1}</span> of ${s.media.length}</p>` : ''}
+          <dl class="spec">
+            ${specRow('Contribution', s.contributions.join(', '))}
+            ${specRow('Platform', s.platform)}
+            ${specRow('Status', s.status)}
+            ${specRow('Year', s.year)}
+          </dl>
+          <div class="pa-impact">
+            <div class="eyebrow">${c.name} impact</div>
+            ${c.impact.map((i) => `<div><span>${i.label}</span><b>${i.value}</b></div>`).join('')}
+          </div>
+          <button class="pa-next" data-goto="${next.index}">
+            <span class="thumb">${P.mediaHTML(next.media[0], { autoplay: false })}</span>
+            <span><small>Up next${next.company !== c ? ' · ' + next.company.name : ''}</small><b>${next.title}</b></span>
+          </button>
+          <a class="link pa-visit" href="${c.url}" target="_blank" rel="noopener">Visit ${c.url.replace(/^https?:\/\/(www\.)?/, '')} ↗</a>
+          <div class="kbd"><span><kbd>←</kbd><kbd>→</kbd>frames</span><span><kbd>↑</kbd><kbd>↓</kbd>shots</span><span><kbd>esc</kbd>close</span></div>`;
+      },
+    });
+
+    document.addEventListener('click', (e) => {
+      const card = e.target.closest('.card[data-shot]');
+      if (!card) return;
+      viewer.open(+card.dataset.shot, card.querySelector('.card__media'));
+    });
+    viewer.openFromHash();
+  </script>
+</body>
+</html>

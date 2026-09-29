@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Adeleke Abdulazeez — Concept B · Inspector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/viewer.css" />
+  <style>
+    :root {
+      --bg: #0d0e0d;
+      --dot: rgba(255, 255, 255, 0.07);
+      --panel: #151715;
+      --panel-2: #1c1f1c;
+      --field: #202420;
+      --line: #262a26;
+      --ink: #e9ece8;
+      --ink-2: #a5aca4;
+      --ink-3: #6d746c;
+      --accent: #9fc4a6;
+      --accent-ink: #0d0e0d;
+      --section: rgba(255, 255, 255, 0.018);
+      --section-line: rgba(255, 255, 255, 0.06);
+      --shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+      --sans: 'Inter', system-ui, sans-serif;
+      --mono: 'Geist Mono', ui-monospace, monospace;
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+      --z: 0.8;
+    }
+    [data-theme='light'] {
+      --bg: #e9ebe6;
+      --dot: rgba(0, 0, 0, 0.09);
+      --panel: #fbfbf9;
+      --panel-2: #f2f3ef;
+      --field: #f0f1ed;
+      --line: #e0e2dd;
+      --ink: #161815;
+      --ink-2: #5b6159;
+      --ink-3: #939a91;
+      --accent: #3f7a4c;
+      --accent-ink: #fff;
+      --section: rgba(255, 255, 255, 0.55);
+      --section-line: rgba(0, 0, 0, 0.06);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 400 12.5px/1.5 var(--sans);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; }
+    img, video { display: block; max-width: 100%; }
+    .mono { font-family: var(--mono); }
+
+    .app {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr) 320px;
+      grid-template-rows: 48px minmax(0, 1fr);
+      height: 100vh;
+    }
+
+    /* ---------- toolbar ---------- */
+    .bar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px 0 12px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+    .mark {
+      width: 26px; height: 26px; border-radius: 7px;
+      display: grid; place-items: center;
+      background: var(--accent); color: var(--accent-ink);
+      font: 600 12px var(--mono);
+    }
+    .crumb { display: flex; align-items: center; gap: 8px; color: var(--ink-2); white-space: nowrap; }
+    .crumb b { color: var(--ink); font-weight: 500; }
+    .bar__mid { margin: 0 auto; display: flex; align-items: center; gap: 2px; background: var(--panel-2); border-radius: 8px; padding: 2px; }
+    .zbtn { border: 0; background: transparent; padding: 4px 9px; border-radius: 6px; cursor: pointer; color: var(--ink-2); font: 500 11.5px var(--mono); transition: background-color 120ms ease, color 120ms ease; }
+    .zbtn[aria-pressed='true'] { background: var(--field); color: var(--ink); box-shadow: var(--shadow); }
+    @media (hover: hover) and (pointer: fine) { .zbtn:hover { color: var(--ink); } }
+    .bar__right { display: flex; align-items: center; gap: 6px; }
+    .tbtn {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 30px; padding: 0 10px; border-radius: 8px;
+      border: 0; background: transparent; cursor: pointer; color: var(--ink-2);
+      transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+    }
+    @media (hover: hover) and (pointer: fine) { .tbtn:hover { background: var(--panel-2); color: var(--ink); } }
+    .tbtn:active { transform: scale(0.97); }
+    .tbtn--primary { background: var(--accent); color: var(--accent-ink); font-weight: 500; }
+    @media (hover: hover) and (pointer: fine) { .tbtn--primary:hover { background: var(--accent); color: var(--accent-ink); filter: brightness(1.06); } }
+    .tbtn svg { width: 14px; height: 14px; }
+
+    /* ---------- panels ---------- */
+    .panel { background: var(--panel); min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+    .layers { border-right: 1px solid var(--line); display: flex; flex-direction: column; }
+    .inspector { border-left: 1px solid var(--line); }
+    .ph { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px 6px; color: var(--ink); font-weight: 500; }
+    .ph span { color: var(--ink-3); font-weight: 400; }
+
+    .tree { list-style: none; margin: 0; padding: 0 6px 10px; }
+    .tree ul { list-style: none; margin: 0; padding: 0; }
+    .lrow {
+      position: relative;
+      display: flex; align-items: center; gap: 7px;
+      width: 100%; height: 30px; padding: 0 8px;
+      border: 0; border-radius: 6px; background: transparent;
+      color: var(--ink-2); text-align: left; cursor: pointer;
+      white-space: nowrap; overflow: hidden;
+      transition: background-color 120ms ease, color 120ms ease;
+    }
+    @media (hover: hover) and (pointer: fine) { .lrow:hover { background: var(--panel-2); color: var(--ink); } }
+    .lrow.is-sel { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--ink); }
+    .lrow .t { overflow: hidden; text-overflow: ellipsis; flex: 1; }
+    .lrow .m { color: var(--ink-3); font: 11px var(--mono); }
+    .lrow img { width: 16px; height: 16px; border-radius: 4px; }
+    .lrow svg { flex: none; width: 13px; height: 13px; color: var(--ink-3); }
+    .lrow--group { color: var(--ink); font-weight: 500; }
+    .lrow--child { padding-left: 30px; }
+    .caret { transition: transform 150ms var(--ease); }
+    .group[aria-expanded='false'] .caret { transform: rotate(-90deg); }
+    .group[aria-expanded='false'] + ul { display: none; }
+    .tree-label { padding: 14px 14px 4px; color: var(--ink-3); font-size: 11px; }
+    .layers__foot { margin-top: auto; padding: 12px 14px; border-top: 1px solid var(--line); color: var(--ink-3); font: 11px/1.7 var(--mono); }
+
+    /* ---------- canvas ---------- */
+    .stage { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: var(--bg); }
+    .stage .aurora { z-index: 0; }
+    .canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: auto;
+      background-color: transparent;
+      background-image: radial-gradient(var(--dot) 1px, transparent 1.2px);
+      background-size: calc(24px * var(--z)) calc(24px * var(--z));
+      background-attachment: local;
+      cursor: default;
+      scrollbar-width: thin;
+    }
+    .canvas.is-panning { cursor: grabbing; }
+    .board { position: relative; display: inline-flex; flex-direction: column; gap: calc(110px * var(--z)); padding: calc(96px * var(--z)) calc(120px * var(--z)) calc(160px * var(--z)); min-width: 100%; }
+
+    .intro {
+      max-width: calc(980px * var(--z));
+      padding: calc(6px * var(--z)) calc(8px * var(--z));
+      border-radius: 2px;
+      cursor: default;
+      position: relative;
+    }
+    .intro.is-sel { outline: 1.5px solid var(--accent); }
+    .intro h1 {
+      margin: 0;
+      font: 500 calc(58px * var(--z))/1.06 var(--sans);
+      letter-spacing: -0.035em;
+      text-wrap: balance;
+    }
+    .intro h1 span { color: var(--ink-3); }
+    .intro .tag { position: absolute; top: calc(-22px * var(--z)); left: 0; font-size: 11px; color: var(--accent); white-space: nowrap; }
+
+    .sec { position: relative; }
+    .sec__label {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-bottom: 10px; padding: 5px 10px 5px 6px;
+      background: var(--panel-2); border: 1px solid var(--section-line); border-radius: 8px;
+      color: var(--ink); font-weight: 500; cursor: pointer;
+    }
+    .sec__label img { width: 18px; height: 18px; border-radius: 5px; }
+    .sec__label span { color: var(--ink-3); font: 11px var(--mono); font-weight: 400; }
+    .sec__box {
+      display: flex; align-items: flex-end; gap: calc(56px * var(--z));
+      padding: calc(56px * var(--z)) calc(48px * var(--z)) calc(52px * var(--z));
+      background: var(--section);
+      border: 1px solid var(--section-line);
+      border-radius: 14px;
+      width: max-content;
+    }
+    .frame { position: relative; flex: none; border: 0; padding: 0; background: none; cursor: default; text-align: left; }
+    .frame__name {
+      position: absolute; left: 0; bottom: 100%; margin-bottom: 6px;
+      max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      font-size: 11.5px; color: var(--ink-3);
+      transition: color 120ms ease;
+    }
+    .frame__media {
+      height: calc(280px * var(--z));
+      aspect-ratio: var(--ar);
+      border-radius: 3px;
+      overflow: hidden;
+      background: var(--panel-2);
+      box-shadow: 0 0 0 1px var(--section-line), 0 10px 30px -12px rgba(0, 0, 0, 0.4);
+    }
+    .frame__media img, .frame__media video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+    .frame::after {
+      content: ''; position: absolute; inset: -1px; top: -1px; height: calc(280px * var(--z) + 2px);
+      border-radius: 3px; pointer-events: none;
+      box-shadow: 0 0 0 1px transparent;
+      transition: box-shadow 120ms ease;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .frame:hover::after { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--accent) 65%, transparent); }
+      .frame:hover .frame__name { color: var(--ink-2); }
+    }
+    .frame.is-sel::after { box-shadow: 0 0 0 1.5px var(--accent); }
+    .frame.is-sel .frame__name { color: var(--accent); }
+    .handles { display: none; position: absolute; inset: 0; height: calc(280px * var(--z)); pointer-events: none; }
+    .frame.is-sel .handles { display: block; }
+    .handles i { position: absolute; width: 8px; height: 8px; background: #fff; border: 1.5px solid var(--accent); border-radius: 1px; }
+    .handles i:nth-child(1) { left: -4px; top: -4px; }
+    .handles i:nth-child(2) { right: -4px; top: -4px; }
+    .handles i:nth-child(3) { left: -4px; bottom: -4px; }
+    .handles i:nth-child(4) { right: -4px; bottom: -4px; }
+    .dims {
+      display: none; position: absolute; left: 50%; top: calc(280px * var(--z) + 8px); transform: translateX(-50%);
+      padding: 1px 6px; border-radius: 4px; background: var(--accent); color: var(--accent-ink);
+      font: 500 10.5px var(--mono); white-space: nowrap;
+    }
+    .frame.is-sel .dims { display: block; }
+    .stack { position: absolute; right: 8px; top: 8px; padding: 2px 7px; border-radius: 999px; background: rgba(0, 0, 0, 0.6); color: #fff; font: 500 10.5px var(--mono); }
+    .frame:focus-visible { outline: none; }
+    .frame:focus-visible::after { box-shadow: 0 0 0 2px var(--accent); }
+
+    /* multiplayer-style intro cursor */
+    .cursor { position: absolute; left: 0; top: 0; z-index: 5; pointer-events: none; opacity: 0; will-change: transform; }
+    .cursor svg { width: 18px; height: 18px; display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
+    .cursor__tag { position: absolute; left: 14px; top: 16px; padding: 2px 7px; border-radius: 4px 999px 999px 999px; background: var(--accent); color: var(--accent-ink); font-weight: 500; font-size: 11.5px; white-space: nowrap; }
+    .cursor__bubble {
+      position: absolute; left: 14px; top: 42px; width: 240px;
+      padding: 10px 12px; border-radius: 4px 14px 14px 14px;
+      background: var(--panel); border: 1px solid var(--line); color: var(--ink);
+      box-shadow: 0 12px 30px -10px rgba(0,0,0,.5);
+      opacity: 0; transform: translateY(-4px) scale(0.97); transform-origin: top left;
+      transition: opacity 200ms var(--ease), transform 200ms var(--ease);
+    }
+    .cursor.is-talking .cursor__bubble { opacity: 1; transform: none; }
+
+    /* ---------- inspector ---------- */
+    .ins-sec { padding: 14px 16px; border-bottom: 1px solid var(--line); }
+    .ins-sec:last-child { border-bottom: 0; }
+    .ins-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 500; color: var(--ink); }
+    .ins-h span { color: var(--ink-3); font-weight: 400; font: 11px var(--mono); }
+    .ins-co { display: flex; align-items: center; gap: 8px; color: var(--ink-2); margin-bottom: 8px; }
+    .ins-co img { width: 18px; height: 18px; border-radius: 5px; }
+    .ins-title { margin: 0 0 6px; font: 600 17px/1.3 var(--sans); letter-spacing: -0.01em; color: var(--ink); }
+    .ins-desc { margin: 0; color: var(--ink-2); font-size: 12.5px; line-height: 1.6; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .field { background: var(--field); border-radius: 6px; padding: 6px 8px; min-width: 0; box-shadow: var(--shadow); }
+    .field--wide { grid-column: 1 / -1; }
+    .field small { display: block; color: var(--ink-3); font-size: 10.5px; }
+    .field div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+    .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 6px; vertical-align: 1px; }
+    .swatches { display: grid; gap: 4px; }
+    .sw {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      padding: 4px 6px 4px 4px; border: 0; border-radius: 6px; background: transparent; cursor: copy; text-align: left;
+      transition: background-color 120ms ease;
+    }
+    @media (hover: hover) and (pointer: fine) { .sw:hover { background: var(--panel-2); } }
+    .sw i { width: 20px; height: 20px; border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(128,128,128,.25); }
+    .sw b { font: 400 11.5px var(--mono); color: var(--ink); text-transform: uppercase; }
+    .sw span { margin-left: auto; color: var(--ink-3); font-size: 11px; }
+    .impact-row { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; color: var(--ink-2); }
+    .impact-row b { color: var(--ink); font: 500 12px var(--mono); }
+    .btn-row { display: flex; gap: 6px; }
+    .btn {
+      flex: 1; height: 32px; border-radius: 7px; border: 1px solid var(--line); background: var(--panel-2);
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background-color 120ms ease, transform 120ms ease;
+    }
+    .btn--primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; font-weight: 500; }
+    .btn:active { transform: scale(0.97); }
+    @media (hover: hover) and (pointer: fine) { .btn:not(.btn--primary):hover { background: var(--field); } }
+    .kbd { color: var(--ink-3); font: 10.5px var(--mono); margin-top: 10px; }
+    .kbd kbd { font: inherit; padding: 0 4px; border: 1px solid var(--line); border-radius: 3px; margin-right: 2px; }
+
+    .about-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .about-head .mark { width: 36px; height: 36px; border-radius: 10px; font-size: 15px; }
+    .about-head b { display: block; font-weight: 500; }
+    .about-head span { color: var(--ink-3); }
+    .about-lede { margin: 0 0 10px; font: 500 16px/1.4 var(--sans); letter-spacing: -0.01em; }
+    .prose p { margin: 0 0 8px; color: var(--ink-2); }
+    .prose a { color: var(--ink); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent); text-underline-offset: 2px; }
+    .xp { display: grid; grid-template-columns: 74px 1fr; gap: 2px 10px; }
+    .xp span { color: var(--ink-3); font: 11px/1.9 var(--mono); }
+    .xp div { line-height: 1.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .xp div em { font-style: normal; color: var(--ink-3); }
+    .linkgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .linkgrid a { background: var(--field); border-radius: 6px; padding: 6px 8px; display: flex; justify-content: space-between; box-shadow: var(--shadow); transition: background-color 120ms ease; }
+    @media (hover: hover) and (pointer: fine) { .linkgrid a:hover { background: var(--panel-2); } }
+    .linkgrid a span { color: var(--ink-3); }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 20px; z-index: 2000;
+      padding: 8px 12px; border-radius: 8px; background: var(--ink); color: var(--bg);
+      font-weight: 500; transform: translate(-50%, 12px); opacity: 0; pointer-events: none;
+      transition: opacity 180ms var(--ease), transform 180ms var(--ease);
+    }
+    .toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+
+    /* viewer = the inspector going fullscreen */
+    .vw--b {
+      --vw-panel-w: 360px;
+      --vw-backdrop: color-mix(in srgb, var(--bg) 92%, transparent);
+      --vw-backdrop-blur: 8px;
+      --vw-panel-bg: var(--panel);
+      --vw-panel-ink: var(--ink);
+      --vw-panel-muted: var(--ink-3);
+      --vw-line: var(--line);
+      --vw-btn-bg: var(--panel-2);
+      --vw-btn-hover: var(--field);
+      --vw-frame-ring: var(--accent);
+      --vw-font: var(--sans);
+      font-size: 12.5px;
+    }
+    .vw--b .vw-panel-body { padding: 0 0 20px; }
+
+    /* ---------- small screens: canvas becomes a feed ---------- */
+    @media (max-width: 900px) {
+      body { overflow: auto; }
+      .app { display: block; height: auto; }
+      .bar { position: sticky; top: 0; z-index: 10; }
+      .bar__mid, .crumb .hide-sm, .bar__right .hide-sm { display: none; }
+      .layers, .inspector { display: none; }
+      .stage { overflow: visible; }
+      .canvas { position: relative; inset: auto; overflow: visible; --z: 0.62; min-height: calc(100vh - 48px); }
+      .board { display: flex; padding: 40px 16px 80px; gap: 56px; }
+      .intro { max-width: none; padding: 0; }
+      .intro h1 { font-size: 34px; }
+      .sec__box { width: auto; overflow-x: auto; scroll-snap-type: x mandatory; padding: 36px 16px 24px; gap: 20px; }
+      .frame { scroll-snap-align: start; }
+      .mobile-about { display: block !important; }
+      .intro.is-sel { outline: none; }
+    }
+    .mobile-about { display: none; color: var(--ink-2); max-width: 560px; margin-top: 18px; }
+    .mobile-about p { margin: 0 0 10px; }
+    .mobile-about a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="bar">
+      <div class="mark" aria-hidden="true">A</div>
+      <div class="crumb"><b>Adeleke Abdulazeez</b><span class="hide-sm">/</span><span class="hide-sm">Selected work</span></div>
+      <div class="bar__mid" role="group" aria-label="Zoom">
+        <button class="zbtn" data-zoom="0.5">50%</button>
+        <button class="zbtn" data-zoom="0.8" aria-pressed="true">80%</button>
+        <button class="zbtn" data-zoom="1">100%</button>
+        <button class="zbtn" data-zoom="fit">Fit</button>
+      </div>
+      <div class="bar__right">
+        <a class="tbtn hide-sm" href="https://instantfind.me/adelekeazeez" target="_blank" rel="noopener">CV ↗</a>
+        <a class="tbtn hide-sm" href="mailto:delekeazzy1@gmail.com">Email</a>
+        <button class="tbtn" id="theme" aria-label="Toggle light and dark">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 2.5v11a5.5 5.5 0 0 0 0-11Z" fill="currentColor"/></svg>
+        </button>
+        <button class="tbtn tbtn--primary" id="present">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 3.2v9.6L12.5 8z" fill="currentColor"/></svg>Present
+        </button>
+      </div>
+    </header>
+
+    <aside class="panel layers" aria-label="Layers">
+      <div class="ph">Layers <span class="mono" id="layerCount"></span></div>
+      <ul class="tree" id="tree"></ul>
+      <div class="layers__foot"><div id="updated"></div><div id="clock"></div></div>
+    </aside>
+
+    <div class="stage" id="stage">
+    <main class="canvas" id="canvas" tabindex="-1">
+      <div class="board" id="board"></div>
+      <div class="cursor" id="cursor" aria-hidden="true">
+        <svg viewBox="0 0 18 18"><path d="M2 1.5 15.5 8 9 9.4 6.2 16z" fill="var(--accent)" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        <span class="cursor__tag">Adeleke</span>
+        <div class="cursor__bubble">Start here: the mobile launch that grew Halvest’s AUM by $2.06M.</div>
+      </div>
+    </main>
+    </div>
+
+    <aside class="panel inspector" id="inspector" aria-label="Inspector" aria-live="polite"></aside>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="shared/data.js"></script>
+  <script src="shared/viewer.js"></script>
+  <script src="shared/aurora.js"></script>
+  <script>
+    const P = window.PORTFOLIO;
+    const $ = (s, r = document) => r.querySelector(s);
+    const canvas = $('#canvas');
+    const board = $('#board');
+    const inspector = $('#inspector');
+    const ico = {
+      caret: '<svg class="caret" viewBox="0 0 12 12"><path d="M3 4.5 6 7.5l3-3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      frame: '<svg viewBox="0 0 12 12"><path d="M3.5 1v10M8.5 1v10M1 3.5h10M1 8.5h10" stroke="currentColor" stroke-width="1" fill="none"/></svg>',
+      text: '<svg viewBox="0 0 12 12"><path d="M2 2.5h8M6 2.5v7.5" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>',
+      link: '<svg viewBox="0 0 12 12"><path d="M4 8 8.5 3.5M5 3h4v4" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    };
+    let selected = null; // shot index or null (= About)
+
+    /* ---------- canvas ---------- */
+    board.innerHTML = `
+      <div class="intro" id="intro" data-about>
+        <span class="tag mono">Text · About</span>
+        <h1>Adeleke Abdulazeez <span>is a product designer making money and AI feel trustworthy.</span></h1>
+        <div class="mobile-about">${P.site.summary.map((p) => `<p>${P.richText(p)}</p>`).join('')}</div>
+      </div>
+      ${P.companies.map((c) => `
+        <section class="sec" id="${c.id}">
+          <div class="sec__label" data-jump="${c.shots[0].index}"><img src="${P.asset(c.logo)}" alt="" />${c.name}${c.product ? ' · ' + c.product : ''}<span>${c.years}</span></div>
+          <div class="sec__box">
+            ${c.shots.map((s) => {
+              const m = s.media[0];
+              return `
+              <button class="frame" data-shot="${s.index}" aria-label="${s.title}">
+                <span class="frame__name">${s.title}</span>
+                <div class="frame__media" style="--ar:${m.w}/${m.h}">${P.mediaHTML(m)}</div>
+                ${s.media.length > 1 ? `<span class="stack">${s.media.length}</span>` : ''}
+                <span class="handles"><i></i><i></i><i></i><i></i></span>
+                <span class="dims">${m.w} × ${m.h}</span>
+              </button>`;
+            }).join('')}
+          </div>
+        </section>`).join('')}`;
+
+    /* ---------- layers ---------- */
+    const outLink = (x) => `<li><a class="lrow lrow--child" href="${x.href}" target="_blank" rel="noopener">${ico.link}<span class="t">${x.name}</span><span class="m">${x.status}</span></a></li>`;
+    $('#tree').innerHTML = `
+      <li><button class="lrow" data-about>${ico.text}<span class="t">About</span></button></li>
+      ${P.companies.map((c) => `
+        <li>
+          <button class="lrow lrow--group group" aria-expanded="true" data-group>${ico.caret}<img src="${P.asset(c.logo)}" alt="" /><span class="t">${c.name}</span><span class="m">${c.start || '—'}</span></button>
+          <ul>${c.shots.map((s) => `<li><button class="lrow lrow--child" data-layer="${s.index}">${ico.frame}<span class="t">${s.title}</span>${s.media.length > 1 ? `<span class="m">${s.media.length}</span>` : ''}</button></li>`).join('')}</ul>
+        </li>`).join('')}
+      <li class="tree-label">Side projects</li>
+      ${P.sideProjects.map(outLink).join('')}
+      <li class="tree-label">Webflow</li>
+      ${P.webflow.map(outLink).join('')}`;
+    $('#layerCount').textContent = P.allShots.length + ' frames';
+    $('#updated').textContent = 'Updated ' + P.updatedLabel();
+    P.startClock($('#clock'), (t) => `${t} ${P.site.tzLabel} · ${P.site.location}`);
+
+    /* ---------- palette from pixels ---------- */
+    const paletteCache = new Map();
+    function palette(el) {
+      try {
+        const cvs = document.createElement('canvas');
+        const w = (cvs.width = 64), h = (cvs.height = 40);
+        const ctx = cvs.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(el, 0, 0, w, h);
+        const data = ctx.getImageData(0, 0, w, h).data;
+        const buckets = new Map();
+        for (let i = 0; i < data.length; i += 4) {
+          const key = ((data[i] >> 4) << 8) | ((data[i + 1] >> 4) << 4) | (data[i + 2] >> 4);
+          const b = buckets.get(key) || { n: 0, r: 0, g: 0, b: 0 };
+          b.n++; b.r += data[i]; b.g += data[i + 1]; b.b += data[i + 2];
+          buckets.set(key, b);
+        }
+        const sorted = [...buckets.values()].sort((a, b) => b.n - a.n).map((b) => [b.r / b.n, b.g / b.n, b.b / b.n, b.n]);
+        const picked = [];
+        for (const c of sorted) {
+          if (picked.every((p) => Math.hypot(p[0] - c[0], p[1] - c[1], p[2] - c[2]) > 48)) picked.push(c);
+          if (picked.length === 5) break;
+        }
+        const total = w * h;
+        return picked.map(([r, g, b, n]) => ({ hex: '#' + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, '0')).join(''), pct: Math.max(1, Math.round((n / total) * 100)) }));
+      } catch { return []; }
+    }
+    function paletteFor(shot) {
+      if (paletteCache.has(shot.index)) return paletteCache.get(shot.index);
+      const el = document.querySelector(`.frame[data-shot="${shot.index}"] img, .frame[data-shot="${shot.index}"] video`);
+      if (!el) return [];
+      const ready = el.tagName === 'IMG' ? el.complete && el.naturalWidth : el.readyState >= 2;
+      if (!ready) return [];
+      const p = palette(el);
+      if (p.length) paletteCache.set(shot.index, p);
+      return p;
+    }
+
+    /* ---------- inspector ---------- */
+    function aboutHTML() {
+      return `
+        <div class="ins-sec">
+          <div class="about-head"><div class="mark">A</div><div><b>${P.site.name}</b><span>${P.site.role} · ${P.site.location}</span></div></div>
+          <p class="about-lede">Making money and AI feel trustworthy.</p>
+          <div class="prose">${P.site.summary.map((p) => `<p>${P.richText(p)}</p>`).join('')}</div>
+        </div>
+        <div class="ins-sec">
+          <div class="ins-h">Experience <span>from</span></div>
+          <div class="xp">${P.companies.map((c) => `<span>${c.years}</span><div>${c.name} <em>· ${c.role}</em></div>`).join('')}<span>Ongoing</span><div>Waqty, Minaroute <em>· iOS</em></div></div>
+        </div>
+        <div class="ins-sec">
+          <div class="ins-h">Links</div>
+          <div class="linkgrid">${P.site.links.map((l) => `<a href="${l.href}" target="_blank" rel="noopener">${l.label}<span>↗</span></a>`).join('')}<a href="mailto:${P.site.email}">Email<span>↗</span></a></div>
+          <p class="kbd"><kbd>←</kbd><kbd>→</kbd> select frames · <kbd>↵</kbd> present · drag canvas to pan</p>
+        </div>`;
+    }
+
+    function shotHTML(s, frame = 0, { inViewer = false } = {}) {
+      const c = s.company;
+      const pal = paletteFor(s);
+      return `
+        <div class="ins-sec">
+          <div class="ins-h">Frame ${inViewer ? '' : `<span>${s.index + 1} of ${P.allShots.length}</span>`}</div>
+          <div class="ins-co"><img src="${P.asset(c.logo)}" alt="" />${c.name}${c.product ? ' · ' + c.product : ''} <span style="color:var(--ink-3)">· ${c.years}</span></div>
+          <h2 class="ins-title">${s.title}</h2>
+          <p class="ins-desc">${s.desc}</p>
+        </div>
+        <div class="ins-sec">
+          <div class="ins-h">Properties</div>
+          <div class="fields">
+            <div class="field field--wide"><small>Contribution</small><div>${s.contributions.join(', ')}</div></div>
+            <div class="field"><small>Platform</small><div>${s.platform}</div></div>
+            <div class="field"><small>Status</small><div><span class="dot"></span>${s.status}</div></div>
+            <div class="field"><small>Year</small><div>${s.year || '—'}</div></div>
+            <div class="field"><small>Frames</small><div>${s.media.length > 1 ? `<span data-frame-num>${frame + 1}</span> / ${s.media.length}` : '1'}</div></div>
+          </div>
+        </div>
+        ${pal.length ? `
+        <div class="ins-sec">
+          <div class="ins-h">Fill <span>sampled</span></div>
+          <div class="swatches">${pal.map((p) => `<button class="sw" data-copy="${p.hex}" aria-label="Copy ${p.hex}"><i style="background:${p.hex}"></i><b>${p.hex}</b><span>${p.pct}%</span></button>`).join('')}</div>
+        </div>` : ''}
+        <div class="ins-sec">
+          <div class="ins-h">${c.name} impact</div>
+          ${c.impact.map((i) => `<div class="impact-row"><span>${i.label}</span><b>${i.value}</b></div>`).join('')}
+        </div>
+        <div class="ins-sec">
+          <div class="ins-h">Export</div>
+          <div class="btn-row">
+            ${inViewer ? '' : `<button class="btn btn--primary" data-present="${s.index}">Present ↵</button>`}
+            <button class="btn" data-copylink="${s.index}">Copy link</button>
+            <a class="btn" href="${c.url}" target="_blank" rel="noopener">Visit ↗</a>
+          </div>
+          ${inViewer ? `<p class="kbd"><kbd>←</kbd><kbd>→</kbd> frames · <kbd>↑</kbd><kbd>↓</kbd> shots · <kbd>esc</kbd> back to canvas</p>` : ''}
+        </div>`;
+    }
+
+    function renderInspector() {
+      inspector.innerHTML = selected === null ? aboutHTML() : shotHTML(P.allShots[selected]);
+      inspector.scrollTop = 0;
+    }
+
+    /* ---------- selection ---------- */
+    function select(i, { scroll = true } = {}) {
+      selected = i;
+      document.querySelectorAll('.frame.is-sel, .lrow.is-sel, .intro.is-sel').forEach((el) => el.classList.remove('is-sel'));
+      if (i === null) {
+        $('#intro').classList.add('is-sel');
+        document.querySelector('.lrow[data-about]').classList.add('is-sel');
+        if (scroll) canvas.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+      } else {
+        const frame = document.querySelector(`.frame[data-shot="${i}"]`);
+        frame.classList.add('is-sel');
+        const layer = document.querySelector(`.lrow[data-layer="${i}"]`);
+        layer.classList.add('is-sel');
+        layer.scrollIntoView({ block: 'nearest' });
+        if (scroll) centerOn(frame);
+      }
+      renderInspector();
+    }
+
+    function centerOn(el) {
+      const cr = canvas.getBoundingClientRect(), r = el.getBoundingClientRect();
+      canvas.scrollTo({
+        left: canvas.scrollLeft + (r.left - cr.left) - (cr.width - r.width) / 2,
+        top: canvas.scrollTop + (r.top - cr.top) - (cr.height - r.height) / 2 + 40,
+        behavior: 'smooth',
+      });
+    }
+
+    /* ---------- viewer (present mode) ---------- */
+    const viewer = Viewer.create({
+      theme: 'b',
+      originRadius: 3,
+      mediaRadius: 8,
+      getOrigin: (shot) => document.querySelector(`.frame[data-shot="${shot.index}"] .frame__media`),
+      renderPanel: (s, frame) => shotHTML(s, frame, { inViewer: true }),
+      onChange: (shot) => { if (shot && shot.index !== selected) select(shot.index, { scroll: false }); },
+    });
+    const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+    function present(i = selected ?? 0) {
+      const el = document.querySelector(`.frame[data-shot="${i}"] .frame__media`);
+      viewer.open(i, el);
+    }
+
+    /* ---------- events ---------- */
+    document.addEventListener('click', (e) => {
+      const frame = e.target.closest('.frame[data-shot]');
+      if (frame) {
+        const i = +frame.dataset.shot;
+        if (isMobile() || selected === i) return present(i); // second click on a selected frame presents
+        return select(i, { scroll: false });
+      }
+      const layer = e.target.closest('[data-layer]');
+      if (layer) return select(+layer.dataset.layer);
+      const jump = e.target.closest('[data-jump]');
+      if (jump) return select(+jump.dataset.jump);
+      if (e.target.closest('[data-about]')) return select(null);
+      const grp = e.target.closest('[data-group]');
+      if (grp) return grp.setAttribute('aria-expanded', grp.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+      const pres = e.target.closest('[data-present]');
+      if (pres) return present(+pres.dataset.present);
+      const sw = e.target.closest('[data-copy]');
+      if (sw) return copy(sw.dataset.copy, `Copied ${sw.dataset.copy.toUpperCase()}`);
+      const cl = e.target.closest('[data-copylink]');
+      if (cl) { const s = P.allShots[+cl.dataset.copylink]; return copy(`${location.origin}${location.pathname}#/work/${s.company.id}/${s.id}`, 'Link copied'); }
+    });
+    canvas.addEventListener('dblclick', (e) => { const f = e.target.closest('.frame[data-shot]'); if (f) present(+f.dataset.shot); });
+    $('#present').addEventListener('click', () => present());
+
+    document.addEventListener('keydown', (e) => {
+      if (viewer.isOpen || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.target.closest?.('input, textarea')) return;
+      const n = P.allShots.length;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); select(selected === null ? 0 : (selected + 1) % n); }
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); select(selected === null ? n - 1 : (selected - 1 + n) % n); }
+      else if (e.key === 'Enter' && selected !== null && !e.target.closest?.('a, button')) { e.preventDefault(); present(); }
+      else if (e.key === 'Escape') select(null);
+    });
+
+    // Drag empty canvas to pan.
+    let pan = null;
+    canvas.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || e.target.closest('.frame, .sec__label, a, button') || isMobile()) return;
+      pan = { x: e.clientX, y: e.clientY, l: canvas.scrollLeft, t: canvas.scrollTop, moved: false };
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!pan) return;
+      const dx = e.clientX - pan.x, dy = e.clientY - pan.y;
+      if (!pan.moved && Math.hypot(dx, dy) > 3) { pan.moved = true; canvas.classList.add('is-panning'); }
+      canvas.scrollLeft = pan.l - dx; canvas.scrollTop = pan.t - dy;
+    });
+    const endPan = () => { if (pan && !pan.moved) select(null, { scroll: false }); pan = null; canvas.classList.remove('is-panning'); };
+    canvas.addEventListener('pointerup', endPan);
+    canvas.addEventListener('pointercancel', () => { pan = null; canvas.classList.remove('is-panning'); });
+
+    // Zoom
+    document.querySelectorAll('[data-zoom]').forEach((b) => b.addEventListener('click', () => {
+      let z = b.dataset.zoom;
+      if (z === 'fit') {
+        const widest = Math.max(...[...document.querySelectorAll('.sec__box')].map((s) => s.scrollWidth / parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--z'))));
+        z = Math.max(0.3, Math.min(1, (canvas.clientWidth - 80) / (widest + 240)));
+      }
+      document.documentElement.style.setProperty('--z', z);
+      document.querySelectorAll('[data-zoom]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      if (selected !== null) requestAnimationFrame(() => centerOn(document.querySelector(`.frame[data-shot="${selected}"]`)));
+    }));
+
+    // Theme
+    $('#theme').addEventListener('click', () => {
+      const html = document.documentElement;
+      html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('b-theme', html.dataset.theme); } catch {}
+    });
+    try { const t = localStorage.getItem('b-theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
+
+    // Clipboard + toast
+    let toastTimer;
+    function copy(text, msg) {
+      (navigator.clipboard?.writeText(text) || Promise.reject()).catch(() => {}).finally(() => {
+        const t = $('#toast'); t.textContent = msg; t.classList.add('is-on');
+        clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('is-on'), 1400);
+      });
+    }
+
+    // Re-render inspector once media has loaded, so the sampled palette appears.
+    document.querySelectorAll('.frame img').forEach((img) => img.addEventListener('load', () => { if (selected === +img.closest('.frame').dataset.shot) renderInspector(); }, { once: true }));
+
+    /* ---------- intro cursor ---------- */
+    function introCursor() {
+      if (isMobile() || window.matchMedia('(prefers-reduced-motion: reduce)').matches || viewer.isOpen) return;
+      const cur = $('#cursor');
+      const target = document.querySelector('.frame[data-shot="0"] .frame__media');
+      const br = board.getBoundingClientRect(), tr = target.getBoundingClientRect();
+      const end = { x: tr.left - br.left + tr.width * 0.55, y: tr.top - br.top + tr.height * 0.45 };
+      const start = { x: end.x + 420, y: end.y - 260 };
+      let cancelled = false;
+      const cancel = () => { cancelled = true; cur.classList.remove('is-talking'); cur.animate([{ opacity: getComputedStyle(cur).opacity }, { opacity: 0 }], { duration: 200, fill: 'forwards' }); };
+      ['pointerdown', 'keydown', 'wheel'].forEach((ev) => window.addEventListener(ev, cancel, { once: true, passive: true }));
+      cur.animate([
+        { transform: `translate(${start.x}px, ${start.y}px)`, opacity: 0 },
+        { transform: `translate(${start.x - 30}px, ${start.y + 20}px)`, opacity: 1, offset: 0.12 },
+        { transform: `translate(${end.x}px, ${end.y}px)`, opacity: 1 },
+      ], { duration: 1500, easing: 'cubic-bezier(0.45, 0, 0.2, 1)', fill: 'forwards' }).finished.then(() => {
+        if (cancelled) return;
+        cur.classList.add('is-talking');
+        setTimeout(() => { if (!cancelled) cancel(); }, 3600);
+      }).catch(() => {});
+    }
+
+    /* ---------- aurora curtain ---------- */
+    // Dark: the original measured violet. Light: a sage shadow, like concept A.
+    const AURORA_LIGHT = { tintA: [0.33, 0.46, 0.37], tintB: [0.45, 0.56, 0.47], gain: 0.34, grain: 0.7 };
+    const auroraTheme = () => (document.documentElement.dataset.theme === 'light' ? AURORA_LIGHT : Aurora.VIOLET);
+    const narrow = window.matchMedia('(max-width: 900px)');
+    let aurora = null;
+    function mountAurora() {
+      aurora?.destroy();
+      aurora = narrow.matches
+        ? Aurora.mount($('#stage'), { theme: auroraTheme() })
+        : Aurora.mount($('#stage'), { theme: auroraTheme(), refEl: $('#stage'), scroller: canvas });
+    }
+    narrow.addEventListener('change', mountAurora);
+    new MutationObserver(() => aurora?.setTheme(auroraTheme())).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    mountAurora();
+
+    /* ---------- boot ---------- */
+    select(null, { scroll: false });
+    if (!viewer.openFromHash()) setTimeout(introCursor, 900);
+  </script>
+</body>
+</html>

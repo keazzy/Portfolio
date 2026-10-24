@@ -11,12 +11,30 @@
       ${b.cap ? `<figcaption>${fill(b.cap)}</figcaption>` : ''}
     </figure>`;
 
+  // Phone screens; `scroll: true` on a tall one plays it like a screen recording.
+  const screens = (b) => `<div class="screens" style="--n:${b.items.length};--m:${Math.min(b.items.length, 2)}">${b.items.map((it) => `
+    <div class="screen">${it.tag ? `<span class="tag">${it.tag}</span>` : ''}
+      <div class="phone"><img src="${it.src}" alt="${it.alt || ''}" loading="lazy" width="${it.w || 375}" height="${it.h || 812}"${it.scroll ? ' data-scroll' : ''} /></div>
+      ${it.cap ? `<p>${fill(it.cap)}</p>` : ''}</div>`).join('')}</div>`;
+  function playScrolls() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('img[data-scroll]').forEach((img) => {
+      const travel = (1 - 812 / +img.getAttribute('height')) * 100;
+      const at = (y, offset) => ({ transform: `translateY(${-y}%)`, offset, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' });
+      const anim = img.animate([at(0, 0), at(0, 0.12), at(travel, 0.6), at(travel, 0.78), at(0, 1)], { duration: 11000, iterations: Infinity });
+      anim.pause();
+      new IntersectionObserver(([e]) => (e.isIntersecting ? anim.play() : anim.pause()), { threshold: 0.4 }).observe(img.parentElement);
+    });
+  }
+
   const BLOCKS = {
     text: (b) => `<p class="cs-p">${fill(b.text)}</p>`,
     figure: (b) => frame(b, media(b)),
     pair: (b) => frame(b, `<div class="pair">${b.items.map(media).join('')}</div>`),
     html: (b) => frame(b, b.html()),
     live: (b) => frame(b, `<div data-live="${b.name}"></div>`),
+    screens: (b) => frame(b, screens(b)),
+    quote: (b) => `<blockquote class="quote"><p>“${b.text}”</p>${b.who ? `<cite>${b.who}</cite>` : ''}</blockquote>`,
     todo: (b) => `<figure class="fig"><div class="fig-card todo-card"><span>Visual needed</span><b>${b.what}</b></div></figure>`,
     decision: (b) => `<aside class="decision"><p class="ch-eyebrow">${b.eyebrow || 'Decision'}</p><h3>${b.title}</h3><p>${fill(b.text)}</p></aside>`,
     stats: (b) => `<div class="stats">${b.items.map(([v, l]) => `<div><b>${fill(v)}</b><span>${l}</span></div>`).join('')}</div>`,
@@ -54,12 +72,14 @@
             <dl class="cs-meta">${C.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
             ${C.results ? BLOCKS.stats({ items: C.results }) : ''}
             ${C.hero ? `<div class="cs-hero">${media(C.hero)}</div>` : ''}
+            ${C.heroScreens ? `<div class="cs-hero screens-hero">${screens(C.heroScreens)}</div>` : ''}
           </header>
           ${body}
           ${C.next ? `<a class="next" href="${C.next.href}"><small>${C.next.label || 'Next'}</small><b>${C.next.title} →</b></a>` : ''}
         </main>
       </div>`;
 
+    playScrolls();
     // Live blocks mount themselves once they're in the page.
     document.querySelectorAll('[data-live]').forEach((el) => C.live?.[el.dataset.live]?.(el));
 

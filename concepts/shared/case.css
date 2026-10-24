@@ -81,6 +81,21 @@ a { color: inherit; }
 .todo-card::after { display: none; }
 .todo-card b { font: 400 20px/1.3 var(--serif); color: var(--ink-2); }
 
+/* ---------- phone screens: a row of them, captioned; a tall one scrolls by itself ---------- */
+.screens { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 196px)); justify-content: center; gap: 18px; }
+.screen { min-width: 0; }
+.screen .tag { display: block; margin: 0 0 8px; font: 500 10.5px/1.2 var(--mono); letter-spacing: 0.07em; text-transform: uppercase; color: color-mix(in srgb, var(--deep) 65%, transparent); }
+.phone { position: relative; aspect-ratio: 375 / 812; overflow: hidden; border-radius: 13% / 6%; background: #0b0a10;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 0 5px #101016, var(--lift); }
+.phone img { width: 100%; height: auto; }
+.screen p { margin: 12px 2px 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-2); }
+.fig.dark .screen p, .fig.deep .screen p { color: rgba(255, 255, 255, 0.64); }
+.fig.dark .screen .tag, .fig.deep .screen .tag { color: rgba(255, 255, 255, 0.5); }
+.cs-hero.screens-hero { padding: 40px 24px; background: #15131c; }
+.quote { max-width: 620px; margin: 28px 0; padding: 4px 0 4px 20px; border-left: 2px solid var(--accent); }
+.quote p { margin: 0; font: 400 22px/1.4 var(--serif); text-wrap: pretty; }
+.quote cite { display: block; margin-top: 8px; font-size: 13px; font-style: normal; color: var(--ink-3); }
+
 /* ---------- small blocks ---------- */
 .decision { position: relative; max-width: 620px; margin: 28px 0; padding: 18px 20px 18px 22px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px var(--rule); }
 .decision::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); }
@@ -111,4 +126,7 @@ a { color: inherit; }
   .ch h2 { font-size: 26px; }
   .fig-card { padding: 40px 14px 14px; border-radius: 12px; }
   .pair { grid-template-columns: 1fr; }
+  .screens { grid-template-columns: repeat(var(--m), minmax(0, 1fr)); gap: 12px; }
+  .cs-hero.screens-hero { padding: 24px 14px; }
+  .quote p { font-size: 19px; }
 }

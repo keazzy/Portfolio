@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Halal stocks · Adeleke Abdulazeez</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/case.css" />
+  <style>
+    /* ---------- the two screening tests, drawn ---------- */
+    .tests { position: relative; z-index: 1; display: grid; gap: 14px; }
+    .test { padding: 18px 20px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.07); }
+    .test-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+    .test-head b { font-weight: 500; font-size: 15px; }
+    .test-head span { font-size: 12.5px; color: var(--ink-3); }
+    .meter { position: relative; height: 10px; margin: 30px 0 8px; border-radius: 99px; background: linear-gradient(90deg, #22a565 0 55%, #f2c14e 55% 85%, #e5484d 85%); }
+    .meter i { position: absolute; top: 50%; width: 3px; height: 20px; border-radius: 2px; background: var(--deep); transform: translate(-50%, -50%); box-shadow: 0 0 0 2px #fff; }
+    .meter em { position: absolute; bottom: 16px; padding: 2px 7px; border-radius: 6px; background: var(--deep); color: #fff; font: 500 12px var(--mono); font-style: normal; transform: translateX(-50%); }
+    .meter-scale { display: flex; justify-content: space-between; font: 400 11.5px var(--mono); color: var(--ink-3); }
+    .test p { margin: 10px 0 0; font-size: 13.5px; color: var(--ink-2); }
+  </style>
+</head>
+<body>
+  <script src="shared/case.js"></script>
+  <script>
+    const A = (p) => '../assets/' + p.split('/').map(encodeURIComponent).join('/');
+    const S = (f, h = 812) => ({ src: A(`halvest/stocks/${f}.webp`), w: 375, h });
+
+    // Where Dangote Cement sits against each AAOIFI ceiling, as the compliance report shows it.
+    const tests = () => `
+      <div class="tests">
+        ${[['Impermissible income', 'share of revenue', 2.6, 5, '2.6% of revenue, against a ceiling of 5%'],
+           ['Debt ratio', 'interest-bearing debt against market value', 11.9, 30, '11.9% of market value, against a ceiling of 30%']].map(([t, d, v, max, line]) => `
+          <div class="test">
+            <div class="test-head"><b>${t}</b><span>${d}</span></div>
+            <div class="meter"><em style="left:${(v / max) * 100}%">${v}%</em><i style="left:${(v / max) * 100}%"></i></div>
+            <div class="meter-scale"><span>0%</span><span>${max}% ceiling</span></div>
+            <p>${line}</p>
+          </div>`).join('')}
+      </div>`;
+
+    renderCase({
+      palette: { tint: '#ece6fa', accent: '#6935d3', deep: '#28134e' },
+      back: { href: 'work-cards.html#halvest' },
+      crumbs: ['Halvest', 'Halal stocks'],
+      logo: A('Logos/Halvest.png'),
+      eyebrow: 'Halvest · Stocks · 2026',
+      title: 'Halal stocks, bought with peace of mind',
+      lede: 'Ethically minded investors wanted stocks, but only ones they could trust were halal. I designed Halvest’s stock investing, first for US stocks and then for halal stocks on the Nigerian Exchange, so the proof sits next to the price and doing the right thing is the default.',
+      meta: [['Role', 'Sole product designer'], ['Research', 'User interviews, usability tests'], ['When', '2026'], ['Platform', 'iOS and Android']],
+      results: [['2', 'markets: US stocks, then halal NGX stocks'], ['3', 'order types: market, limit and recurring'], ['On', 'by default: purification on every dividend and sale']],
+      heroScreens: { items: [S('list'), { ...S('stock', 1773) }, { ...S('compliance', 1712), scroll: true }] },
+      next: { href: 'case-vest.html', label: 'Also from Halvest', title: 'Vest: a design system that checks itself' },
+      blocks: [
+        { t: 'chapter', id: 'overview', eyebrow: 'Overview', title: 'Halal investors wanted stocks, on their terms',
+          text: ['Halvest’s investors kept asking for stocks. But for them, buying a share comes with questions a normal brokerage doesn’t answer: is this company actually halal, what do I do with the part of its income that isn’t, and how do I pay for a US share from a naira wallet?',
+            'They didn’t need another trading app. They needed one that let them invest with peace of mind.'] },
+
+        { t: 'chapter', id: 'research', eyebrow: 'Research', title: 'It started with listening',
+          text: ['Before designing US stocks I interviewed investors and ran usability tests on the flows. What we learned shaped that launch, and then the launch of halal stocks on the Nigerian Exchange that followed.'] },
+        { t: 'todo', what: 'Themes and anonymised quotes from the 2025 discovery calls' },
+
+        { t: 'chapter', id: 'compliance', eyebrow: 'Compliance', toc: 'Compliance', title: 'The proof sits next to the price',
+          text: ['Every stock carries a “Shariah compliant” pill right under its price. It opens a compliance report: the two tests a company has to pass, where it sits against each ceiling, and a summary in plain language.',
+            'Investors can ask follow-up questions in the report itself, answered by HalAI in the same plain language and pointing back to the standard.'] },
+        { t: 'screens', frame: 'dark', label: 'From the price to the proof', items: [
+          { ...S('stock', 1773), cap: 'The pill under the price opens the report.' },
+          { ...S('compliance', 1712), scroll: true, cap: 'Two tests, a summary, and questions you can ask.' },
+          { ...S('compliance-answered', 1712), cap: 'An answer, in plain language.' }] },
+        { t: 'html', label: 'What the report checks', html: tests, cap: 'Redrawn from the Dangote Cement report: both tests are AAOIFI standards, and the company passes each with room to spare.' },
+        { t: 'decision', title: 'Show the test, not just the badge', text: 'A “compliant” label asks people to trust us. Two bars against published ceilings let them check it for themselves, without leaving the stock.' },
+
+        { t: 'chapter', id: 'purification', eyebrow: 'Purification', toc: 'Purification', title: 'Doing the right thing is the default',
+          text: ['Even a compliant company earns a little impermissible income, so a share of each dividend should go to charity. Halvest works out that share and gives it on the investor’s behalf.',
+            'At review, purification comes first and is on by default. Switching it off opens a sheet that hands the job over to the investor; switching it back on asks nothing.'] },
+        { t: 'screens', frame: 'dark', label: 'On by default, off on purpose', items: [
+          { ...S('buy-review', 900), cap: 'Purification leads the review, already on.' },
+          { ...S('buy-handover'), cap: 'Off hands it over, and says what that means.' },
+          { ...S('purification-sheet'), cap: 'How purification works, for this company.' }] },
+        { t: 'screens', frame: 'dark', label: 'Before and after', items: [
+          { ...S('old-buy-review'), tag: 'Earlier design', cap: 'Purification wasn’t part of the decision.' },
+          { ...S('buy-review', 900), tag: 'As shipped', cap: 'It’s the first thing you see, and it’s on.' }] },
+        { t: 'decision', title: 'Off asks, on doesn’t', text: 'Opting out of giving should be a choice someone makes knowingly, never something they slide past. Opting back in should take one tap.' },
+
+        { t: 'chapter', id: 'currencies', eyebrow: 'Across markets', toc: 'Across markets', title: 'A US share, paid for in naira',
+          text: ['Buying Apple from a naira wallet means an exchange rate and a market that might be asleep. The review shows the rate in one line, and when New York is closed the order is queued, with a card saying when it will fill.'] },
+        { t: 'screens', frame: 'dark', label: 'The rate, and when it fills', items: [
+          { ...S('stock-us-closed', 961), cap: 'A US stock says when its market is closed.' },
+          { ...S('buy-naira-closed', 1058), scroll: true, cap: 'The rate is part of the review; the order waits for the open.' },
+          { ...S('holdings-dollars'), cap: 'Holdings can be read in dollars, converted at the same rate.' }] },
+
+        { t: 'chapter', id: 'orders', eyebrow: 'Orders', toc: 'Orders', title: 'Market, limit or recurring, in one flow',
+          text: ['Buy opens with no order type chosen, so the kind of order is a decision rather than a default. Flipping between money and shares keeps what you typed. A key that would break the figure shakes instead of failing later, and running short offers to add or convert money rather than ending in an error.'] },
+        { t: 'screens', frame: 'dark', label: 'Choosing, sizing and placing an order', items: [
+          { ...S('buy-type'), cap: 'Nothing chosen to start.' },
+          { ...S('buy-amount', 861), cap: 'Money or shares, one tap apart.' },
+          { ...S('buy-need-more', 861), cap: 'Short? Add money or convert.' },
+          { ...S('buy-submitted'), cap: 'Submitted, with the settlement day.' }] },
+
+        { t: 'chapter', id: 'holdings', eyebrow: 'Holdings', toc: 'Holdings and selling', title: 'What you own, and what you give',
+          text: ['The stock portfolio adds every holding up in one currency. Selling gives the purification share from the gross proceeds, unless the investor chooses to give it themselves, and the sheet says so before they confirm.'] },
+        { t: 'screens', frame: 'dark', label: 'Holding and selling', items: [
+          { ...S('holdings'), cap: 'Every holding, every holding screened.' },
+          { ...S('sell-review', 999), cap: 'Purification comes from the gross proceeds.' },
+          { ...S('sell-purify-yourself'), cap: 'Or it’s yours to give, said plainly.' }] },
+
+        { t: 'chapter', id: 'handoff', eyebrow: 'Design × Engineering', toc: 'Design × Engineering', title: 'Every screen says how it behaves',
+          text: ['Beside each group of screens in Figma sits a behaviour card, tied to the file in the codebase that builds it: what each part does, what happens at the edges, and why. Engineering builds from it, and when the code changes, the card is updated to match.'] },
+        { t: 'figure', label: 'Behaviour · Buy', src: A('halvest/stocks/behaviour-buy.webp'), w: 760, h: 1394, cap: 'The behaviour card for Buy, from order type to the order’s end, with the screens it maps to in code.' },
+
+        { t: 'chapter', id: 'reflection', eyebrow: 'Reflection', toc: 'Reflection', title: 'What I’d keep doing' },
+        { t: 'reflect', items: [['Put the proof where the decision happens.', 'Trust came from showing the screening next to the price, not from a badge or a help page.'],
+          ['Make the ethical choice the easy one.', 'Purification being on by default, and asking before it goes off, did more than any amount of explaining could.']] },
+      ],
+    });
+  </script>
+</body>
+</html>

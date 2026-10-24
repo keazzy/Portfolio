@@ -522,6 +522,7 @@
     const h19 = F('halvest/image 19.png', 1392, 895), h20 = F('halvest/image 20.png', 1392, 1048), h5 = F('halvest/image 5.png', 1392, 894);
     const h2 = F('halvest/image 2.png', 1392, 1044), hStats = F('halvest/Frame 2085654841.png', 1392, 697);
     const vestTeaser = F('halvest/vest-teaser.mp4', 1280, 720, true);
+    const st = (n, h = 812) => F(`halvest/stocks/${n}.webp`, 375, h), TOP = { x: 0, y: 0, w: 375, h: 812 };
     const steps = [55, 322, 589, 856, 1123].map((x) => ({ x, y: 208, w: 213, h: 479 }));
     const prosp = F('impulse/prospecting_djdauy.webm', 2000, 1254, true);
     const search = (n) => F(`impulse/Search - ${n}.png`, 2880, 1800);
@@ -542,7 +543,12 @@
           stage('dark', phone(h20, { x: 497, y: 84, w: 400, h: 878 }), 'Not enough funds: the amount stays, a sheet offers to top up'),
           stage('tint', phone(h5, { x: 222, y: 136, w: 287, h: 623 }), 'Portfolio value and composition'), stage('tint', phone(h5, { x: 894, y: 121, w: 287, h: 623 }), 'Business financing breakdown'),
           asPhoto(h2, 'In the hand'), asPhoto(hStats, 'Launch results')] },
-      'halvest/stocks': { tall: true, bg: 'tint', cover: todo('Stocks: browse, halal screening, buy'), frames: [stage('tint', todo('Stocks: browse, halal screening, buy'), 'Screens to come')] },
+      'halvest/stocks': { tall: true, bg: 'dark', cover: pair(phone(st('stock', 1773), TOP, { inPair: true }), phone(st('compliance', 1712), TOP, { inPair: true })),
+        frames: [stage('dark', pair(phone(st('stock', 1773), TOP, { inPair: true }), phone(st('compliance', 1712), TOP, { inPair: true })), 'The pill under the price opens the compliance report'),
+          stage('dark', pair(phone(st('buy-review', 900), TOP, { inPair: true }), phone(st('buy-handover'), TOP, { inPair: true })), 'Purification: on by default, and off only on purpose'),
+          stage('dark', pair(phone(st('buy-naira-closed', 1058), TOP, { inPair: true }), phone(st('stock-us-closed', 961), TOP, { inPair: true })), 'A US share from a naira wallet: the rate, and when it fills'),
+          stage('dark', pair(phone(st('buy-type'), TOP, { inPair: true }), phone(st('buy-amount', 861), TOP, { inPair: true })), 'Market, limit or recurring'),
+          stage('tint', pair(phone(st('holdings'), TOP, { inPair: true }), phone(st('sell-purify-yourself'), TOP, { inPair: true })), 'Holding and selling')] },
       'halvest/vest': { bg: null, cover: photo(vestTeaser), frames: [asPhoto(vestTeaser, 'Meet Vest')] },
       'halvest/onboarding': { bg: 'mesh', reel: 'onboarding', cover: pair(phone(h19, steps[0], { inPair: true }), phoneStack(steps.slice(1).map((c) => ({ s: h19, c })), { inPair: true })),
         frames: steps.map((c, i) => stage('tint', phone(h19, c), ['Welcome: the promise in one line', 'Country: search with flags', 'Email: checked as you type', 'Code: resend timer visible', 'Password: strength shown as you type'][i])) },

@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Presentation — before & after</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #f5f3ee; --paper-2: #ebe8e0; --ink: #1a1c19;
+      --ink-2: rgba(26, 28, 25, 0.66); --ink-3: rgba(26, 28, 25, 0.44); --rule: rgba(26, 28, 25, 0.12);
+      --accent: #b5441b;
+      --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; --mono: 'Geist Mono', ui-monospace, monospace;
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+      --shadow: 0 1px 2px rgba(20, 18, 40, 0.06), 0 18px 40px -18px rgba(20, 18, 40, 0.32);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 400 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+    img, video { display: block; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+    .eyebrow { font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+
+    header.top { padding: 72px 0 32px; }
+    h1 { margin: 0 0 14px; font: 400 clamp(36px, 4.6vw, 52px)/1.08 var(--serif); letter-spacing: -0.02em; }
+    h1 em { color: var(--accent); }
+    .lede { max-width: 640px; color: var(--ink-2); margin: 0 0 24px; }
+    .rules { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+    .rules li { border-top: 1px solid var(--ink); padding-top: 12px; font-size: 14px; color: var(--ink-2); }
+    .rules b { display: block; color: var(--ink); font-weight: 500; margin-bottom: 2px; }
+
+    section.block { padding: 56px 0; border-top: 1px solid var(--rule); }
+    h2 { margin: 0 0 6px; font: 400 28px/1.2 var(--serif); letter-spacing: -0.01em; }
+    .sub { margin: 0 0 24px; color: var(--ink-2); max-width: 680px; }
+
+    /* ---------- rails ---------- */
+    .row-label { display: flex; align-items: baseline; gap: 10px; margin: 22px 0 10px; }
+    .row-label b { font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--paper-2); color: var(--ink-2); }
+    .row-label b.new { background: var(--accent); color: #fff; }
+    .row-label span { color: var(--ink-3); font-size: 13px; }
+    .rail { display: flex; gap: 16px; overflow-x: auto; padding: 4px 32px 10px; margin: 0 -32px; scrollbar-width: thin; scroll-snap-type: x proximity; }
+
+    /* Current card (as on the site today) */
+    .card { flex: none; scroll-snap-align: start; }
+    .card__media { position: relative; height: var(--h, 300px); aspect-ratio: var(--ar); border-radius: 12px; overflow: hidden; background: var(--paper-2); box-shadow: inset 0 0 0 1px var(--rule); }
+    .card__media > img, .card__media > video { width: 100%; height: 100%; object-fit: cover; }
+    .cap { display: flex; justify-content: space-between; gap: 16px; padding: 10px 2px 0; font-size: 13px; }
+    .cap span:last-child { color: var(--ink-3); font: 11.5px var(--mono); white-space: nowrap; }
+    .note { margin: 4px 2px 0; font-size: 12.5px; color: var(--ink-2); max-width: 360px; }
+
+    /* Proposed card: one stage size, brand tint, frame drawn by the site */
+    .stage {
+      position: relative; height: var(--h, 300px); aspect-ratio: 5 / 4; border-radius: 12px; overflow: hidden;
+      display: grid; place-items: center;
+      background: radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 60%), var(--tint);
+    }
+    .stage--wide { aspect-ratio: 16 / 9; height: auto; width: 100%; }
+    .stage.bleed > .crop, .stage.bleed > img { width: 100%; height: 100%; }
+    .stage.bleed img { object-fit: cover; width: 100%; height: 100%; }
+
+    /* Crop: show a region of a larger image/video without re-exporting it */
+    .crop { position: relative; overflow: hidden; background: #fff; }
+    .crop > img, .crop > video { position: absolute; max-width: none; height: auto; }
+
+    /* Fit rules: height-driven for tall things, width-driven for wide things */
+    .fit-h { height: var(--fh, 82%); width: auto; }
+    .fit-w { width: var(--fw, 84%); height: auto; }
+
+    /* Phone: the screen is the element; bezel is drawn with box-shadow so it never distorts the screen */
+    .phone { border-radius: 9% / 4.2%; box-shadow: 0 0 0 6px #141414, 0 0 0 7px #3b3b3b, 0 28px 50px -18px rgba(20, 18, 40, 0.45); }
+    .phone::after { content: ''; position: absolute; top: 1.6%; left: 50%; width: 30%; height: 3.4%; transform: translateX(-50%); border-radius: 999px; background: #141414; }
+    .pair { position: relative; height: 76%; display: flex; align-items: center; gap: 7%; }
+    .pair .phone { height: 100%; }
+    .pair .phone:first-child { transform: translateY(-4%); }
+    .pair .phone + .phone { transform: translateY(6%); }
+
+    /* Browser window */
+    .browser { border-radius: 10px; overflow: hidden; background: #fff; box-shadow: var(--shadow), 0 0 0 1px rgba(20, 18, 40, 0.08); }
+    .browser__bar { display: flex; align-items: center; gap: 5px; height: 22px; padding: 0 9px; background: #f3f3f5; border-bottom: 1px solid rgba(20, 18, 40, 0.07); }
+    .browser__bar i { width: 7px; height: 7px; border-radius: 50%; background: #d9d9de; }
+    .browser__bar span { margin-left: 10px; height: 10px; flex: 0 1 38%; border-radius: 999px; background: #e6e6ea; }
+    .browser .crop { width: 100%; }
+
+    /* Panel: a focused region floating on the stage */
+    .panel { border-radius: 14px; box-shadow: var(--shadow), 0 0 0 1px rgba(20, 18, 40, 0.06); }
+
+    /* Side-by-side compare */
+    .compare { display: grid; grid-template-columns: auto auto; gap: 28px; align-items: start; justify-content: start; }
+    .compare > div { min-width: 0; }
+
+    /* Viewer demo */
+    .viewer { margin-top: 28px; }
+    .viewer .stage { --h: auto; }
+    .vbar { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+    .vbtn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--rule); background: transparent; cursor: pointer; display: grid; place-items: center; color: var(--ink); transition: background-color 150ms ease, transform 120ms ease; }
+    .vbtn:active { transform: scale(0.94); }
+    @media (hover: hover) and (pointer: fine) { .vbtn:hover { background: var(--paper-2); } }
+    .vcount { font: 12px var(--mono); color: var(--ink-3); min-width: 54px; }
+    .vcap { color: var(--ink-2); font-size: 14px; }
+    .dots { display: flex; gap: 5px; margin-left: auto; }
+    .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--rule); }
+    .dots i.on { background: var(--ink); }
+
+    /* Editor mock */
+    .editor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+    .fields { border: 1px solid var(--rule); border-radius: 14px; background: #fff; padding: 18px; display: grid; gap: 16px; }
+    .field label { display: block; font-size: 12.5px; font-weight: 500; margin-bottom: 6px; }
+    .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+    .seg span { padding: 5px 10px; border-radius: 8px; border: 1px solid var(--rule); font-size: 13px; color: var(--ink-2); }
+    .seg span.on { border-color: var(--ink); color: var(--ink); background: var(--paper); }
+    .input { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--rule); font-size: 13px; color: var(--ink-2); }
+    .tips { margin: 0; padding-left: 18px; color: var(--ink-2); }
+    .tips li { margin-bottom: 8px; }
+    .tips b { color: var(--ink); font-weight: 500; }
+    .soft { font-size: 12.5px; color: var(--ink-3); margin-top: 10px; }
+
+    @media (max-width: 900px) {
+      .rules, .editor { grid-template-columns: 1fr 1fr; }
+      .compare { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .wrap { padding: 0 18px; }
+      .rail { padding: 4px 18px 10px; margin: 0 -18px; }
+      .rules, .editor { grid-template-columns: 1fr; }
+      .card__media, .stage { --h: 240px; }
+      .compare .card, .compare .card__media, .compare .stage { width: 100%; height: auto; }
+      .compare { grid-template-columns: minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <p class="eyebrow">Presentation · before &amp; after</p>
+      <h1>Same screens, <em>presented</em> as a set.</h1>
+      <p class="lede">Nothing here is re-exported. These are crops of your current images, framed by the site. Some crops are soft because they come from small exports; plain screens at 2× will be sharp.</p>
+      <ul class="rules">
+        <li><b>One stage</b>Every card is the same shape, on your company's tint.</li>
+        <li><b>Frames drawn in code</b>Phone, browser or floating panel. Crisp at any size, identical everywhere.</li>
+        <li><b>Focus on the moment</b>The card crops to what you designed; the viewer still shows the whole screen.</li>
+        <li><b>One line on what to look at</b>A caption per card and per frame.</li>
+      </ul>
+    </header>
+  </div>
+
+  <div class="wrap">
+    <section class="block">
+      <h2>One row, side by side</h2>
+      <p class="sub">Your Halvest row today mixes a dark video, a five-phone strip, a photo and a two-phone composite. Proposed, the same files read as one collection.</p>
+      <div class="row-label"><b>Now</b><span>as on the site</span></div>
+      <div class="rail" id="rowNow"></div>
+      <div class="row-label"><b class="new">Proposed</b><span>same files, framed by the site</span></div>
+      <div class="rail" id="rowNew"></div>
+    </section>
+
+    <section class="block">
+      <h2>Onboarding: show the steps, not a strip</h2>
+      <p class="sub">Five phones in one image makes each screen tiny. Split into frames, the card shows two steps and the viewer walks through all five, one phone at a time.</p>
+      <div class="compare" id="cmpOnboarding"></div>
+      <div class="viewer" id="vOnboarding"></div>
+    </section>
+
+    <section class="block">
+      <h2>Pulse: crop to the command bar</h2>
+      <p class="sub">The thing you designed fills a third of a 2880px screenshot, so on a card it's unreadable. Proposed, the card and the step-through focus on the panel, and the last frame shows it in context.</p>
+      <div class="compare" id="cmpPulse"></div>
+      <div class="viewer" id="vPulse"></div>
+    </section>
+
+    <section class="block">
+      <h2>Cuuro rules: the modal first, the page second</h2>
+      <p class="sub">The card focuses on the conditions and actions; the viewer opens on the whole modal and ends on the full screen in a browser frame.</p>
+      <div class="compare" id="cmpCuuro"></div>
+      <div class="viewer" id="vCuuro"></div>
+    </section>
+
+    <section class="block">
+      <h2>What you'd set in the editor</h2>
+      <p class="sub">Four options per image or video. Everything else is automatic, so any new upload matches the set.</p>
+      <div class="editor">
+        <div class="fields" aria-hidden="true">
+          <div class="field"><label>Frame</label><div class="seg"><span class="on">Phone</span><span>Browser</span><span>Panel</span><span>None (photos)</span></div></div>
+          <div class="field"><label>Background</label><div class="seg"><span class="on">Company tint</span><span>Custom colour</span></div></div>
+          <div class="field"><label>Focus</label><div class="input">Drag a box on the image (Sanity's built-in crop tool)</div></div>
+          <div class="field"><label>Caption</label><div class="input">The amount stays put; top up without losing your place.</div></div>
+        </div>
+        <div>
+          <p class="eyebrow" style="margin:0 0 10px">What to export from now on</p>
+          <ul class="tips">
+            <li><b>One screen per image</b>, not compositions: phones at 3× (1179 × 2556) or desktop at 2× (2880 × 1800).</li>
+            <li><b>Short loops</b> of interactions, 5–10 seconds, muted MP4 or WebM, recorded from Figma prototypes or the real app.</li>
+            <li><b>No backgrounds or device frames</b> baked in; the site adds them so everything matches.</li>
+            <li><b>Photos stay photos</b>: launch events and in-hand shots use "None".</li>
+          </ul>
+          <p class="soft">The phone pairs, panels and browser windows on this page are all drawn by CSS around your existing files.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const A = (p) => '../assets/' + p.split('/').map(encodeURIComponent).join('/');
+    const TINT = { halvest: '#ece6fa', impulse: '#e9ebfb', kinfolk: '#ebe8e1' };
+
+    /* ---------- building blocks ---------- */
+    // Show region c = {x, y, w, h} of a media file sized iw × ih.
+    function crop(src, iw, ih, c, { video = false, cls = '', style = '' } = {}) {
+      const w = (iw / c.w) * 100, l = (-c.x / c.w) * 100, t = (-c.y / c.h) * 100;
+      const inner = video
+        ? `<video src="${src}#t=0.1" muted loop playsinline autoplay preload="metadata" style="width:${w}%;left:${l}%;top:${t}%"></video>`
+        : `<img src="${src}" alt="" loading="lazy" style="width:${w}%;left:${l}%;top:${t}%" />`;
+      return `<div class="crop ${cls}" style="aspect-ratio:${c.w}/${c.h};${style}">${inner}</div>`;
+    }
+    // Height- or width-driven, depending on shape vs the stage's shape.
+    const fitFor = (ratio, stageRatio, fh = 0.82, fw = 0.84) => (ratio > stageRatio * (fw / fh) ? 'fit-w' : 'fit-h');
+
+    const phone = (src, iw, ih, c, opts = {}) => crop(src, iw, ih, c, { ...opts, cls: `phone ${opts.pair ? '' : 'fit-h'}` });
+    const pair = (a, b) => `<div class="pair">${a}${b}</div>`;
+    const panel = (src, iw, ih, c, stageRatio, opts = {}) => crop(src, iw, ih, c, { ...opts, cls: `panel ${fitFor(c.w / c.h, stageRatio)}` });
+    const browser = (src, iw, ih, c = { x: 0, y: 0, w: iw, h: ih }) =>
+      `<div class="browser fit-w"><div class="browser__bar"><i></i><i></i><i></i><span></span></div>${crop(src, iw, ih, c)}</div>`;
+
+    const stage = (tint, inner, { wide = false, bleed = false } = {}) =>
+      `<div class="stage${wide ? ' stage--wide' : ''}${bleed ? ' bleed' : ''}" style="--tint:${tint}">${inner}</div>`;
+
+    const nowCard = ({ src, w, h, video, title, meta }) => `
+      <div class="card">
+        <div class="card__media" style="--ar:${w}/${h}">${video ? `<video src="${src}#t=0.1" muted loop playsinline autoplay></video>` : `<img src="${src}" alt="" loading="lazy" />`}</div>
+        <div class="cap"><span>${title}</span><span>${meta}</span></div>
+      </div>`;
+    const newCard = ({ tint, inner, title, meta, note, bleed }) => `
+      <div class="card">
+        ${stage(tint, inner, { bleed })}
+        <div class="cap"><span>${title}</span><span>${meta}</span></div>
+        ${note ? `<p class="note">${note}</p>` : ''}
+      </div>`;
+
+    /* ---------- source files and crops (measured on the originals) ---------- */
+    const H = {
+      video: { src: A('halvest/Halvest Video.mp4'), w: 956, h: 720, screen: { x: 337, y: 54, w: 281, h: 607 } },
+      onboarding: { src: A('halvest/image 19.png'), w: 1392, h: 895, steps: [55, 322, 589, 856, 1123].map((x) => ({ x, y: 208, w: 213, h: 479 })) },
+      funds: { src: A('halvest/image 20.png'), w: 1392, h: 1048, screen: { x: 497, y: 84, w: 400, h: 878 } },
+      portfolio: { src: A('halvest/image 5.png'), w: 1392, h: 894, left: { x: 222, y: 136, w: 287, h: 623 }, right: { x: 894, y: 121, w: 287, h: 623 } },
+      launch: { src: A('halvest/image 2.png'), w: 1392, h: 1044 },
+    };
+    const CARD = 5 / 4;
+
+    /* ---------- row: now vs proposed ---------- */
+    document.getElementById('rowNow').innerHTML = [
+      nowCard({ src: H.video.src, w: 956, h: 720, video: true, title: 'Funding the wallet', meta: 'Shipped · 2025' }),
+      nowCard({ src: H.onboarding.src, w: 1392, h: 895, title: 'Onboarding, one step at a time', meta: 'Shipped · 2025' }),
+      nowCard({ src: H.funds.src, w: 1392, h: 1048, title: 'Not enough funds', meta: 'Shipped · 2025' }),
+      nowCard({ src: H.portfolio.src, w: 1392, h: 894, title: 'Portfolio at a glance', meta: 'Shipped · 2025' }),
+      nowCard({ src: H.launch.src, w: 1392, h: 1044, title: 'Mobile launch', meta: 'Live · 2025' }),
+    ].join('');
+
+    const t = TINT.halvest;
+    const onboardingPair = pair(phone(H.onboarding.src, 1392, 895, H.onboarding.steps[0], { pair: true }), phone(H.onboarding.src, 1392, 895, H.onboarding.steps[2], { pair: true }));
+    document.getElementById('rowNew').innerHTML = [
+      newCard({ tint: t, inner: phone(H.video.src, 956, 720, H.video.screen, { video: true }), title: 'Funding the wallet', meta: 'Shipped · 2025', note: 'Copy the details in one tap, a calm “confirming” state, then straight back to investing.' }),
+      newCard({ tint: t, inner: onboardingPair, title: 'Onboarding, one step at a time', meta: 'Shipped · 2025 · 5 steps', note: 'One task per screen, with copy that says why each detail is needed.' }),
+      newCard({ tint: t, inner: phone(H.funds.src, 1392, 1048, H.funds.screen), title: 'Not enough funds', meta: 'Shipped · 2025', note: 'The amount stays put; top up without losing your place.' }),
+      newCard({ tint: t, inner: pair(phone(H.portfolio.src, 1392, 894, H.portfolio.left, { pair: true }), phone(H.portfolio.src, 1392, 894, H.portfolio.right, { pair: true })), title: 'Portfolio at a glance', meta: 'Shipped · 2025', note: 'Holdings first; compliance detail one tap away.' }),
+      newCard({ tint: t, inner: `<img src="${H.launch.src}" alt="" loading="lazy" />`, bleed: true, title: 'Mobile launch', meta: 'Live · 2025', note: 'Photos stay photos: frame set to “None”.' }),
+    ].join('');
+
+    /* ---------- viewer demo ---------- */
+    function viewerDemo(el, tint, frames) {
+      let i = 0;
+      el.innerHTML = `
+        <div class="row-label"><b class="new">Proposed</b><span>in the viewer · use the arrows or ← →</span></div>
+        <div class="stage-slot"></div>
+        <div class="vbar">
+          <button class="vbtn" data-d="-1" aria-label="Previous frame"><svg viewBox="0 0 16 16" width="15" height="15"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="vbtn" data-d="1" aria-label="Next frame"><svg viewBox="0 0 16 16" width="15" height="15"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="vcount"></span><span class="vcap"></span>
+          <span class="dots">${frames.map(() => '<i></i>').join('')}</span>
+        </div>`;
+      const slot = el.querySelector('.stage-slot');
+      const render = () => {
+        const f = frames[i];
+        slot.innerHTML = stage(tint, f.html, { wide: true });
+        el.querySelector('.vcount').textContent = `${i + 1} / ${frames.length}`;
+        el.querySelector('.vcap').textContent = f.caption;
+        el.querySelectorAll('.dots i').forEach((d, k) => d.classList.toggle('on', k === i));
+      };
+      const go = (d) => { i = (i + d + frames.length) % frames.length; render(); };
+      el.addEventListener('click', (e) => { const b = e.target.closest('[data-d]'); if (b) go(+b.dataset.d); });
+      el.tabIndex = 0;
+      el.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1); });
+      render();
+    }
+    const WIDE = 16 / 9;
+
+    /* ---------- 1. Onboarding ---------- */
+    document.getElementById('cmpOnboarding').innerHTML = `
+      <div><div class="row-label"><b>Now</b></div>${nowCard({ src: H.onboarding.src, w: 1392, h: 895, title: 'Onboarding, one step at a time', meta: 'Shipped · 2025' })}</div>
+      <div><div class="row-label"><b class="new">Proposed</b></div>${newCard({ tint: t, inner: onboardingPair, title: 'Onboarding, one step at a time', meta: 'Shipped · 2025 · 5 steps', note: 'One task per screen, with copy that says why each detail is needed.' })}</div>`;
+    const stepCaps = ['Welcome: the promise in one line', 'Country: search with flags', 'Email: checked as you type', 'Code: resend timer visible', 'Password: strength shown as you type'];
+    viewerDemo(document.getElementById('vOnboarding'), t, H.onboarding.steps.map((c, k) => ({ html: phone(H.onboarding.src, 1392, 895, c), caption: stepCaps[k] })));
+
+    /* ---------- 2. Pulse ---------- */
+    const pulse = (n) => A(`impulse/Search - ${n}.png`);
+    const PANEL = { x: 884, y: 292, w: 1114, h: 1200 };
+    document.getElementById('cmpPulse').innerHTML = `
+      <div><div class="row-label"><b>Now</b></div>${nowCard({ src: pulse(1), w: 2880, h: 1800, title: 'Pulse: search, ask, compose', meta: 'Shipped · 2024' })}</div>
+      <div><div class="row-label"><b class="new">Proposed</b></div>${newCard({ tint: TINT.impulse, inner: panel(pulse(7), 2880, 1800, { x: 884, y: 292, w: 1114, h: 700 }, CARD), title: 'Pulse: search, ask, compose', meta: 'Shipped · 2024 · 10 frames', note: 'One command bar: ask, then draft an email from what Pulse already knows.' })}</div>`;
+    const pulseCaps = ['Ask in plain language', 'Pulse gathers what you asked for', 'An answer with sources and quick actions', 'Compose: suggested prompts', 'Compose an email', 'Describe what you need', 'A ready-to-send draft, with attachment', 'Create: notes, reports, emails', 'Create a meeting note', 'Describe the note'];
+    viewerDemo(document.getElementById('vPulse'), TINT.impulse, [
+      ...pulseCaps.map((caption, k) => ({ html: panel(pulse(k + 1), 2880, 1800, PANEL, WIDE), caption })),
+      { html: browser(pulse(7), 2880, 1800), caption: 'In context: the full Impulse workspace' },
+    ]);
+
+    /* ---------- 3. Cuuro ---------- */
+    const cuuro = A('kinfolk/Cuuro 5.png');
+    const MODAL = { x: 497, y: 43, w: 474, h: 786 };
+    document.getElementById('cmpCuuro').innerHTML = `
+      <div><div class="row-label"><b>Now</b></div>${nowCard({ src: cuuro, w: 1400, h: 875, title: 'Transaction rules', meta: 'Internal' })}</div>
+      <div><div class="row-label"><b class="new">Proposed</b></div>${newCard({ tint: TINT.kinfolk, inner: panel(cuuro, 1400, 875, { x: 497, y: 43, w: 474, h: 430 }, CARD), title: 'Transaction rules', meta: 'Internal', note: 'Founders set rules once; AI categorises every transaction after.' })}</div>`;
+    viewerDemo(document.getElementById('vCuuro'), TINT.kinfolk, [
+      { html: panel(cuuro, 1400, 875, MODAL, WIDE), caption: 'The whole rule: type, conditions, actions, and when it applies' },
+      { html: browser(cuuro, 1400, 875), caption: 'In context: the transactions page behind it' },
+    ]);
+  </script>
+</body>
+</html>

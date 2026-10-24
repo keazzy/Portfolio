@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Work cards → viewer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/viewer.css" />
+  <style>
+    :root {
+      --paper: #f5f3ee; --paper-2: #ebe8e0; --ink: #1a1c19;
+      --ink-2: rgba(26, 28, 25, 0.66); --ink-3: rgba(26, 28, 25, 0.44); --rule: rgba(26, 28, 25, 0.12);
+      --accent: #b5441b; --accent-soft: #f7e2d5;
+      --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; --mono: 'Geist Mono', ui-monospace, monospace;
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+      --gutter: 32px; --maxw: 960px;
+      --lift: 0 1px 2px rgba(20, 18, 40, 0.06), 0 22px 44px -20px rgba(20, 18, 40, 0.38);
+      --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 400 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+    img, video { display: block; }
+    a { color: inherit; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
+    .mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.01em; }
+    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+    .link { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+    .intro { padding: 56px 0 8px; }
+    .intro h1 { margin: 0 0 8px; font: 400 34px/1.15 var(--serif); letter-spacing: -0.015em; }
+    .intro p { margin: 0; color: var(--ink-2); max-width: 640px; }
+
+    /* ---------- company header (unchanged from the site) ---------- */
+    .co { padding: 72px 0 24px; border-top: 1px solid var(--rule); margin-top: 48px; }
+    .co__head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 64px; }
+    .co__logo { width: 40px; height: 40px; border-radius: 11px; border: 1px solid var(--rule); background: #fff; object-fit: cover; margin-bottom: 18px; }
+    .co__name { margin: 0; font: 400 28px/1.2 var(--serif); letter-spacing: -0.01em; }
+    .co__name em { font-style: italic; color: var(--ink-2); }
+    .co__role { margin-top: 2px; color: var(--ink-2); font: 400 17px/1.4 var(--serif); }
+    .co__meta { margin-top: 14px; color: var(--ink-3); display: grid; gap: 2px; }
+    .co__summary { margin: 0 0 22px; font: 400 20px/1.5 var(--serif); text-wrap: pretty; }
+    .impact { display: flex; border-top: 1px solid var(--rule); }
+    .impact div { flex: 1; padding: 12px 16px 0 0; }
+    .impact div + div { padding-left: 16px; border-left: 1px solid var(--rule); }
+    .impact b { display: block; font: 500 20px/1.2 var(--mono); letter-spacing: -0.02em; }
+    .impact span { font-size: 12px; color: var(--ink-3); }
+
+    /* ---------- the new work grid ---------- */
+    .wgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; margin-top: 48px; }
+    .wcol { display: flex; flex-direction: column; gap: 48px; }
+    .wcol:nth-child(2) { padding-top: 64px; } /* stagger the second column, like a contact sheet */
+    .wcard { display: block; width: 100%; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: zoom-in; }
+    .cover { position: relative; width: 100%; overflow: hidden; border-radius: 4px; display: grid; place-items: center; isolation: isolate; }
+    .cover::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background-image: var(--grain); opacity: 0.32; mix-blend-mode: soft-light; }
+    .cover > .lift { transition: transform 450ms var(--ease); }
+    @media (hover: hover) and (pointer: fine) { .wcard:hover .cover > .lift { transform: translateY(-6px); } }
+    .wcard:active .cover { transform: scale(0.995); }
+    .wcard:focus-visible { outline: none; }
+    .wcard:focus-visible .cover { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink); }
+
+    /* ---------- reels: covers that play a short interaction while on screen ---------- */
+    .layer { position: absolute; inset: 0; opacity: 0; }
+    .layer.on { opacity: 1; }
+    .stack { background: #fff; }
+    .stack .layer > img { position: absolute; max-width: none; height: auto; }
+    .bleed .layer img { width: 100%; height: auto; }
+    @keyframes caret { 50% { opacity: 0; } }
+    .r-cursor { position: absolute; left: 0; top: 0; z-index: 5; width: 20px; height: 20px; margin: -2px 0 0 -3px; pointer-events: none; opacity: 0; }
+    .r-cursor svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.35)); transform-origin: 3px 2px; }
+    .r-tap { position: absolute; z-index: 5; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; pointer-events: none;
+      background: rgba(255, 255, 255, 0.78); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.18); }
+    /* ---------- live Pulse command bar (rebuilt from the Impulse screens, drawn at 557 × 600 then scaled) ---------- */
+    .live-wrap { position: absolute; left: 6%; top: 7%; width: 88%; }
+    .live-wrap.fit-height { position: relative; left: auto; top: auto; }
+    .live-wrap.full { left: 0; top: 0; width: 100%; }
+    .pl { position: relative; width: 557px; height: 600px; transform: scale(var(--k, 0.7)); transform-origin: 0 0; overflow: hidden;
+      background: #fff; border-radius: 14px; box-shadow: var(--lift), 0 0 0 1px rgba(20, 18, 40, 0.06);
+      font: 400 13.5px/1.4 var(--sans); color: #16151c; text-align: left; letter-spacing: 0; }
+    .pl svg { display: block; }
+    .pl-head { position: relative; height: 70px; border-bottom: 1px solid #ececef; }
+    .pl-hv { position: absolute; inset: 0; display: flex; align-items: center; gap: 14px; padding: 0 20px 0 22px; opacity: 0; }
+    .pl-hv.on { opacity: 1; }
+    .pl-hv .ico { width: 22px; height: 22px; color: #5f6470; flex: none; }
+    .pl-input { flex: 1; min-width: 0; font-size: 14px; white-space: nowrap; overflow: hidden; }
+    .pl-ph { color: #9a9aa3; }
+    .pl-q.typing::after { content: ''; display: inline-block; width: 1.5px; height: 1.1em; margin-left: 1px; vertical-align: -0.2em; background: #6d5ef5; animation: caret 1s steps(1) infinite; }
+    .pl-logo { width: 31px; height: 31px; border-radius: 8px; border: 1px solid #e7e7ea; background: #fff; display: grid; place-items: center; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); flex: none; }
+    .ring { width: 15px; height: 15px; border-radius: 50%; background: conic-gradient(from 200deg, #8b5cf6, #4f7dff, #37c5ff, #8b5cf6);
+      -webkit-mask: radial-gradient(circle, transparent 45%, #000 49%); mask: radial-gradient(circle, transparent 45%, #000 49%); }
+    .pl-stop { display: flex; align-items: center; gap: 8px; padding-left: 14px; border-left: 1px solid #ececef; font-size: 13px; }
+    .pl-stop i { width: 16px; height: 16px; border: 1.5px solid #5f6470; border-radius: 4px; }
+    .pl-spin { width: 20px; height: 20px; color: #5f6470; }
+    .pl-body { position: relative; height: 530px; }
+    .pl-a, .pl-b { position: absolute; inset: 0; padding: 0 22px; }
+    .pl-b { display: none; }
+    .pl-ask { display: flex; align-items: center; gap: 10px; height: 48px; margin-top: 10px; padding: 0 8px; border-radius: 12px; border: 1.5px solid transparent;
+      background: linear-gradient(#f2f2f4, #f2f2f4) padding-box, linear-gradient(90deg, #b28cf8, #e7a0d6, #f6b48a) border-box; }
+    .pl-tile { width: 31px; height: 31px; border-radius: 8px; border: 1px solid #e6e6ea; background: #fff; display: grid; place-items: center; flex: none; }
+    .pl-tile svg { width: 17px; height: 17px; color: #4b4b55; }
+    .pl-ask-tag { flex: 1; color: #8e8e96; white-space: nowrap; }
+    .pl-kbd { padding: 2px 6px; border: 1px solid #e3e3e7; border-radius: 6px; background: #fff; font-size: 12px; color: #3a3a40; }
+    .pl-label { margin: 18px 2px 8px; font-size: 13px; font-weight: 500; }
+    .pl-row { display: flex; align-items: center; gap: 10px; height: 50px; margin: 2px -9px; padding: 0 9px; border-radius: 12px; }
+    .pl-row.hl { background: #f2f2f4; }
+    .pl-row span { color: #8e8e96; margin-left: 2px; }
+    .pl-query { display: flex; align-items: center; gap: 8px; margin: 16px 0 10px; font-size: 14px; }
+    .pl-query svg { width: 18px; height: 18px; }
+    .grad { background: linear-gradient(90deg, #c084fc 0%, #f59e7c 32%, #e879b9 50%, #8b7cf6 74%, #c4b5fd 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .pl-note { margin: 0 0 12px; font-size: 12.5px; }
+    .pl-skel, .pl-answer { border-radius: 12px; background: #f6f6f8; border: 1px solid #ececef; padding: 10px 9px; }
+    .pl-skel { height: 196px; background: #f2f2f4; border-color: transparent; }
+    .pl-skel i { display: block; height: 12px; margin: 8px 0; border-radius: 4px; background: linear-gradient(90deg, #e5e5ea 0%, #f3f3f6 45%, #e5e5ea 90%); background-size: 220% 100%; }
+    .pl-answer { display: none; }
+    .pl-answer p { margin: 0 0 10px; font-size: 12.5px; line-height: 1.5; min-height: 1.5em; }
+    .pl-answer .w { opacity: 0; }
+    .pl-dot { display: inline-block; width: 7px; height: 7px; margin-left: 3px; border-radius: 50%; background: #8b7cf6; vertical-align: 0; }
+    .pl-react { display: flex; gap: 14px; padding: 0 1px 10px; color: #6b6b74; }
+    .pl-react svg { width: 16px; height: 16px; }
+    .pl-chips { display: flex; gap: 8px; white-space: nowrap; overflow: hidden; margin-bottom: 10px; }
+    .pl-chip { padding: 6px 12px; border-radius: 999px; border: 1.2px solid transparent; font-size: 12.5px;
+      background: linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #b28cf8, #e7a0d6, #f6b48a) border-box; }
+    .pl-srcl { margin: 0 0 6px; font-size: 12.5px; }
+    .pl-cards { display: flex; gap: 9px; overflow: hidden; }
+    .pl-card { flex: 0 0 168px; padding: 9px; border: 1px solid #e7e7ea; border-radius: 10px; background: #fafafb; font-size: 12.5px; line-height: 1.45; }
+    .pl-card .pl-tile { width: 24px; height: 24px; border-radius: 6px; margin-bottom: 8px; }
+    .pl-card .pl-tile svg { width: 14px; height: 14px; }
+    .pl-card .pl-tile.red { background: #e5484d; border-color: #e5484d; }
+    .pl-card .pl-tile.red svg { color: #fff; }
+    .pl-card b { display: block; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pl-react, .pl-chips, .pl-src { visibility: hidden; }
+    /* ---------- live Pulse home, "a day with Pulse" (drawn at 640 × 480 then scaled) ---------- */
+    .dy { position: relative; width: 640px; height: 480px; transform: scale(var(--k, 0.7)); transform-origin: 0 0; overflow: hidden;
+      font: 400 14px/1.4 var(--sans); color: #16151c; text-align: left; letter-spacing: -0.005em; --t: 700ms; }
+    .fit-height .dy { border-radius: 14px; box-shadow: var(--lift); }
+    .dy svg { display: block; }
+    .dy-sky { position: absolute; inset: 0; opacity: 0; }
+    .dy-sky.on { opacity: 1; }
+    /* The sky's brightest point follows the sun: low left at 8:30, high right at 2:00, an afterglow once it has set. */
+    .dy-sky.m { background: radial-gradient(120% 100% at 8% 55%, #ffd3a8 0%, #fde3cc 40%, #f7eee6 100%); }
+    .dy-sky.a { background: radial-gradient(120% 100% at 69% 7%, #f4f8ff 0%, #d4e5fa 32%, #e3edf9 70%, #eef3f8 100%); }
+    .dy-sky.e { background: radial-gradient(85% 65% at 98% 104%, #e88466 0%, #9a5688 30%, rgba(58, 42, 96, 0) 70%), linear-gradient(180deg, #19152d 0%, #2a2249 55%, #3a2b5c 100%); }
+    .dy-sun, .dy-sun-y { position: absolute; left: 0; top: 0; pointer-events: none; }
+    .dy-sun i { position: absolute; width: 300px; height: 300px; margin: -150px 0 0 -150px; border-radius: 50%; opacity: 0; }
+    .dy-sun i.m { background: radial-gradient(circle closest-side, #fff0d4 0 17%, rgba(255, 207, 150, 0.85) 24%, rgba(255, 186, 128, 0.3) 38%, rgba(255, 186, 128, 0) 100%); }
+    .dy-sun i.a { background: radial-gradient(circle closest-side, #fffdf6 0 15%, rgba(255, 248, 226, 0.85) 21%, rgba(255, 255, 255, 0.4) 34%, rgba(255, 255, 255, 0) 100%); }
+    .dy-sun i.e { background: radial-gradient(circle closest-side, #ffb187 0 17%, rgba(255, 128, 92, 0.8) 25%, rgba(240, 110, 90, 0.32) 40%, rgba(240, 110, 90, 0) 100%); }
+    .dy-moon { position: absolute; left: 92px; top: 56px; width: 18px; height: 18px; border-radius: 50%; opacity: 0; pointer-events: none;
+      box-shadow: inset 5px -3px 0 0 #f1eaff; filter: drop-shadow(0 0 6px rgba(225, 210, 255, 0.55)); }
+    .dy-top { position: absolute; left: 0; right: 0; top: 84px; display: flex; flex-direction: column; align-items: center; transition: color var(--t); }
+    .dy-time { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px 0 7px; border-radius: 999px; font-size: 12.5px; color: #5f5f69;
+      background: rgba(255, 255, 255, 0.62); box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.06); transition: background var(--t), color var(--t), box-shadow var(--t); }
+    .dy-time b { font-weight: 500; color: #16151c; transition: color var(--t); }
+    .dy-clock { position: relative; width: 15px; height: 15px; border: 1.4px solid currentColor; border-radius: 50%; }
+    .dy-clock i { position: absolute; left: 50%; bottom: 50%; width: 1.4px; margin-left: -0.7px; border-radius: 1px; background: currentColor; transform-origin: 50% 100%; }
+    .dy-clock .h { height: 3.6px; } .dy-clock .m { height: 5.2px; }
+    .dy-hi { display: flex; margin-top: 14px; font-size: 30px; font-weight: 600; line-height: 38px; letter-spacing: -0.025em; white-space: pre; }
+    .dy-roll { height: 38px; overflow: hidden; }
+    .dy-words { display: flex; flex-direction: column; align-items: flex-start; }
+    .dy-sub { margin-top: 5px; font-size: 15px; color: #6b6b74; transition: color var(--t); }
+    .dy.dark .dy-top { color: #fff; }
+    .dy.dark .dy-sub { color: rgba(255, 255, 255, 0.62); }
+    .dy.dark .dy-time { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.72); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14); }
+    .dy.dark .dy-time b { color: #fff; }
+    .dy-box { position: absolute; left: 94px; top: 206px; width: 452px; height: 112px; overflow: hidden; border-radius: 16px; border: 1.5px solid transparent;
+      background: linear-gradient(#fff, #fff) padding-box, linear-gradient(100deg, #f6b0cc, #d3b5f7 40%, #b8c3fb 65%, #f8c9ab) border-box;
+      box-shadow: 0 12px 32px -10px rgba(70, 50, 150, 0.22); }
+    .dy-in { position: absolute; left: 0; right: 0; top: 0; height: 109px; }
+    .dy-text { position: absolute; left: 15px; right: 15px; top: 12px; font-size: 15px; line-height: 28px; white-space: nowrap; overflow: hidden; }
+    .dy-ph { color: #9a9aa3; }
+    .dy-text.typing::after { content: ''; display: inline-block; width: 1.5px; height: 1.1em; margin-left: 1px; vertical-align: -0.2em; background: #6d5ef5; animation: caret 1s steps(1) infinite; }
+    .dy-raw { background: linear-gradient(90deg, #7c5cf6, #d96fb4); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .dy-chip { display: inline-flex; align-items: center; gap: 5px; height: 24px; margin: 0 1px; padding: 0 8px 0 4px; border-radius: 7px; vertical-align: middle;
+      font-size: 13.5px; font-weight: 500; line-height: 1; }
+    .dy-chip i { width: 17px; height: 17px; border-radius: 5px; display: grid; place-items: center; font: 700 10px/1 var(--sans); font-style: normal; color: #fff; }
+    .dy-chip i svg { width: 12px; height: 12px; }
+    .dy-chip.time { background: #e9f0ff; color: #2c56c9; } .dy-chip.time i { color: #2c56c9; }
+    .dy-chip.time i svg { width: 15px; height: 15px; }
+    .dy-chip.co { background: #f0f0f3; } .dy-chip.co i { background: #16151c; }
+    .dy-chip.meet { background: #f0ecff; color: #5b3fd6; } .dy-chip.meet i { background: #7c5cf6; }
+    .dy-chip.deal { background: #e6f6ec; color: #17794a; } .dy-chip.deal i { background: #23a566; }
+    .dy-tools { position: absolute; left: 11px; right: 11px; bottom: 10px; display: flex; align-items: center; gap: 7px; }
+    .dy-model { display: flex; align-items: center; gap: 6px; height: 30px; margin-right: auto; padding: 0 10px; border: 1px solid #e6e6ea; border-radius: 8px; font-size: 13px; }
+    .dy-model svg { width: 12px; height: 12px; color: #6b6b74; }
+    .dy-btn { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid #e6e6ea; border-radius: 8px; color: #4b4b55; }
+    .dy-btn svg { width: 16px; height: 16px; }
+    .dy-send { background: #7c5cf6; border-color: #7c5cf6; color: #fff; }
+    .dy-out { position: absolute; left: 0; right: 0; top: 0; padding: 13px 15px 10px; opacity: 0; }
+    .dy-ch { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #6b6b74; }
+    .dy-tile { width: 26px; height: 26px; display: grid; place-items: center; border: 1px solid #e7e7ea; border-radius: 7px; background: #fff; }
+    .dy-now { margin-left: auto; color: #a1a1aa; }
+    .dy-ct { margin: 8px 0 2px; font-size: 16.5px; font-weight: 600; letter-spacing: -0.015em; }
+    .dy-li { display: flex; align-items: center; gap: 10px; min-height: 27px; font-size: 13.5px; color: #3a3a42; white-space: nowrap; overflow: hidden; }
+    .dy-li .dot { width: 6px; height: 6px; margin: 0 4px; border-radius: 50%; background: #b7a6fb; flex: none; }
+    .dy-li .box { width: 16px; height: 16px; display: grid; place-items: center; border: 1.5px solid #cfcfd6; border-radius: 5px; flex: none; }
+    .dy-li .box svg { width: 10px; height: 10px; color: #fff; opacity: 0; }
+    .dy-li .box.on { background: #7c5cf6; border-color: #7c5cf6; }
+    .dy-li .box.on svg { opacity: 1; }
+    .dy-li .av { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; font-size: 11px; font-weight: 600; color: #fff; flex: none; }
+    .dy-li b { font-weight: 500; color: #16151c; }
+    .dy-li em { font-style: normal; color: #8e8e96; overflow: hidden; text-overflow: ellipsis; }
+    .dy-chips { position: absolute; left: 94px; top: 332px; width: 452px; display: flex; justify-content: center; gap: 6px; }
+    .dy-chips span { display: flex; flex: none; align-items: center; gap: 6px; height: 30px; padding: 0 11px 0 9px; border-radius: 9px; font-size: 12.5px; white-space: nowrap; color: #2a2a30;
+      background: rgba(255, 255, 255, 0.78); box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.07); transition: background var(--t), color var(--t), box-shadow var(--t); }
+    .dy-chips svg { width: 14px; height: 14px; color: #5f5f69; transition: color var(--t); }
+    .dy.dark .dy-chips span { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.86); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14); }
+    .dy.dark .dy-chips svg { color: rgba(255, 255, 255, 0.6); }
+    .r-ring { position: absolute; z-index: 5; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; pointer-events: none; border: 2px solid rgba(109, 94, 245, 0.55); }
+    .wcap { display: flex; flex-wrap: wrap; gap: 0 6px; margin-top: 10px; font: 400 14.5px/1.35 var(--sans); letter-spacing: -0.01em; }
+    .wcap span { color: var(--ink-3); }
+    @media (hover: hover) and (pointer: fine) { .wcard:hover .wcap b { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; } }
+    .wcap b { font-weight: 400; }
+
+    /* ---------- compositions ---------- */
+    .crop { position: relative; overflow: hidden; background: #fff; }
+    .crop > img, .crop > video { position: absolute; max-width: none; height: auto; }
+    .fill { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .fit-h { height: var(--fh, 78%); width: auto; }
+    .fit-w { width: var(--fw, 82%); height: auto; }
+    .phone { border-radius: 9% / 4.2%; box-shadow: 0 0 0 6px #141414, 0 0 0 7px #3b3b3b, 0 30px 56px -20px rgba(20, 18, 40, 0.5); }
+    .phone::after { content: ''; position: absolute; top: 1.6%; left: 50%; width: 30%; height: 3.4%; transform: translateX(-50%); border-radius: 999px; background: #141414; }
+    .pair { position: relative; height: 74%; display: flex; align-items: center; gap: 7%; }
+    .pair .phone { height: 100%; }
+    .pair .phone:first-child { transform: translateY(-4%); }
+    .pair .phone + .phone { transform: translateY(6%); }
+    .panel { border-radius: 14px; box-shadow: var(--lift), 0 0 0 1px rgba(20, 18, 40, 0.06); }
+    .bleed { position: absolute; left: 9%; top: 12%; width: 118%; border-radius: 10px 0 0 0; overflow: hidden; background: #fff; box-shadow: var(--lift), 0 0 0 1px rgba(20, 18, 40, 0.08); }
+    .bleed img, .bleed video { width: 100%; height: auto; }
+    .browser { border-radius: 10px; overflow: hidden; background: #fff; box-shadow: var(--lift), 0 0 0 1px rgba(20, 18, 40, 0.08); }
+    .browser__bar { display: flex; align-items: center; gap: 5px; height: 22px; padding: 0 9px; background: #f3f3f5; border-bottom: 1px solid rgba(20, 18, 40, 0.07); }
+    .browser__bar i { width: 7px; height: 7px; border-radius: 50%; background: #d9d9de; }
+    .browser__bar span { margin-left: 10px; height: 10px; flex: 0 1 38%; border-radius: 999px; background: #e6e6ea; }
+    .browser .crop { width: 100%; }
+    .vstage { position: relative; width: 100%; height: 100%; display: grid; place-items: center; overflow: hidden; isolation: isolate; }
+    .vstage::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background-image: var(--grain); opacity: 0.28; mix-blend-mode: soft-light; }
+
+    /* ---------- viewer (concept A's sidebar) ---------- */
+    .vw--a { --vw-panel-w: 420px; --vw-backdrop: rgba(24, 27, 23, 0.62); --vw-backdrop-blur: 10px; --vw-panel-bg: #fbfaf6; --vw-panel-ink: var(--ink); --vw-panel-muted: var(--ink-3); --vw-line: var(--rule); --vw-frame-ring: #fff; --vw-font: var(--sans); --vw-media-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.5); }
+    .vw--a .vw-media-wrap { border-radius: 8px; }
+    .vw--a .vw-frame img { object-fit: cover; }
+    .vw-frame .vstage.mini::after, .vw-frame .phone::after { display: none; }
+    .vw-frame .vstage.mini .phone { box-shadow: 0 0 0 1px #141414; }
+    .vw-frame .vstage.mini .panel, .vw-frame .vstage.mini .browser { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); }
+    .vw-frame .vstage.mini .browser__bar { height: 3px; padding: 0; }
+    .vw-frame .vstage.mini .browser__bar * { display: none; }
+    .vw-frame .vstage.mini .crop img { height: auto; object-fit: initial; }
+    .pa-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); margin-top: 12px; }
+    .pa-eyebrow img { width: 20px; height: 20px; border-radius: 6px; border: 1px solid var(--rule); }
+    .pa-title { margin: 14px 0 12px; font: 400 30px/1.12 var(--serif); letter-spacing: -0.015em; text-wrap: balance; }
+    .pa-desc { margin: 0 0 18px; color: var(--ink-2); font-size: 15px; line-height: 1.6; }
+    .pa-frame { margin: 0 0 22px; padding: 10px 12px; border-radius: 10px; background: var(--paper); font-size: 13.5px; }
+    .pa-frame .mono { color: var(--ink-3); margin-right: 6px; }
+    .spec { margin: 0 0 24px; }
+    .spec div { display: flex; align-items: baseline; gap: 8px; padding: 6px 0; font-size: 13.5px; }
+    .spec dt { color: var(--ink-3); }
+    .spec .dots { flex: 1; border-bottom: 1px dotted color-mix(in srgb, var(--ink) 30%, transparent); transform: translateY(-4px); }
+    .spec dd { margin: 0; text-align: right; }
+    .pa-impact { border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; background: #fff; }
+    .pa-impact div { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; font-size: 13px; }
+    .pa-impact b { font: 500 13px var(--mono); }
+    .kbd { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--ink-3); font: 11px var(--mono); }
+    .kbd kbd { font: inherit; padding: 1px 5px; border: 1px solid var(--rule); border-radius: 4px; background: #fff; color: var(--ink-2); margin-right: 4px; }
+
+    @media (max-width: 860px) {
+      .co__head { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+      .wgrid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+      .wcol { display: contents; }
+      .wcol:nth-child(2) { padding-top: 0; }
+      .wcard { order: var(--o); }
+    }
+    @media (max-width: 600px) {
+      :root { --gutter: 18px; }
+      .wcap { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="intro">
+      <p class="eyebrow">Prototype · work cards → viewer</p>
+      <h1>Each company's work as a grid of covers.</h1>
+      <p>Click any card: it opens the framed step-through from the presentation proposal, with the details sidebar. Still crops of your current files. ← → moves between frames, ↑ ↓ between shots.</p>
+    </header>
+  </div>
+  <main id="work"></main>
+
+  <script src="shared/data.js"></script>
+  <script src="shared/viewer.js"></script>
+  <script>
+    const P = window.PORTFOLIO;
+    const A = (p) => '../assets/' + p.split('/').map(encodeURIComponent).join('/');
+
+    /* ---------- backgrounds per company ---------- */
+    const BG = {
+      halvest: {
+        tint: 'radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,.55), rgba(255,255,255,0) 60%), #ece6fa',
+        dark: 'radial-gradient(90% 70% at 50% 100%, #3b2c6b 0%, rgba(59,44,107,0) 70%), #1d1a26',
+        mesh: 'radial-gradient(60% 60% at 15% 20%, #b9a6f4 0%, transparent 70%), radial-gradient(55% 55% at 85% 25%, #f1b8d8 0%, transparent 70%), radial-gradient(70% 60% at 55% 100%, #8b76ee 0%, transparent 70%), #d8cff6',
+      },
+      impulse: {
+        tint: 'radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,.55), rgba(255,255,255,0) 60%), #e9ebfb',
+        dark: '#2e2f35',
+        mesh: 'radial-gradient(60% 60% at 15% 25%, #aab5f6 0%, transparent 70%), radial-gradient(55% 55% at 85% 20%, #d7c6f7 0%, transparent 70%), radial-gradient(70% 60% at 60% 100%, #8fa2f0 0%, transparent 70%), #cfd6f8',
+      },
+      kinfolk: {
+        tint: 'radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,.55), rgba(255,255,255,0) 60%), #ebe8e1',
+        dark: '#2b2a27',
+        mesh: 'radial-gradient(60% 60% at 15% 20%, #e7cba9 0%, transparent 70%), radial-gradient(55% 55% at 85% 30%, #d9bccc 0%, transparent 70%), radial-gradient(70% 60% at 50% 100%, #c8b296 0%, transparent 70%), #e6ddd0',
+      },
+    };
+
+    /* ---------- building blocks ---------- */
+    function crop(src, iw, ih, c, { video = false, cls = '' } = {}) {
+      const w = (iw / c.w) * 100, l = (-c.x / c.w) * 100, t = (-c.y / c.h) * 100;
+      const media = video
+        ? `<video src="${src}#t=0.1" muted loop playsinline autoplay preload="metadata" style="width:${w}%;left:${l}%;top:${t}%"></video>`
+        : `<img src="${src}" alt="" loading="lazy" width="${iw}" height="${ih}" style="width:${w}%;left:${l}%;top:${t}%" />`;
+      return `<div class="crop ${cls}" style="aspect-ratio:${c.w}/${c.h}">${media}</div>`;
+    }
+    const full = (iw, ih) => ({ x: 0, y: 0, w: iw, h: ih });
+    const fitFor = (ratio, box, fh, fw) => (ratio > box * (fw / fh) ? 'fit-w' : 'fit-h');
+    // Each builder takes the box ratio it will sit in, so it can choose height- or width-driven sizing.
+    const phone = (s, c, o = {}) => () => crop(s.src, s.w, s.h, c, { video: s.video, cls: `phone lift ${o.inPair ? '' : 'fit-h'}` });
+    const pair = (a, b) => () => `<div class="pair lift">${a()}${b()}</div>`.replace(/phone lift fit-h/g, 'phone');
+    const panel = (s, c) => (box) => crop(s.src, s.w, s.h, c, { video: s.video, cls: `panel lift ${fitFor(c.w / c.h, box, 0.74, 0.82)}` });
+    const browser = (s, c = full(s.w, s.h)) => (box) =>
+      `<div class="browser lift ${fitFor((c.w / c.h) * 0.96, box, 0.8, 0.84)}"><div class="browser__bar"><i></i><i></i><i></i><span></span></div>${crop(s.src, s.w, s.h, c, { video: s.video })}</div>`;
+    const bleed = (s) => () => `<div class="bleed lift" style="aspect-ratio:${s.w}/${s.h}">${s.video ? `<video src="${s.src}#t=0.1" muted loop playsinline autoplay preload="metadata" width="${s.w}" height="${s.h}"></video>` : `<img src="${s.src}" alt="" loading="lazy" width="${s.w}" height="${s.h}" />`}</div>`;
+    const photo = (s) => () => (s.video ? `<video class="fill" src="${s.src}#t=0.1" muted loop playsinline autoplay preload="metadata"></video>` : `<img class="fill" src="${s.src}" alt="" loading="lazy" />`);
+
+    /* Stacks: several states of one thing, one visible at a time (the reels switch between them). */
+    const layerMedia = (s, c) => {
+      const st = `width:${(s.w / c.w) * 100}%;left:${(-c.x / c.w) * 100}%;top:${(-c.y / c.h) * 100}%`;
+      return `<img src="${s.src}" alt="" loading="lazy" width="${s.w}" height="${s.h}" style="${st}" />`;
+    };
+    const stackOf = (items, cls) =>
+      `<div class="crop stack ${cls}" style="aspect-ratio:${items[0].c.w}/${items[0].c.h}">${items.map((it, i) => `<div class="layer${i ? '' : ' on'}">${layerMedia(it.s, it.c)}</div>`).join('')}</div>`;
+    const phoneStack = (items, o = {}) => () => stackOf(items, o.inPair ? 'phone' : 'phone lift fit-h');
+    const panelStack = (items) => (box) => stackOf(items, `panel lift ${fitFor(items[0].c.w / items[0].c.h, box, 0.74, 0.82)}`);
+    const bleedStack = (sources) => () =>
+      `<div class="bleed lift" style="aspect-ratio:${sources[0].w}/${sources[0].h}">${sources.map((s, i) => `<div class="layer${i ? '' : ' on'}"><img src="${s.src}" alt="" loading="lazy" width="${s.w}" height="${s.h}" /></div>`).join('')}</div>`;
+    const photoStack = (sources) => () => sources.map((s, i) => `<div class="layer${i ? '' : ' on'}"><img class="fill" src="${s.src}" alt="" loading="lazy" /></div>`).join('');
+
+    /* ---------- the live Pulse command bar ---------- */
+    const I = {
+      search: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg>',
+      mail: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="2.5" y="4.5" width="15" height="11" rx="2.5"/><path d="m3.5 6 6.5 5 6.5-5"/></svg>',
+      clip: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="3.5" width="12" height="14" rx="2.5"/><path d="M7.5 3.5h5v2.5h-5zM7 10l1.5 1.5L11 9M7 14h6"/></svg>',
+      sparkle: '<svg viewBox="0 0 24 24"><defs><linearGradient id="spk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c084fc"/><stop offset=".55" stop-color="#f59e7c"/><stop offset="1" stop-color="#8b7cf6"/></linearGradient></defs><g fill="none" stroke="url(#spk)" stroke-width="1.5" stroke-linejoin="round"><path d="M10 4.5 11.6 9 16 10.5 11.6 12 10 16.5 8.4 12 4 10.5 8.4 9z"/><path d="M17.5 3v3M16 4.5h3M18 15.5v2.5M16.8 16.8h2.5"/></g></svg>',
+      spin: '<svg class="pl-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>',
+      up: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 9v8H3.5V9zM6 9l3.5-6c1.4 0 2 .9 1.7 2.3L10.8 8H15a1.6 1.6 0 0 1 1.6 1.9l-1 5.6A1.8 1.8 0 0 1 13.8 17H6"/></svg>',
+      down: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 11V3H3.5v8zM6 11l3.5 6c1.4 0 2-.9 1.7-2.3L10.8 12H15a1.6 1.6 0 0 0 1.6-1.9l-1-5.6A1.8 1.8 0 0 0 13.8 3H6"/></svg>',
+      redo: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3.5v3h-3"/></svg>',
+      copy: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="7" width="10" height="10" rx="2.5"/><path d="M13 7V5.5A2.5 2.5 0 0 0 10.5 3h-5A2.5 2.5 0 0 0 3 5.5v5A2.5 2.5 0 0 0 5.5 13H7"/></svg>',
+    };
+    const PL_ROWS = [['Meeting with Kinfolk CEO', 'Tasks'], ['New push test', 'Tasks'], ['Press Emmax neck', 'Tasks'], ['Sales Pitch Meeting', 'Calendar']];
+    const PL_ANSWER = [
+      'Here’s a quick rundown of what’s on your plate for today, Saturday, September 27, 2025',
+      'You’ve got a busy but manageable day ahead. First up, you need to follow up with Acme Corp about their proposal by 10:00 AM—don’t forget to attach the updated pricing sheet. Then, at 2:00 PM, you’ve got the Q4 planning sync with the Marketing Team; the Zoom link is already in your calendar.',
+      'There’s also a high-priority task to review customer feedback for Ticket #456 before the end of the day. And whenever you get a chance, try to update the CRM contact list—it’s not urgent, but it’ll help keep things organized.',
+    ];
+    const PL_INNER = `
+      <div class="pl-head">
+        <div class="pl-hv on">${I.search}<span class="pl-input"><span class="pl-q"></span><span class="pl-ph">Search or ask Pulse AI…</span></span><span class="pl-logo"><i class="ring"></i></span></div>
+        <div class="pl-hv">${I.spin}<span class="pl-input">Pulse AI is looking for the information you requested</span><span class="pl-stop"><i></i>Stop</span></div>
+        <div class="pl-hv">${I.search}<span class="pl-input">Ask a follow up question or search for something else.</span></div>
+      </div>
+      <div class="pl-body">
+        <div class="pl-a">
+          <div class="pl-ask" style="opacity:0"><span class="pl-tile"><i class="ring"></i></span><span class="pl-ask-q"></span><span class="pl-ask-tag">&nbsp;-&nbsp; Ask Pulse AI</span><span class="pl-kbd">⌘↵</span></div>
+          <div class="pl-label" style="opacity:0">Result</div>
+          ${PL_ROWS.map(([t, k], i) => `<div class="pl-row${i ? '' : ' hl'}" style="opacity:0"><span class="pl-tile">${I.mail}</span>${t}<span>${k}</span></div>`).join('')}
+        </div>
+        <div class="pl-b">
+          <div class="pl-query">${I.sparkle}<span class="grad">What are my tasks for today</span></div>
+          <p class="pl-note">Review all AI-generated outputs for relevance and appropriateness before use.</p>
+          <div class="pl-skel"><i style="width:30%"></i><i style="width:70%"></i><i style="width:45%"></i><i style="width:32%"></i></div>
+          <div class="pl-answer">
+            ${PL_ANSWER.map(() => '<p></p>').join('')}
+            <div class="pl-react">${I.up}${I.down}${I.redo}${I.copy}</div>
+            <div class="pl-chips"><span class="pl-chip">Remind me at 9:30 AM</span><span class="pl-chip">Add Zoom link to notes</span><span class="pl-chip">Move CRM update to tomorrow</span></div>
+            <div class="pl-src">
+              <p class="pl-srcl">Source</p>
+              <div class="pl-cards">
+                <div class="pl-card"><span class="pl-tile red">${I.clip}</span><b>Q4 Planning sync with marketing</b>Assigned to you</div>
+                <div class="pl-card"><span class="pl-tile">${I.mail}</span><b>Follow up with Acme Corp</b>Assigned to you</div>
+                <div class="pl-card"><span class="pl-tile">${I.mail}</span><b>Review Ticket #456 feedback</b>Assigned to you</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    /* ---------- the live Pulse home: one morning, afternoon and evening ---------- */
+    const DI = {
+      cal: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><rect x="2.5" y="3.5" width="11" height="10" rx="2"/><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3"/></svg>',
+      meet: '<svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><rect x="2" y="4.5" width="8.5" height="7" rx="1.6"/><path d="m10.5 7 3.5-2v6l-3.5-2"/></svg>',
+      check: '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2.5 6.2 2.3 2.3 4.7-5"/></svg>',
+      down: '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m3 4.5 3 3 3-3"/></svg>',
+      mic: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="5.5" y="2" width="5" height="8" rx="2.5"/><path d="M3.5 7.5a4.5 4.5 0 0 0 9 0M8 12v2"/></svg>',
+      plus: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>',
+      up: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V3.5M4 7.5l4-4 4 4"/></svg>',
+      doc: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M4 2h5.5L12 4.5V14H4z"/><path d="M6 8h4M6 10.5h4"/></svg>',
+      plan: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><rect x="3" y="2.5" width="10" height="11.5" rx="2"/><path d="m5.5 7 1 1 2-2M5.5 11h5"/></svg>',
+      sum: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M5 6h6M5 8.5h6M5 11h3.5"/></svg>',
+    };
+    // Each beat: the time, a request (strings are typed; [typed, kind, chip] turns into an entity chip), and what comes back.
+    const DY_BEATS = [
+      { sky: 'm', word: 'morning', time: '8:30 AM', mins: 8 * 60 + 30, sun: [52, 262],
+        ask: ['Prep me for my ', ['10am', 'time', '10:00 AM'], ' with ', ['Acme', 'co', 'Acme Corp']],
+        out: { label: 'Meeting brief', title: 'Acme Corp · 10:00 AM', kind: 'dot',
+          items: ['Proposal due Friday; they want the updated pricing', 'Last call: questions on seat-based billing', 'Open deal: $48k, in negotiation'] } },
+      { sky: 'a', word: 'afternoon', time: '2:00 PM', mins: 14 * 60, sun: [440, 34],
+        ask: ['Summarize the ', ['Q4 planning sync', 'meet', 'Q4 Planning sync']],
+        out: { label: 'Meeting summary', title: 'Q4 Planning sync · 3 action items', kind: 'check',
+          items: ['Campaign launch moves to Oct 14', 'Emmanuel: share the updated pricing sheet', 'Marketing: draft the Acme case study'] } },
+      { sky: 'e', word: 'evening', time: '7:45 PM', mins: 19 * 60 + 45, sun: [630, 536], dark: true,
+        ask: ['Draft follow-ups for ', ['today’s deals', 'deal', 'Today’s deals · 3']],
+        out: { label: 'Drafts', title: '3 follow-ups ready to send', kind: 'mail',
+          items: [['A', 'Acme Corp', 'Re: proposal and pricing', '#16151c'], ['N', 'Northwind', 'Next steps after the demo', '#2f6fe4'], ['G', 'Globex', 'Contract redlines', '#e5484d']] } },
+    ];
+    const dyChip = (kind, label) => `<span class="dy-chip ${kind}"><i>${{ time: DI.cal, co: label[0], meet: DI.meet, deal: '$' }[kind]}</i>${label}</span>`;
+    const dyOut = (o) => `
+      <div class="dy-ch"><span class="dy-tile"><i class="ring"></i></span>${o.label}<span class="dy-now">Just now</span></div>
+      <p class="dy-ct">${o.title}</p>
+      ${o.items.map((it) => o.kind === 'mail'
+        ? `<div class="dy-li"><span class="av" style="background:${it[3]}">${it[0]}</span><b>${it[1]}</b><em>${it[2]}</em></div>`
+        : `<div class="dy-li">${o.kind === 'check' ? `<span class="box">${DI.check}</span>` : '<span class="dot"></span>'}${it}</div>`).join('')}`;
+    const DY_INNER = `
+      ${DY_BEATS.map((b, i) => `<div class="dy-sky ${b.sky}${i ? '' : ' on'}"></div>`).join('')}
+      <div class="dy-sun"><div class="dy-sun-y">${DY_BEATS.map((b) => `<i class="${b.sky}"></i>`).join('')}</div></div>
+      <span class="dy-moon"></span>
+      <div class="dy-top">
+        <span class="dy-time"><span class="dy-clock"><i class="h"></i><i class="m"></i></span><b>${DY_BEATS[0].time}</b>· Lagos</span>
+        <p class="dy-hi" style="margin-bottom:0">Good <span class="dy-roll"><span class="dy-words">${DY_BEATS.map((b) => `<span>${b.word}</span>`).join('')}</span></span>, Emmanuel</p>
+        <span class="dy-sub">Ready when you are</span>
+      </div>
+      <div class="dy-box">
+        <div class="dy-in">
+          <div class="dy-text"><span class="dy-ph">Ask Pulse AI…</span></div>
+          <div class="dy-tools"><span class="dy-model">Select model${DI.down}</span><span class="dy-btn">${DI.mic}</span><span class="dy-btn">${DI.plus}</span><span class="dy-btn dy-send">${DI.up}</span></div>
+        </div>
+        <div class="dy-out"></div>
+      </div>
+      <div class="dy-chips"><span>${DI.doc}Create doc</span><span>${DI.plan}Make a plan</span><span>${DI.sum}Summarize text</span></div>`;
+
+    // Set the clock, sky and greeting for a beat without animating (start of a loop, reduced motion).
+    function dySet(root, i) {
+      const b = DY_BEATS[i], words = root.querySelectorAll('.dy-words > span');
+      root.querySelectorAll('.dy-sky').forEach((s, j) => s.classList.toggle('on', j <= i));
+      root.classList.toggle('dark', !!b.dark);
+      root.querySelector('.dy-sun').style.transform = `translateX(${b.sun[0]}px)`;
+      root.querySelector('.dy-sun-y').style.transform = `translateY(${b.sun[1]}px)`;
+      root.querySelectorAll('.dy-sun i').forEach((s, j) => { s.style.opacity = j === i ? '1' : '0'; });
+      root.querySelector('.dy-moon').style.opacity = b.dark ? '1' : '0';
+      root.querySelector('.dy-clock .h').style.transform = `rotate(${b.mins * 0.5}deg)`;
+      root.querySelector('.dy-clock .m').style.transform = `rotate(${b.mins * 6}deg)`;
+      root.querySelector('.dy-time b').textContent = b.time;
+      root.querySelector('.dy-words').style.transform = `translateY(${-38 * i}px)`;
+      root.querySelector('.dy-roll').style.width = words[i].offsetWidth + 'px';
+    }
+
+    /* ---------- live covers: coded components drawn at a fixed size, then scaled to their box ---------- */
+    const LIVE = {
+      pulse: { cls: 'pl', w: 557, h: 600, inner: PL_INNER, script: 'pulseLive', still: staticPulse, narrow: [1000, 1080] },
+      day: { cls: 'dy', w: 640, h: 480, inner: DY_INNER, script: 'dayLive', still: staticDay, narrow: [1000, 800], full: true },
+    };
+    // Cards: `lift` floats the component on the cover, `full` makes it the whole cover. Viewer: `fit-height`.
+    const liveCover = (name, { fitHeight = false } = {}) => () => {
+      const L = LIVE[name];
+      return `<div class="live-wrap ${fitHeight ? 'fit-height' : L.full ? 'full' : 'lift'}" data-live="${name}"><div class="${L.cls}">${L.inner}</div></div>`;
+    };
+    function fitLive(wrap) {
+      if (!wrap) return;
+      const { w, h } = LIVE[wrap.dataset.live], host = wrap.parentElement, fit = wrap.classList.contains('fit-height');
+      const k = fit ? Math.min((host.clientHeight * 0.88) / h, (host.clientWidth * 0.9) / w) : wrap.clientWidth / w;
+      wrap.style.setProperty('--k', k.toFixed(4));
+      if (fit) wrap.style.width = w * k + 'px';
+      else wrap.style.top = Math.max(0, (host.clientHeight - h * k) / 2) + 'px';
+      wrap.style.height = h * k + 'px';
+    }
+
+    /* ---------- source files ---------- */
+    const F = (path, w, h, video = false) => ({ src: A(path), w, h, video });
+    const hv = F('halvest/Halvest Video.mp4', 956, 720, true);
+    const h19 = F('halvest/image 19.png', 1392, 895), h20 = F('halvest/image 20.png', 1392, 1048), h5 = F('halvest/image 5.png', 1392, 894);
+    const h2 = F('halvest/image 2.png', 1392, 1044), hStats = F('halvest/Frame 2085654841.png', 1392, 697);
+    const steps = [55, 322, 589, 856, 1123].map((x) => ({ x, y: 208, w: 213, h: 479 }));
+    const prosp = F('impulse/prospecting_djdauy.webm', 2000, 1254, true);
+    const search = (n) => F(`impulse/Search - ${n}.png`, 2880, 1800);
+    const mac = (n) => F(`impulse/MacBook Pro 14_ - ${n}.png`, 2880, 1800);
+    const slide = F('impulse/Slide 4_3 - 2.png', 2048, 1536), home = F('impulse/Entities - Overview - Companies.png', 2880, 1800);
+    const ds = F('impulse/image 3.png', 1400, 918), site1 = F('impulse/Impulse first image.png', 1400, 1260), site2 = F('impulse/image 4.png', 1400, 870);
+    const kv = F('kinfolk/cuuro video 2 v2.mp4', 1136, 720, true), k = (n, h = 875) => F(`kinfolk/Cuuro ${n}.png`, 1400, h), k6 = F('kinfolk/cuuro 6.png', 1400, 706);
+    const PULSE_PANEL = { x: 884, y: 292, w: 1114, h: 1200 };
+    const MODAL = { x: 497, y: 43, w: 474, h: 786 };
+
+    /* ---------- presentation per shot: cover + viewer frames ---------- */
+    // frame: { bg, build } or { photo: source } (photos show at their own shape)
+    const stage = (bg, build, cap) => ({ bg, build, cap });
+    const asPhoto = (s, cap) => ({ photo: s, cap });
+    const CFG = {
+      'halvest/fund-wallet': { ratio: 4 / 5, bg: 'tint', cover: phone(hv, { x: 337, y: 54, w: 281, h: 607 }), frames: [stage('tint', phone(hv, { x: 337, y: 54, w: 281, h: 607 }), 'Bank transfer → confirming → success')] },
+      'halvest/onboarding': { ratio: 1, bg: 'mesh', reel: 'onboarding', cover: pair(phone(h19, steps[0], { inPair: true }), phoneStack(steps.slice(1).map((c) => ({ s: h19, c })), { inPair: true })),
+        frames: steps.map((c, i) => stage('tint', phone(h19, c), ['Welcome: the promise in one line', 'Country: search with flags', 'Email: checked as you type', 'Code: resend timer visible', 'Password: strength shown as you type'][i])) },
+      'halvest/not-enough-funds': { ratio: 4 / 5, bg: 'dark', reel: 'funds', cover: phone(h20, { x: 497, y: 84, w: 400, h: 878 }), frames: [stage('dark', phone(h20, { x: 497, y: 84, w: 400, h: 878 }), 'The amount stays; a sheet offers to top up')] },
+      'halvest/portfolio': { ratio: 4 / 5, bg: 'tint', reel: 'portfolio', cover: phoneStack([{ s: h5, c: { x: 222, y: 136, w: 287, h: 623 } }, { s: h5, c: { x: 894, y: 121, w: 287, h: 623 } }]),
+        frames: [stage('tint', phone(h5, { x: 222, y: 136, w: 287, h: 623 }), 'Portfolio value and composition'), stage('tint', phone(h5, { x: 894, y: 121, w: 287, h: 623 }), 'Business financing breakdown')] },
+      'halvest/launch': { ratio: 4 / 3, bg: null, reel: 'ken', cover: photo(h2), frames: [asPhoto(h2, 'In the hand'), asPhoto(hStats, 'Launch results')] },
+
+      'impulse/prospecting': { ratio: 4 / 3, bg: 'mesh', cover: bleed(prosp), frames: [stage('mesh', browser(prosp), 'From filters to a recurring automation')] },
+      'impulse/pulse-search': { ratio: 4 / 5, bg: 'dark', reel: 'pulseLive', cover: liveCover('pulse'),
+        frames: [{ live: 'pulse', bg: 'dark', cap: 'Live: ask Pulse and watch the answer stream in' }, ...['Ask in plain language', 'Pulse gathers what you asked for', 'An answer with sources and quick actions', 'Compose: suggested prompts', 'Compose an email', 'Describe what you need', 'A ready-to-send draft, with attachment', 'Create: notes, reports, emails', 'Create a meeting note', 'Describe the note']
+          .map((cap, i) => stage('tint', panel(search(i + 1), PULSE_PANEL), cap)), stage('tint', browser(search(7)), 'In context: the full workspace')] },
+      'impulse/meetings': { ratio: 4 / 3, bg: 'tint', reel: 'cycle', cover: bleedStack([mac(83), mac(84), mac(88)]),
+        frames: [stage('tint', browser(mac(83)), 'Summary, action items and talk time'), stage('tint', browser(mac(84)), 'What’s new today'), stage('tint', browser(mac(88)), 'A chat that knows who was in the room'), asPhoto(slide, 'Up close')] },
+      'impulse/home': { ratio: 4 / 3, bg: 'dark', reel: 'dayLive', cover: liveCover('day'),
+        frames: [{ live: 'day', bg: 'dark', cap: 'Live: morning, afternoon and evening with Pulse' }, stage('dark', panel(home, { x: 1040, y: 400, w: 1280, h: 820 }), 'One prompt to start from'), stage('tint', browser(home), 'The full home')] },
+      'impulse/design-system': { ratio: 1400 / 918, bg: null, reel: 'ken', cover: photo(ds), frames: [asPhoto(ds, 'Core components')] },
+      'impulse/marketing': { ratio: 1, bg: null, reel: 'cyclePhotos', cover: photoStack([site1, site2]), frames: [asPhoto(site1, 'Launch site'), asPhoto(site2, 'Customer stories')] },
+
+      'kinfolk/deal-flow': { ratio: 1136 / 720, bg: null, cover: photo(kv), frames: [asPhoto(kv, 'Board, then a startup’s activity, team and risk'), stage('tint', browser(k(2, 882)), 'The deal-flow board')] },
+      'kinfolk/meeting-recording': { ratio: 4 / 3, bg: 'mesh', reel: 'pan', cover: bleed(k(3)), frames: [stage('mesh', browser(k(3)), 'Transcript, action items and follow-ups')] },
+      'kinfolk/applications': { ratio: 4 / 3, bg: 'tint', reel: 'pan', cover: bleed(k(4)), frames: [stage('tint', browser(k(4)), 'Every application and its status')] },
+      'kinfolk/transaction-rules': { ratio: 1, bg: 'dark', reel: 'rules', cover: panel(k(5), { x: 497, y: 43, w: 474, h: 430 }),
+        frames: [stage('dark', panel(k(5), MODAL), 'The whole rule: type, conditions, actions, timing'), stage('tint', browser(k(5)), 'In context: the transactions page')] },
+      'kinfolk/site': { ratio: 1400 / 904, bg: null, reel: 'cyclePhotos', cover: photoStack([k(1, 904), k6]), frames: [asPhoto(k(1, 904), 'Landing page'), asPhoto(k6, 'AI features')] },
+    };
+
+    /* ---------- viewer frames: turn each config frame into a composed "media" item ---------- */
+    const STAGE_W = 1600, STAGE_H = 1000;
+    function toMedia(co, f) {
+      if (f.live) {
+        // On phones the stage takes the component's own shape so it isn't shrunk to fit a 16:10 box.
+        const L = LIVE[f.live], narrow = () => window.matchMedia('(max-width: 820px)').matches; // the viewer's own phone breakpoint
+        return { html: `<div class="vstage" style="background:${BG[co][f.bg]}">${liveCover(f.live, { fitHeight: true })()}</div>`, caption: f.cap, live: f.live,
+          get w() { return narrow() ? L.narrow[0] : STAGE_W; }, get h() { return narrow() ? L.narrow[1] : STAGE_H; },
+          thumbHTML: '<span class="vw-frame-play" aria-hidden="true"></span>' };
+      }
+      if (f.photo) {
+        const s = f.photo;
+        return { html: s.video ? `<video class="vw-el" src="${s.src}#t=0.1" autoplay muted loop playsinline></video>` : `<img class="vw-el" src="${s.src}" alt="" />`,
+          w: s.w, h: s.h, caption: f.cap, thumbHTML: s.video ? '<span class="vw-frame-play" aria-hidden="true"></span>' : `<img src="${s.src}" alt="" loading="lazy" />` };
+      }
+      const inner = f.build(STAGE_W / STAGE_H);
+      const thumbHTML = inner.includes('<video') ? '<span class="vw-frame-play" aria-hidden="true"></span>' : `<div class="vstage mini" style="background:${BG[co][f.bg]}">${inner}</div>`;
+      return { html: `<div class="vstage" style="background:${BG[co][f.bg]}">${inner}</div>`, w: STAGE_W, h: STAGE_H, caption: f.cap, thumbHTML };
+    }
+    P.allShots.forEach((s) => {
+      const cfg = CFG[`${s.company.id}/${s.id}`];
+      if (cfg) s.media = cfg.frames.map((f) => toMedia(s.company.id, f));
+    });
+
+    /* ---------- page ---------- */
+    function card(s) {
+      const cfg = CFG[`${s.company.id}/${s.id}`];
+      const bg = cfg.bg ? `background:${BG[s.company.id][cfg.bg]};` : 'background:#ddd;';
+      return `
+        <button class="wcard" data-shot="${s.index}" ${cfg.reel ? `data-reel="${cfg.reel}"` : ''} style="--o:${s.index}" aria-label="${s.title}. Open">
+          <div class="cover" style="aspect-ratio:${cfg.ratio};${bg}">${cfg.cover(cfg.ratio)}</div>
+          <div class="wcap"><b>${s.title}</b><span>/ ${[s.status, s.year].filter(Boolean).join(' ')}</span></div>
+        </button>`;
+    }
+    document.getElementById('work').innerHTML = P.companies.map((c) => {
+      const cards = c.shots.map(card);
+      const left = cards.filter((_, i) => i % 2 === 0).join(''), right = cards.filter((_, i) => i % 2 === 1).join('');
+      return `
+        <section class="co" id="${c.id}">
+          <div class="wrap">
+            <div class="co__head">
+              <div>
+                <img class="co__logo" src="${P.asset(c.logo)}" alt="" />
+                <h2 class="co__name">${c.name}${c.product ? ` <em>· ${c.product}</em>` : ''}</h2>
+                <div class="co__role">${c.role}</div>
+                <div class="co__meta mono"><span>${c.tags.join(' · ')}</span><span>${c.years}</span></div>
+              </div>
+              <div>
+                <p class="co__summary">${c.summary}</p>
+                <div class="impact">${c.impact.map((i) => `<div><b>${i.value}</b><span>${i.label}</span></div>`).join('')}</div>
+              </div>
+            </div>
+            <div class="wgrid"><div class="wcol">${left}</div><div class="wcol">${right}</div></div>
+          </div>
+        </section>`;
+    }).join('');
+
+    // Play videos only while visible.
+    const io = new IntersectionObserver((es) => es.forEach((en) => (en.isIntersecting ? en.target.play().catch(() => {}) : en.target.pause())), { threshold: 0.3 });
+    document.querySelectorAll('.cover video').forEach((v) => { v.pause(); io.observe(v); });
+
+    function staticPulse(pl) {
+      pl.innerHTML = PL_INNER;
+      const hv = pl.querySelectorAll('.pl-hv'); hv[0].classList.remove('on'); hv[2].classList.add('on');
+      pl.querySelector('.pl-a').style.display = 'none'; pl.querySelector('.pl-b').style.display = 'block';
+      pl.querySelector('.pl-skel').style.display = 'none'; pl.querySelector('.pl-answer').style.display = 'block';
+      pl.querySelectorAll('.pl-answer > p').forEach((p, i) => { p.textContent = PL_ANSWER[i]; });
+      pl.querySelectorAll('.pl-react, .pl-chips, .pl-src').forEach((el) => { el.style.visibility = 'visible'; });
+    }
+
+    // Reduced motion: the evening home, exactly as designed.
+    function staticDay(dy) {
+      dy.innerHTML = DY_INNER;
+      dySet(dy, DY_BEATS.length - 1);
+    }
+
+    /* ---------- reels: scripted micro-interactions on the covers ----------
+       Each runs while its card is on screen, loops, and resets when it scrolls away.
+       Only transform/opacity/filter are animated. Off entirely for reduced motion. */
+    const STOP = Symbol('stop');
+    const EASE_UI = 'cubic-bezier(0.23, 1, 0.32, 1)';
+    const EASE_PUSH = 'cubic-bezier(0.32, 0.72, 0, 1)';
+    const EASE_MOVE = 'cubic-bezier(0.65, 0, 0.35, 1)';
+    const CURSOR_SVG = '<svg viewBox="0 0 20 20"><path d="M3 2 16.5 9.6 10.2 11 7.6 17.2z" fill="#141414" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+
+    function makeReel(cover, script) {
+      let run = 0;
+      let cursor = null;
+      const pos = { x: 0, y: 0 };
+      const point = (el, rx, ry) => {
+        const c = cover.getBoundingClientRect(), r = el.getBoundingClientRect();
+        return { x: r.left - c.left + rx * r.width, y: r.top - c.top + ry * r.height };
+      };
+      const layersOf = (el) => [...el.querySelectorAll(':scope > .layer')];
+      const settle = (anims) => Promise.all(anims.map((a) => a.finished)).catch(() => { throw STOP; });
+
+      function reset() {
+        cover.getAnimations({ subtree: true }).forEach((a) => a.cancel());
+        [cover, ...cover.querySelectorAll('.stack, .bleed')].forEach((el) => layersOf(el).forEach((l, i) => { l.classList.toggle('on', i === 0); l.style.zIndex = ''; }));
+        cover.querySelectorAll('.r-tap, .r-ring').forEach((n) => n.remove());
+        if (cursor) cursor.style.opacity = '0';
+      }
+
+      const api = (id) => {
+        const alive = () => id === run;
+        const guard = () => { if (!alive()) throw STOP; };
+        return {
+          $: (sel) => cover.querySelector(sel),
+          cover,
+          wait: (ms) => new Promise((res, rej) => setTimeout(() => (alive() ? res() : rej(STOP)), ms)),
+
+          // Switch the visible layer: 'fade' (blur crossfade), 'push' (iOS navigation), 'back'.
+          async show(el, i, mode = 'fade') {
+            guard();
+            const ls = layersOf(el), from = ls.find((l) => l.classList.contains('on')), to = ls[i];
+            if (!to || from === to) return;
+            to.classList.add('on');
+            let anims;
+            if (mode === 'push' || mode === 'back') {
+              const fwd = mode === 'push';
+              (fwd ? to : from).style.zIndex = '2';
+              anims = [
+                to.animate(fwd ? [{ transform: 'translateX(100%)' }, { transform: 'none' }] : [{ transform: 'translateX(-28%)', filter: 'brightness(0.82)' }, { transform: 'none', filter: 'none' }], { duration: 460, easing: EASE_PUSH, fill: 'both' }),
+                from.animate(fwd ? [{ transform: 'none', filter: 'none' }, { transform: 'translateX(-28%)', filter: 'brightness(0.82)' }] : [{ transform: 'none' }, { transform: 'translateX(100%)' }], { duration: 460, easing: EASE_PUSH, fill: 'both' }),
+              ];
+            } else {
+              anims = [
+                from.animate([{ opacity: 1, filter: 'blur(0)' }, { opacity: 0, filter: 'blur(6px)' }], { duration: 420, easing: 'ease', fill: 'both' }),
+                to.animate([{ opacity: 0, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0)' }], { duration: 420, easing: 'ease', fill: 'both' }),
+              ];
+            }
+            await settle(anims);
+            from.classList.remove('on');
+            ls.forEach((l) => { l.style.zIndex = ''; });
+            anims.forEach((a) => a.cancel());
+          },
+
+          // A desktop cursor that glides to a spot on an element.
+          async cursorTo(el, rx, ry, dur = 800) {
+            guard();
+            if (!cursor) { cursor = document.createElement('div'); cursor.className = 'r-cursor'; cursor.innerHTML = CURSOR_SVG; cover.appendChild(cursor); }
+            const to = point(el, rx, ry);
+            const from = cursor.style.opacity === '1' ? { ...pos } : { x: cover.clientWidth * 0.9, y: cover.clientHeight * 1.04 };
+            cursor.style.opacity = '1';
+            Object.assign(pos, to);
+            await settle([cursor.animate([{ transform: `translate(${from.x}px, ${from.y}px)` }, { transform: `translate(${to.x}px, ${to.y}px)` }], { duration: dur, easing: EASE_MOVE, fill: 'forwards' })]);
+          },
+          async click() {
+            guard();
+            const ring = document.createElement('span'); ring.className = 'r-ring';
+            ring.style.left = pos.x + 'px'; ring.style.top = pos.y + 'px'; cover.appendChild(ring);
+            const press = cursor.firstElementChild.animate([{ transform: 'scale(1)' }, { transform: 'scale(0.82)' }, { transform: 'scale(1)' }], { duration: 220, easing: EASE_UI });
+            const r = ring.animate([{ transform: 'scale(0.4)', opacity: 0.9 }, { transform: 'scale(1.5)', opacity: 0 }], { duration: 520, easing: 'ease-out', fill: 'forwards' });
+            await settle([press]);
+            r.finished.then(() => ring.remove()).catch(() => {});
+          },
+          async cursorOut() {
+            guard();
+            if (!cursor) return;
+            await settle([cursor.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: 'forwards' })]);
+            cursor.style.opacity = '0';
+          },
+
+          // A finger tap for phone screens.
+          async tap(el, rx, ry) {
+            guard();
+            const p = point(el, rx, ry), t = document.createElement('span'); t.className = 'r-tap';
+            t.style.left = p.x + 'px'; t.style.top = p.y + 'px'; cover.appendChild(t);
+            await settle([t.animate([{ transform: 'scale(0.5)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], { duration: 160, easing: EASE_UI, fill: 'forwards' })]);
+            await settle([t.animate([{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(1.6)', opacity: 0 }], { duration: 380, easing: 'ease-out', fill: 'forwards' })]);
+            t.remove();
+          },
+
+          async type(el, text) {
+            el.classList.add('typing');
+            for (const ch of text) { guard(); el.textContent += ch; await this.wait(38 + Math.random() * 55); }
+          },
+
+          // Scroll a screenshot (uses the `translate` property, so it composes with the hover lift).
+          async pan(el, toPct, dur) {
+            guard();
+            const from = el.dataset.pan || '0';
+            el.dataset.pan = String(toPct);
+            await settle([el.animate([{ translate: `0 ${from}%` }, { translate: `0 ${toPct}%` }], { duration: dur, easing: EASE_MOVE, fill: 'forwards' })]);
+          },
+          async ken(el, dur) {
+            guard();
+            await settle([el.animate([{ scale: '1', translate: '0 0' }, { scale: '1.06', translate: '-1% -1%' }], { duration: dur, easing: 'ease-in-out', direction: 'alternate', iterations: 2 })]);
+          },
+        };
+      };
+
+      return {
+        async start() {
+          const id = ++run;
+          const r = api(id);
+          // Loop until stopped. If something else cancels an animation mid-way, just start the loop again.
+          while (id === run) {
+            reset();
+            const t0 = performance.now();
+            try { await script(r); }
+            catch (e) { if (e !== STOP) { console.error(e); break; } }
+            if (id === run && performance.now() - t0 < 60) await new Promise((res) => setTimeout(res, 500));
+          }
+        },
+        stop() { run++; reset(); delete cover.querySelector('.bleed')?.dataset.pan; },
+      };
+    }
+
+    const SCRIPTS = {
+      // Type a query → results → Ask Pulse AI → thinking → streamed answer → actions and sources.
+      async pulseLive(r) {
+        const root = r.$('.pl');
+        root.innerHTML = PL_INNER;
+        const $$ = (sel) => [...root.querySelectorAll(sel)];
+        const q = root.querySelector('.pl-q'), ph = root.querySelector('.pl-ph'), askQ = root.querySelector('.pl-ask-q');
+        const ask = root.querySelector('.pl-ask'), heads = $$('.pl-hv'), A = root.querySelector('.pl-a'), B = root.querySelector('.pl-b');
+        const appear = (el, delay = 0, dy = 6) => {
+          el.style.visibility = 'visible';
+          return el.animate([{ opacity: 0, transform: `translateY(${dy}px)` }, { opacity: 1, transform: 'none' }], { duration: 300, delay, easing: EASE_UI, fill: 'both' });
+        };
+        const swapHead = (i) => {
+          const from = heads.find((h) => h.classList.contains('on')), to = heads[i];
+          from.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: 'forwards' });
+          to.classList.add('on');
+          to.animate([{ opacity: 0, transform: 'translateY(4px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: EASE_UI, fill: 'both' });
+          from.classList.remove('on');
+        };
+
+        root.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 250, fill: 'both' });
+        await r.wait(700);
+
+        // 1. Type the question; Ask Pulse AI and results appear as you type.
+        ph.remove();
+        q.classList.add('typing');
+        const text = 'What are my tasks for today';
+        for (let i = 0; i < text.length; i++) {
+          q.textContent += text[i];
+          askQ.textContent = q.textContent;
+          if (i === 2) [ask, root.querySelector('.pl-label'), ...$$('.pl-row')].forEach((el, k) => appear(el, k * 55));
+          await r.wait(42 + Math.random() * 48);
+        }
+        await r.wait(450);
+
+        // 2. Click "Ask Pulse AI".
+        await r.cursorTo(ask, 0.38, 0.5, 750);
+        await r.click();
+        ask.animate([{ transform: 'scale(1)' }, { transform: 'scale(0.985)' }, { transform: 'scale(1)' }], { duration: 200, easing: EASE_UI });
+        q.classList.remove('typing');
+        await r.wait(160);
+
+        // 3. Thinking.
+        swapHead(1);
+        root.querySelector('.pl-spin').animate([{ transform: 'rotate(0)' }, { transform: 'rotate(360deg)' }], { duration: 900, iterations: Infinity, easing: 'steps(8)' });
+        A.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-6px)' }], { duration: 180, fill: 'forwards' });
+        await r.wait(180);
+        A.style.display = 'none';
+        B.style.display = 'block';
+        B.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 280, easing: EASE_UI, fill: 'both' });
+        $$('.pl-skel i').forEach((bar) => bar.animate([{ backgroundPosition: '110% 0' }, { backgroundPosition: '-110% 0' }], { duration: 1100, iterations: Infinity, easing: 'linear' }));
+        await r.cursorOut();
+        await r.wait(1250);
+
+        // 4. Stream the answer, word by word.
+        const skel = root.querySelector('.pl-skel'), answer = root.querySelector('.pl-answer');
+        skel.style.display = 'none';
+        answer.style.display = 'block';
+        answer.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, fill: 'both' });
+        const dot = document.createElement('span'); dot.className = 'pl-dot';
+        dot.animate([{ opacity: 0.35, transform: 'scale(0.8)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 520, iterations: Infinity, direction: 'alternate', easing: 'ease-in-out' });
+        const paras = $$('.pl-answer > p');
+        for (let pi = 0; pi < PL_ANSWER.length; pi++) {
+          const words = PL_ANSWER[pi].split(' ');
+          for (let wi = 0; wi < words.length; wi++) {
+            const w = document.createElement('span');
+            w.className = 'w';
+            w.textContent = (wi ? ' ' : '') + words[wi];
+            paras[pi].appendChild(w);
+            paras[pi].appendChild(dot);
+            w.animate([{ opacity: 0, filter: 'blur(2px)' }, { opacity: 1, filter: 'blur(0)' }], { duration: 220, easing: 'ease-out', fill: 'forwards' });
+            await r.wait(18 + Math.random() * 30 + (/[.,—;]$/.test(words[wi]) ? 90 : 0));
+          }
+          await r.wait(180);
+        }
+        dot.remove();
+        swapHead(2);
+
+        // 5. Reactions, quick actions and sources settle in.
+        appear(root.querySelector('.pl-react'), 0, 4);
+        $$('.pl-chip').forEach((c, i) => { c.parentElement.style.visibility = 'visible'; c.animate([{ opacity: 0, transform: 'scale(0.94)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: 120 + i * 80, easing: EASE_UI, fill: 'both' }); });
+        appear(root.querySelector('.pl-src'), 420, 8);
+        $$('.pl-card').forEach((c, i) => c.animate([{ opacity: 0, transform: 'translateX(10px)' }, { opacity: 1, transform: 'none' }], { duration: 320, delay: 480 + i * 90, easing: EASE_UI, fill: 'both' }));
+        await r.wait(3200);
+        await new Promise((res) => root.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }).finished.then(res, res));
+      },
+      // Ask → Pulse works → answer.
+      async pulse(r) {
+        const st = r.$('.stack');
+        await r.wait(700);
+        await r.cursorTo(st, 0.56, 0.17, 900);
+        await r.click();
+        await r.show(st, 1);
+        await r.wait(1100);
+        await r.show(st, 2);
+        await r.cursorOut();
+        await r.wait(2800);
+      },
+      // Morning → afternoon → evening: each time of day, a request whose names become entities, then what Pulse brings back.
+      async dayLive(r) {
+        const root = r.$('.dy');
+        root.innerHTML = DY_INNER;
+        const q = (sel) => root.querySelector(sel);
+        const skies = [...root.querySelectorAll('.dy-sky')], words = [...root.querySelectorAll('.dy-words > span')];
+        const box = q('.dy-box'), inp = q('.dy-in'), out = q('.dy-out'), text = q('.dy-text'), ph = q('.dy-ph'), chips = q('.dy-chips');
+        const go = (el, kf, o) => el.animate(kf, { easing: EASE_UI, fill: 'both', ...o });
+        const fade = (el, to, o) => go(el, [{ opacity: 1 - to }, { opacity: to }], { duration: 180, ...o });
+        const key = (ms) => r.wait(30 + Math.random() * 38 + ms);
+        dySet(root, 0);
+        go(root, [{ opacity: 0 }, { opacity: 1 }], { duration: 300 });
+        go(q('.dy-sun-y'), [{ transform: `translateY(${DY_BEATS[0].sun[1] + 70}px)` }, { transform: `translateY(${DY_BEATS[0].sun[1]}px)` }], { duration: 2200, easing: 'cubic-bezier(0.2, 0.75, 0.35, 1)' });
+        await r.wait(650);
+
+        for (let i = 0; i < DY_BEATS.length; i++) {
+          const b = DY_BEATS[i], prev = DY_BEATS[i - 1];
+          if (prev) {
+            // Time moves on: the sky, the light, the clock and the greeting.
+            go(skies[i], [{ opacity: 0 }, { opacity: 1 }], { duration: 1000, easing: 'ease' });
+            // The sun travels an arc: x and y move on different curves (rising eases out, setting eases in).
+            const rising = b.sun[1] < prev.sun[1], suns = root.querySelectorAll('.dy-sun i');
+            go(q('.dy-sun'), [{ transform: `translateX(${prev.sun[0]}px)` }, { transform: `translateX(${b.sun[0]}px)` }], { duration: 1500, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' });
+            go(q('.dy-sun-y'), [{ transform: `translateY(${prev.sun[1]}px)` }, { transform: `translateY(${b.sun[1]}px)` }], { duration: 1500, easing: rising ? 'cubic-bezier(0.2, 0.75, 0.35, 1)' : 'cubic-bezier(0.6, 0, 0.8, 0.3)' });
+            fade(suns[i - 1], 0, { duration: 1500, easing: 'ease' });
+            fade(suns[i], 1, { duration: 1500, easing: 'ease' });
+            if (b.dark) fade(q('.dy-moon'), 1, { duration: 700, delay: 1100, easing: 'ease' });
+            [['h', 0.5], ['m', 6]].forEach(([hand, f]) => go(q(`.dy-clock .${hand}`), [{ transform: `rotate(${prev.mins * f}deg)` }, { transform: `rotate(${b.mins * f}deg)` }], { duration: 1100, easing: EASE_MOVE }));
+            root.classList.toggle('dark', !!b.dark);
+            go(q('.dy-words'), [{ transform: `translateY(${-38 * (i - 1)}px)` }, { transform: `translateY(${-38 * i}px)` }], { duration: 650, delay: 150, easing: EASE_PUSH });
+            go(q('.dy-roll'), [{ width: words[i - 1].offsetWidth + 'px' }, { width: words[i].offsetWidth + 'px' }], { duration: 650, delay: 150, easing: EASE_PUSH });
+            const t = q('.dy-time b');
+            fade(t, 0, { duration: 140 });
+            await r.wait(300);
+            t.textContent = b.time;
+            fade(t, 1, { duration: 200 });
+            await r.wait(750);
+          }
+
+          // Type the request; names turn into entity chips once Pulse recognises them.
+          ph.remove();
+          text.classList.add('typing');
+          for (const part of b.ask) {
+            if (typeof part === 'string') {
+              const node = document.createTextNode('');
+              text.appendChild(node);
+              for (const ch of part) { node.data += ch; await key(0); }
+            } else {
+              const raw = document.createElement('span');
+              raw.className = 'dy-raw';
+              text.appendChild(raw);
+              for (const ch of part[0]) { raw.textContent += ch; await key(0); }
+              await r.wait(180);
+              raw.insertAdjacentHTML('afterend', dyChip(part[1], part[2]));
+              const chip = raw.nextElementSibling;
+              raw.remove();
+              go(chip, [{ opacity: 0, transform: 'scale(0.82)', filter: 'blur(2px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { duration: 340 });
+              await r.wait(120);
+            }
+          }
+          await r.wait(420);
+
+          // Send: the prompt grows into the answer.
+          go(q('.dy-send'), [{ transform: 'scale(1)' }, { transform: 'scale(0.86)' }, { transform: 'scale(1)' }], { duration: 240, fill: 'none' });
+          await r.wait(200);
+          text.classList.remove('typing');
+          out.innerHTML = dyOut(b.out);
+          const lis = [...out.querySelectorAll('.dy-li')];
+          lis.forEach((li) => { li.style.opacity = '0'; });
+          const tall = out.offsetHeight + 3;
+          fade(inp, 0, { duration: 160 });
+          fade(chips, 0, { duration: 160 });
+          go(box, [{ height: '112px' }, { height: tall + 'px' }], { duration: 480, easing: EASE_PUSH });
+          fade(out, 1, { duration: 240, delay: 160 });
+          lis.forEach((li, j) => go(li, [{ opacity: 0, transform: b.out.kind === 'mail' ? 'translateX(12px)' : 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 340, delay: 280 + j * 120 }));
+          await r.wait(280 + lis.length * 120 + 300);
+          if (b.out.kind === 'check') {
+            for (const tick of out.querySelectorAll('.box')) {
+              await r.wait(280);
+              tick.classList.add('on');
+              go(tick, [{ transform: 'scale(0.7)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 300, fill: 'none' });
+            }
+          }
+          await r.wait(1300);
+          if (i === DY_BEATS.length - 1) break;
+
+          // Back to an empty prompt for the next part of the day.
+          fade(out, 0, { duration: 160 });
+          go(box, [{ height: tall + 'px' }, { height: '112px' }], { duration: 400, delay: 80, easing: EASE_PUSH });
+          await r.wait(420);
+          text.replaceChildren(ph);
+          fade(inp, 1, { duration: 220 });
+          fade(chips, 1, { duration: 220 });
+        }
+        await r.wait(400);
+        await new Promise((res) => go(root, [{ opacity: 1 }, { opacity: 0 }], { duration: 350 }).finished.then(res, res));
+      },
+      // Walk the sign-up: tap, slide to the next screen, repeat.
+      async onboarding(r) {
+        const st = r.$('.pair .stack');
+        await r.wait(900);
+        await r.tap(st, 0.32, 0.378); await r.show(st, 1, 'push');
+        await r.wait(850);
+        await r.tap(st, 0.5, 0.612); await r.show(st, 2, 'push');
+        await r.wait(850);
+        await r.tap(st, 0.5, 0.612); await r.show(st, 3, 'push');
+        await r.wait(2000);
+      },
+      // Tap a holding, open its breakdown, come back.
+      async portfolio(r) {
+        const st = r.$('.stack');
+        await r.wait(900);
+        await r.tap(st, 0.5, 0.536); await r.show(st, 1, 'push');
+        await r.wait(2200);
+        await r.show(st, 0, 'back');
+        await r.wait(900);
+      },
+      async funds(r) {
+        await r.wait(1400);
+        await r.tap(r.$('.phone'), 0.5, 0.928);
+        await r.wait(2200);
+      },
+      // Set up a rule: pick the match, the source, the category.
+      async rules(r) {
+        const m = r.$('.panel');
+        await r.wait(700);
+        await r.cursorTo(m, 0.47, 0.467, 850); await r.click();
+        await r.wait(350);
+        await r.cursorTo(m, 0.498, 0.553, 550); await r.click();
+        await r.wait(350);
+        await r.cursorTo(m, 0.536, 0.786, 650); await r.click();
+        await r.wait(900);
+        await r.cursorOut();
+        await r.wait(1200);
+      },
+      async cycle(r) {
+        const b = r.$('.bleed');
+        await r.wait(1800); await r.show(b, 1);
+        await r.wait(2200); await r.show(b, 2);
+        await r.wait(2200); await r.show(b, 0);
+        await r.wait(300);
+      },
+      async cyclePhotos(r) {
+        await r.wait(2400); await r.show(r.cover, 1);
+        await r.wait(2800); await r.show(r.cover, 0);
+      },
+      async pan(r) {
+        const b = r.$('.bleed');
+        await r.wait(900);
+        await r.pan(b, -14, 3400);
+        await r.wait(900);
+        await r.pan(b, 0, 2600);
+        await r.wait(500);
+      },
+      async ken(r) {
+        await r.ken(r.$('.fill'), 7000);
+      },
+    };
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('.cover .live-wrap').forEach((w) => { fitLive(w); new ResizeObserver(() => fitLive(w)).observe(w); });
+    if (reduceMotion) {
+      // Still show a finished state instead of an empty box.
+      document.querySelectorAll('.cover .live-wrap').forEach((w) => LIVE[w.dataset.live].still(w.firstElementChild));
+    }
+    if (!reduceMotion) {
+      const reels = new Map();
+      document.querySelectorAll('.wcard[data-reel]').forEach((card) => {
+        const script = SCRIPTS[card.dataset.reel];
+        if (script) reels.set(card, makeReel(card.querySelector('.cover'), script));
+      });
+      const reelIO = new IntersectionObserver((entries) => entries.forEach((en) => {
+        const reel = reels.get(en.target);
+        if (!reel) return;
+        if (en.isIntersecting) reel.start(); else reel.stop();
+      }), { threshold: 0.5 });
+      reels.forEach((_, card) => reelIO.observe(card));
+    }
+
+    /* ---------- viewer ---------- */
+    let liveReel = null, liveFit = null;
+    const specRow = (k, v) => (v ? `<div><dt>${k}</dt><span class="dots"></span><dd>${v}</dd></div>` : '');
+    const viewer = Viewer.create({
+      theme: 'a',
+      originRadius: 4,
+      mediaRadius: 8,
+      getOrigin: (shot) => document.querySelector(`.wcard[data-shot="${shot.index}"] .cover`),
+      onChange: (shot, frame) => {
+        liveReel?.stop(); liveReel = null;
+        liveFit?.disconnect(); liveFit = null;
+        const name = shot?.media[frame].live;
+        if (!name) return;
+        const stage = document.querySelector('.vw-media .vstage'), wrap = stage.querySelector('.live-wrap');
+        liveFit = new ResizeObserver(() => fitLive(wrap));
+        liveFit.observe(stage);
+        fitLive(wrap);
+        if (reduceMotion) LIVE[name].still(wrap.firstElementChild);
+        else (liveReel = makeReel(stage, SCRIPTS[LIVE[name].script])).start();
+      },
+      renderPanel: (s, frame) => {
+        const c = s.company;
+        const n = s.media.length;
+        return `
+          <div class="pa-eyebrow"><img src="${P.asset(c.logo)}" alt="" />${c.name}${c.product ? ' · ' + c.product : ''}<span style="color:var(--ink-3)">· ${c.years}</span></div>
+          <h2 class="pa-title">${s.title}</h2>
+          <p class="pa-desc">${s.desc}</p>
+          <p class="pa-frame"><span class="mono">${n > 1 ? `<span data-frame-num>${frame + 1}</span> / ${n}` : 'Frame'}</span><span data-frame-cap>${s.media[frame].caption || ''}</span></p>
+          <dl class="spec">${specRow('Contribution', s.contributions.join(', '))}${specRow('Platform', s.platform)}${specRow('Status', s.status)}${specRow('Year', s.year)}</dl>
+          <div class="pa-impact">${c.impact.map((i) => `<div><span>${i.label}</span><b>${i.value}</b></div>`).join('')}</div>
+          <a class="link" href="${c.url}" target="_blank" rel="noopener">Visit ${c.url.replace(/^https?:\/\/(www\.)?/, '')} ↗</a>
+          <div class="kbd"><span><kbd>←</kbd><kbd>→</kbd>frames</span><span><kbd>↑</kbd><kbd>↓</kbd>shots</span><span><kbd>esc</kbd>close</span></div>`;
+      },
+    });
+    document.addEventListener('click', (e) => {
+      const c = e.target.closest('.wcard[data-shot]');
+      if (c) viewer.open(+c.dataset.shot, c.querySelector('.cover'));
+    });
+    viewer.openFromHash();
+  </script>
+</body>
+</html>

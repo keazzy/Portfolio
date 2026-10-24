@@ -58,7 +58,7 @@
     /* ---------- rendering ---------- */
     function renderMedia() {
       const m = state.shot.media[state.frame];
-      mediaBox.innerHTML = P.mediaHTML(m, { cls: 'vw-el' });
+      mediaBox.innerHTML = m.html || P.mediaHTML(m, { cls: 'vw-el' });
       const el = mediaBox.firstElementChild;
       if (el.tagName === 'IMG') el.loading = 'eager';
       sizeMedia();
@@ -70,7 +70,7 @@
       if (media.length < 2) { frames.innerHTML = ''; return; }
       frames.innerHTML = media.map((m, i) => `
         <button class="vw-frame${i === state.frame ? ' is-active' : ''}" data-frame="${i}" aria-label="Frame ${i + 1} of ${media.length}">
-          ${m.type === 'video' ? '<span class="vw-frame-play" aria-hidden="true"></span>' : `<img src="${P.asset(m.src)}" alt="" loading="lazy" />`}
+          ${m.thumbHTML || (m.type === 'video' ? '<span class="vw-frame-play" aria-hidden="true"></span>' : `<img src="${P.asset(m.src)}" alt="" loading="lazy" />`)}
         </button>`).join('');
     }
 
@@ -86,6 +86,7 @@
       state.frame = i;
       renderMedia(); renderFrames();
       body.querySelectorAll('[data-frame-num]').forEach((el) => { el.textContent = i + 1; });
+      body.querySelectorAll('[data-frame-cap]').forEach((el) => { el.textContent = state.shot.media[i].caption || ''; });
       opts.onChange && opts.onChange(state.shot, state.frame);
     }
 

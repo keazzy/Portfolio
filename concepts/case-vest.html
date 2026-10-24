@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vest · Adeleke Abdulazeez</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/case.css" />
+  <style>
+    /* ---------- Vest's own diagrams ---------- */
+    .drift { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; }
+    .dr-col { padding: 16px; }
+    .dr-h { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 12.5px; font-weight: 500; color: var(--ink-2); }
+    .dr-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--rule); font-size: 13.5px; }
+    .dr-row span { color: var(--ink-2); }
+    .dr-row b { display: flex; align-items: center; gap: 6px; font-weight: 500; white-space: nowrap; }
+    .dr-row .sw { width: 11px; height: 11px; border-radius: 3px; }
+    .dr-row.off b { color: #c2361f; }
+    .dr-row.off b::after { content: '≠'; margin-left: 2px; font-weight: 600; }
+    .dr-mid { display: grid; justify-items: center; gap: 8px; max-width: 150px; text-align: center; }
+    .dr-bubble { padding: 9px 12px; border-radius: 14px 14px 14px 4px; background: var(--deep); color: #fff; font-size: 12.5px; line-height: 1.35; }
+    .dr-mid small { font-size: 11.5px; color: var(--ink-3); }
+
+    .rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .rule { position: relative; z-index: 1; padding: 16px 16px 14px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.07); }
+    .rule:last-child { grid-column: 1 / -1; background: var(--deep); color: #fff; }
+    .rule i { font: 500 11px var(--mono); font-style: normal; color: var(--accent); }
+    .rule:last-child i { color: #cbb8ff; }
+    .rule b { display: block; margin: 6px 0 4px; font: 500 15px/1.3 var(--sans); }
+    .rule p { margin: 0 0 10px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+    .rule:last-child p { color: rgba(255, 255, 255, 0.72); }
+    .rule code { font: 500 11.5px var(--mono); color: var(--deep); background: var(--tint); padding: 2px 6px; border-radius: 5px; }
+    .rule:last-child code { color: #fff; background: rgba(255, 255, 255, 0.12); }
+
+    .pipe { position: relative; z-index: 1; display: grid; justify-items: center; gap: 0; }
+    .pp { width: min(100%, 360px); padding: 12px 16px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.07); text-align: center; }
+    .pp small { display: block; font: 500 10.5px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+    .pp b { font-weight: 500; font-size: 14.5px; }
+    .pp.accent { background: var(--accent); color: #fff; box-shadow: none; }
+    .pp.accent small { color: rgba(255, 255, 255, 0.7); }
+    .pp-arrow { width: 1.5px; height: 22px; background: color-mix(in srgb, var(--deep) 35%, transparent); position: relative; }
+    .pp-arrow::after { content: ''; position: absolute; left: 50%; bottom: -1px; width: 7px; height: 7px; border-right: 1.5px solid; border-bottom: 1.5px solid; color: color-mix(in srgb, var(--deep) 35%, transparent); transform: translateX(-50%) rotate(45deg); }
+    .pp-routes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; width: 100%; }
+    .pp-routes div { padding: 12px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.07); text-align: center; }
+    .pp-routes b { display: block; font-weight: 500; font-size: 14px; }
+    .pp-routes span { display: block; margin-top: 4px; font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
+    .pp-check { margin: 14px 0 0; padding: 7px 12px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px rgba(194, 54, 31, 0.25); color: #b2341d; font-size: 12.5px; }
+
+    .tk { position: relative; z-index: 1; }
+    .tk-total { margin: 0 0 12px; font: 400 22px/1.2 var(--serif); }
+    .tk-bar { display: flex; gap: 3px; height: 38px; }
+    .tk-bar i { border-radius: 6px; }
+    .tk-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: 13px; color: var(--ink-2); }
+    .tk-legend span { display: flex; align-items: center; gap: 6px; }
+    .tk-legend i { width: 9px; height: 9px; border-radius: 3px; }
+    .tk-legend b { font: 500 13px var(--mono); color: var(--ink); }
+
+    .say { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 18px; align-items: center; }
+    .say-src { padding: 18px; border-radius: 12px; background: var(--deep); color: #fff; }
+    .say-src small { font: 500 10.5px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); }
+    .say-src code { display: block; margin: 12px 0 4px; font: 500 12.5px var(--mono); color: #cbb8ff; }
+    .say-src b { font: 400 24px/1.2 var(--serif); }
+    .say-outs { display: grid; gap: 8px; }
+    .say-outs div { padding: 10px 12px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.07); }
+    .say-outs small { display: block; margin-bottom: 4px; font: 500 10.5px var(--mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }
+    .say-outs code { font: 400 12.5px/1.4 var(--mono); color: var(--deep); word-break: break-word; }
+    .say-layer { display: inline-block; padding: 6px 14px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 13px; font-weight: 500; }
+
+    .code { position: relative; z-index: 1; margin: 0; padding: 20px 22px; border-radius: 10px; background: #15121f; color: #d9d3ee; overflow-x: auto;
+      font: 400 13px/1.7 var(--mono); white-space: pre; }
+    .code .k { color: #9f8cff; }
+    .code .m { color: #7d7894; }
+    .demos { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .demos span { padding: 5px 10px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.08); font: 500 12px var(--mono); color: var(--deep); }
+
+    .pr { position: relative; z-index: 1; overflow: hidden; border-radius: 12px; background: #fff; box-shadow: var(--lift), 0 0 0 1px rgba(20, 18, 40, 0.07); }
+    .pr-head { padding: 16px 18px; border-bottom: 1px solid var(--rule); }
+    .pr-head span { display: inline-block; padding: 3px 9px; border-radius: 999px; background: #e3f6ea; color: #157a46; font-size: 12px; font-weight: 500; }
+    .pr-head b { display: block; margin: 8px 0 2px; font-size: 16px; font-weight: 500; }
+    .pr-head small { color: var(--ink-3); font-size: 12.5px; }
+    .pr-files { display: flex; gap: 10px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--rule); font: 400 12.5px var(--mono); }
+    .pr-files .a { color: #157a46; } .pr-files .d { color: #c2361f; }
+    .pr-checks { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 12px 18px; font-size: 13px; color: var(--ink-2); }
+    .pr-checks span::before { content: '✓'; margin-right: 6px; color: #157a46; font-weight: 600; }
+
+    /* the live rolling number */
+    .roll-stage { position: relative; z-index: 1; display: grid; place-items: center; min-height: 230px; border-radius: 10px; background: #fff; box-shadow: var(--lift); }
+    .roll { display: flex; font: 500 clamp(34px, 7vw, 60px)/1 var(--sans); letter-spacing: -0.03em; color: var(--deep); font-variant-numeric: tabular-nums; perspective: 400px; }
+    .roll .slot { position: relative; display: inline-block; }
+    .roll .slot > span { display: inline-block; transform-origin: 50% 60%; }
+    .roll .slot > .old { position: absolute; left: 0; top: 0; }
+    .roll-note { position: relative; z-index: 1; margin: 14px 0 0; font-size: 12.5px; color: rgba(255, 255, 255, 0.62); }
+
+    @media (max-width: 640px) {
+      .drift { grid-template-columns: 1fr; }
+      .dr-mid { max-width: none; }
+      .rules { grid-template-columns: 1fr; }
+      .pp-routes { grid-template-columns: 1fr; }
+      .say { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <script src="shared/case.js"></script>
+  <script>
+    const A = (p) => '../assets/' + p.split('/').map(encodeURIComponent).join('/');
+    const V = (f) => A('halvest/vest/' + f);
+
+    /* ---------- diagrams only this story needs ---------- */
+    const drift = () => `
+      <div class="drift">
+        <div class="dr-col sheet"><p class="dr-h">Figma</p>
+          <div class="dr-row"><span>Gain colour</span><b><i class="sw" style="background:#1f9d55"></i>#1F9D55</b></div>
+          <div class="dr-row"><span>Small button</span><b>44px</b></div>
+          <div class="dr-row"><span>Wallet button</span><b>“Fund wallet”</b></div>
+        </div>
+        <div class="dr-mid"><span class="dr-bubble">“We changed the gain colour.”</span><small>…and someone has to remember to tell engineering</small></div>
+        <div class="dr-col sheet"><p class="dr-h">The app</p>
+          <div class="dr-row off"><span>Gain colour</span><b><i class="sw" style="background:#2fae66"></i>#2FAE66</b></div>
+          <div class="dr-row off"><span>Small button</span><b>40px</b></div>
+          <div class="dr-row off"><span>Wallet button</span><b>“Top up”</b></div>
+        </div>
+      </div>`;
+
+    const RULES = [
+      ['Presentation only', 'A component takes props and calls handlers. It never fetches data, navigates or reads a store.', 'npm run check · boundary'],
+      ['Values come from Figma', 'Colour, type, scale and motion arrive through the tokens. A value typed into a component is a value that will drift.', 'drift check'],
+      ['One way to do each thing', 'One formatter writes every figure; one Change decides every gain or loss. A second way is how one loss came to be printed four ways.', 'formatMoney · <Change>'],
+      ['Name it, then use the name', 'A spring is asked for by its job, a curve by what the move is doing. A bare number is a decision nobody can find later.', "useSpring('settle')"],
+      ['A rule is a check, and a check has been seen failing', 'Each check was run against the old code first, to watch it fail. A check nobody has seen fail is not a check.', 'npm run check'],
+    ];
+    const rules = () => `<div class="rules">${RULES.map(([t, d, c], i) => `<div class="rule"><i>0${i + 1}</i><b>${t}</b><p>${d}</p><code>${c.replace(/</g, '&lt;')}</code></div>`).join('')}</div>`;
+
+    const pipeline = () => `
+      <div class="pipe">
+        <div class="pp"><small>In Figma</small><b>Vest’s variables and text styles</b></div><i class="pp-arrow"></i>
+        <div class="pp accent"><small>Figma plugin</small><b>Halvest Tokens</b></div><i class="pp-arrow"></i>
+        <div class="pp-routes">
+          <div><b>Bridge</b><span>Repo open: written and checked before the button finishes</span></div>
+          <div><b>GitHub</b><span>Never cloned it: opens a pull request</span></div>
+          <div><b>File</b><span>Neither works: a file to apply</span></div>
+        </div><i class="pp-arrow"></i>
+        <div class="pp"><small>In the repo</small><b>Token source that mirrors Figma</b></div><i class="pp-arrow"></i>
+        <div class="pp"><small>What the app imports</small><b>@halvest/tokens</b></div>
+        <p class="pp-check">The drift check fails the moment code and Figma disagree</p>
+      </div>`;
+
+    const TOKENS = [['Primitives', 212, '#6935d3'], ['Semantic, light and dark', 63, '#a184f2'], ['Scale', 39, '#32d0c6'], ['Type styles', 28, '#ff91f7'], ['Elevation', 4, '#28134e']];
+    const tokens = () => `
+      <div class="tk sheet" style="padding:20px">
+        <p class="tk-total">346 tokens, generated from Figma</p>
+        <div class="tk-bar">${TOKENS.map(([, n, c]) => `<i style="flex:${n};background:${c}"></i>`).join('')}</div>
+        <div class="tk-legend">${TOKENS.map(([l, n, c]) => `<span><i style="background:${c}"></i><b>${n}</b>${l}</span>`).join('')}</div>
+      </div>`;
+
+    const say = () => `
+      <div class="say">
+        <div class="say-src"><small>Halvest Say · source of truth</small><code>wallet.fund.cta</code><b>Fund wallet</b></div>
+        <div class="say-outs">
+          <div><small>Figma</small><span class="say-layer">Fund wallet</span></div>
+          <div><small>The app · @halvest/say</small><code>say('wallet.fund.cta')</code></div>
+          <div><small>iOS · .strings</small><code>"wallet.fund.cta" = "Fund wallet";</code></div>
+          <div><small>Android · strings.xml</small><code>&lt;string name="wallet_fund_cta"&gt;Fund wallet&lt;/string&gt;</code></div>
+        </div>
+      </div>`;
+
+    const handover = () => `
+      <pre class="code"><span class="m">/**
+ * AmountEntry · interaction demo
+ *</span>
+ * <span class="k">DS Mapping</span>           <span class="m">every value, mapped to a token</span>
+ * <span class="k">Motion Spec</span>          <span class="m">numbers that are decisions: keep them exactly</span>
+ * <span class="k">Deliberate One-Offs</span>  <span class="m">literal on purpose</span>
+ * <span class="k">Platform Notes</span>       <span class="m">bugs we have already hit, and the workarounds</span>
+ * <span class="k">Out of Scope</span>         <span class="m">wire these to the real implementation</span>
+ <span class="m">*/</span></pre>
+      <div class="demos">${['AmountEntry', 'ChartScrub', 'CountUp', 'CurrencySwipe', 'ForYouCards', 'HideValue', 'NavDock', 'Numpad', 'SwipePager'].map((d) => `<span>${d}</span>`).join('')}</div>`;
+
+    const pr = () => `
+      <div class="pr">
+        <div class="pr-head"><span>Open</span><b>Tokens: sync from Figma</b><small>From Halvest Tokens · ready for review</small></div>
+        <div class="pr-files"><span>src/semantic.json</span><span class="a">+4</span><span class="d">−4</span></div>
+        <div class="pr-checks"><span>Drift check</span><span>Boundary check</span><span>Types</span></div>
+      </div>`;
+
+    /* ---------- live: Vest's rolling number, rebuilt for the web from its doc card ---------- */
+    function rolling(el) {
+      el.innerHTML = '<div class="roll-stage"><div class="roll" aria-hidden="true"></div></div><p class="roll-note">Live, rebuilt for this page from the doc card: changed digits rise out of a blur, left to right.</p>';
+      const roll = el.querySelector('.roll');
+      const values = ['81,240,110.50', '81,240,560.71', '81,241,020.10', '81,240,987.35'];
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let i = 0;
+      const draw = (v) => { roll.innerHTML = '<span>₦</span>' + [...v].map((ch) => `<span class="slot"><span>${ch}</span></span>`).join(''); };
+      draw(values[0]);
+      const step = () => {
+        const from = values[i], to = values[(i = (i + 1) % values.length)];
+        const slots = roll.querySelectorAll('.slot');
+        let n = 0;
+        [...to].forEach((ch, k) => {
+          if (from[k] === ch) return;
+          const slot = slots[k], old = slot.firstElementChild;
+          if (reduce) { old.textContent = ch; return; }
+          old.classList.add('old');
+          const neu = document.createElement('span'); neu.textContent = ch; slot.appendChild(neu);
+          const delay = n++ * 45;
+          old.animate([{ transform: 'none', filter: 'blur(0)', opacity: 1 }, { transform: 'translateY(-38%) rotateX(55deg)', filter: 'blur(4px)', opacity: 0 }],
+            { duration: 260, delay, easing: 'cubic-bezier(0.5, 0, 0.75, 0)', fill: 'forwards' }).finished.then(() => old.remove(), () => {});
+          neu.animate([{ transform: 'translateY(45%) rotateX(-55deg)', filter: 'blur(5px)', opacity: 0 }, { transform: 'none', filter: 'blur(0)', opacity: 1 }],
+            { duration: 540, delay, easing: 'cubic-bezier(0.2, 0.9, 0.25, 1)', fill: 'backwards' });
+        });
+      };
+      // Only roll while it's on screen.
+      let timer = null;
+      new IntersectionObserver(([e]) => {
+        clearInterval(timer); timer = null;
+        if (e.isIntersecting) timer = setInterval(step, 2400);
+      }, { threshold: 0.4 }).observe(el);
+    }
+
+    renderCase({
+      palette: { tint: '#ece6fa', accent: '#6935d3', deep: '#28134e' },
+      back: { href: 'work-cards.html#halvest' },
+      crumbs: ['Halvest', 'Vest'],
+      logo: A('Logos/Halvest.png'),
+      eyebrow: 'Halvest · Design system · 2026',
+      title: 'Vest: a design system that checks itself',
+      lede: 'As Halvest’s only designer, I built Vest in Figma and in code, then wrote the tools that keep the two in step. Design changes now reach the app as pull requests I open myself.',
+      meta: [['Role', 'Sole designer, design engineering'], ['With', 'Halvest’s engineers'], ['When', '2026'], ['Status', 'Shipping soon']],
+      results: [['346', 'design tokens, generated from Figma'], ['44', 'components, each with a doc card'], ['2', 'Figma plugins I built: Tokens and Say'], ['Seconds', 'from a change in Figma to checked code']],
+      hero: { video: A('halvest/vest-teaser.mp4'), w: 1280, h: 720 },
+      next: { href: 'work-cards.html#/work/halvest/mobile', label: 'Next', title: 'Halvest goes mobile' },
+      live: { rolling },
+      blocks: [
+        { t: 'chapter', id: 'overview', eyebrow: 'Overview', title: 'Designed in one place, built in another',
+          text: ['Halvest’s app is designed in Figma and built in code, and the two drifted. A colour changed in the file and the app didn’t follow; a button said one thing in design and another in production. As the only designer, the only check was me noticing.',
+            'Vest is how I stopped relying on that.'] },
+        { t: 'html', label: 'How drift happens', html: drift, cap: 'An illustration of the problem: every difference needed someone to notice it and send a message.' },
+
+        { t: 'chapter', id: 'system', eyebrow: 'The system', toc: 'The system', title: 'So Vest starts in Figma…',
+          text: ['Every component gets a doc card: what it’s for, when not to use it, its parts, every variant and state, how it moves, and what a screen reader says. One page explains how to read them all, and every card says when it last matched the code.'] },
+        { t: 'figure', label: 'Start here', src: V('start-here.webp'), w: 1360, h: 1050, cap: 'The page every designer and engineer reads first: how to read a card, what each status means, and how things are named.' },
+        { t: 'figure', label: 'One component, 336 variants', src: V('button-set.webp'), w: 1600, h: 1206, cap: 'Button: seven styles, three sizes, four states and four icon positions, all one component in Figma and in code.' },
+        { t: 'figure', label: 'Components carry decisions', src: V('action-items.webp'), w: 1600, h: 733, cap: 'An action item already knows its four tones, from urgent to neutral, so no screen has to choose colours for itself.' },
+        { t: 'figure', frame: 'flush deep', label: 'Illustrations live in Vest too', src: V('illustrations.webp'), w: 2400, h: 128 },
+
+        { t: 'chapter', id: 'rules', eyebrow: 'The rules', toc: 'The rules', title: '…and is enforced in code',
+          text: ['Vest is also the package the app imports. Its principles aren’t guidelines people are asked to remember: each one is a check that fails.'] },
+        { t: 'html', label: 'Five principles, five checks', html: rules },
+
+        { t: 'chapter', id: 'tokens', eyebrow: 'Halvest Tokens', toc: 'Tokens', title: 'A change in Figma becomes a pull request',
+          text: ['Halvest Tokens is a Figma plugin I built. It reads Vest’s variables and text styles and sends them to the codebase in one of three ways, depending on who’s sending. A designer who has never cloned the repo can still open a pull request.'] },
+        { t: 'html', label: 'From Figma to the app', html: pipeline },
+        { t: 'html', label: 'What it carries', html: tokens },
+        { t: 'decision', title: 'Why the plugin doesn’t build the package itself', text: 'A Figma plugin can’t run Node, so the GitHub route commits only the token source, and CI builds the package on that branch. It also keeps the plugin’s access small: it can write one branch, and nothing more.' },
+
+        { t: 'chapter', id: 'copy', eyebrow: 'Halvest Say', toc: 'Copy', title: 'The same words, everywhere',
+          text: ['Copy drifted the same way colour did. Halvest Say keeps every string in one place: a Figma plugin to write and link copy, an API that holds the source of truth, and exports in each platform’s own format.'] },
+        { t: 'html', label: 'One string, every surface', html: say },
+        { t: 'todo', what: 'A short recording of the Say plugin in Figma' },
+
+        { t: 'chapter', id: 'motion', eyebrow: 'Motion', toc: 'Motion', title: 'Motion is part of the system, too',
+          text: ['Springs, curves and durations live in one file and are asked for by the job they do, like <code>useSpring(\'settle\')</code>. Every figure that changes in front of you rolls the same way.',
+            'Every spring and duration was tuned on a real phone, not in a prototype preview.'] },
+        { t: 'live', frame: 'deep', label: 'Rolling number', name: 'rolling' },
+        { t: 'figure', label: 'From its doc card', src: V('rolling-stills.webp'), w: 1360, h: 869, cap: 'The doc card stops the roll at its telling moments, worked out from the code’s own springs, and says what Reduce Motion does instead.' },
+
+        { t: 'chapter', id: 'handover', eyebrow: 'Handover', toc: 'Handover', title: 'Handing over interactions, not just screens',
+          text: ['When a static frame can’t explain an interaction, I build a working demo with its spec written into the source: which values map to tokens, which motion numbers are decisions, and which platform bugs we’ve already hit. It’s written to be read by an engineer, or by an AI agent working in our repo.'] },
+        { t: 'html', label: 'Every demo opens with its spec', html: handover, cap: 'The interaction gallery: nine demos so far, each one a single file an engineer can lift into the app.' },
+
+        { t: 'chapter', id: 'issues', eyebrow: 'Known issues', toc: 'Known issues', title: 'Logging what isn’t right yet',
+          text: ['Building a real screen from Vest surfaced problems: touch targets under 44px, parts that break when resized, type that reads wrong in context. Each is logged with a proposed fix as an open decision, rather than quietly patched.'] },
+        { t: 'figure', label: 'Known issues', src: V('known-issues.webp'), w: 1400, h: 1187 },
+
+        { t: 'chapter', id: 'engineering', eyebrow: 'Engineering × Design', toc: 'Engineering × Design', title: 'Now I open pull requests',
+          text: ['Working in the codebase changed how I design. Constraints show up while I’m still deciding, I can fix a token or a string myself, and engineering reviews a change instead of rebuilding it from a handoff. Token and copy changes no longer need a ticket or a message: they arrive as pull requests that only need a review.'] },
+        { t: 'html', label: 'How a design change arrives now', html: pr, cap: 'An illustration of the workflow: the change, the files it touches, and the checks it has to pass.' },
+
+        { t: 'chapter', id: 'reflection', eyebrow: 'Reflection', toc: 'Reflection', title: 'What I’d keep doing' },
+        { t: 'reflect', items: [['Make rules fail loudly.', 'A guideline nobody can fail is only a suggestion. Writing each principle as a check is what made Vest hold.'],
+          ['Tune motion where people feel it.', 'Values that looked right in a preview often felt wrong in the hand. Deciding on a real phone, and writing the reason down, saved arguments later.']] },
+      ],
+    });
+  </script>
+</body>
+</html>

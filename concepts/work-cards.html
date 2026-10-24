@@ -20,6 +20,9 @@
       --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
     }
     * { box-sizing: border-box; }
+    /* Grain over the whole page: dark speckles with alpha, so no blend mode is needed while scrolling. */
+    body::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.16;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 -0.45'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>") 0 0 / 200px 200px; }
     body { margin: 0; background: var(--paper); color: var(--ink); font: 400 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
     img, video { display: block; }
     a { color: inherit; }
@@ -48,9 +51,8 @@
     .impact span { font-size: 12px; color: var(--ink-3); }
 
     /* ---------- the new work grid ---------- */
-    .wgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; margin-top: 48px; }
-    .wcol { display: flex; flex-direction: column; gap: 48px; }
-    .wcol:nth-child(2) { padding-top: 64px; } /* stagger the second column, like a contact sheet */
+    .wgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; margin-top: 48px; align-items: start; }
+    .wcol { display: flex; flex-direction: column; gap: 40px; }
     .wcard { display: block; width: 100%; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: zoom-in; }
     .cover { position: relative; width: 100%; overflow: hidden; border-radius: 4px; display: grid; place-items: center; isolation: isolate; }
     .cover::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background-image: var(--grain); opacity: 0.32; mix-blend-mode: soft-light; }
@@ -75,6 +77,7 @@
     .live-wrap { position: absolute; left: 6%; top: 7%; width: 88%; }
     .live-wrap.fit-height { position: relative; left: auto; top: auto; }
     .live-wrap.full { left: 0; top: 0; width: 100%; }
+    .live-wrap.rise { left: 9%; top: 9%; width: 82%; }
     .pl { position: relative; width: 557px; height: 600px; transform: scale(var(--k, 0.7)); transform-origin: 0 0; overflow: hidden;
       background: #fff; border-radius: 14px; box-shadow: var(--lift), 0 0 0 1px rgba(20, 18, 40, 0.06);
       font: 400 13.5px/1.4 var(--sans); color: #16151c; text-align: left; letter-spacing: 0; }
@@ -130,8 +133,8 @@
     .pl-card .pl-tile.red svg { color: #fff; }
     .pl-card b { display: block; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pl-react, .pl-chips, .pl-src { visibility: hidden; }
-    /* ---------- live Pulse home, "a day with Pulse" (drawn at 640 × 480 then scaled) ---------- */
-    .dy { position: relative; width: 640px; height: 480px; transform: scale(var(--k, 0.7)); transform-origin: 0 0; overflow: hidden;
+    /* ---------- live Pulse home, "a day with Pulse" (drawn at 640 × 360 then scaled) ---------- */
+    .dy { position: relative; width: 640px; height: 360px; transform: scale(var(--k, 0.7)); transform-origin: 0 0; overflow: hidden;
       font: 400 14px/1.4 var(--sans); color: #16151c; text-align: left; letter-spacing: -0.005em; --t: 700ms; }
     .fit-height .dy { border-radius: 14px; box-shadow: var(--lift); }
     .dy svg { display: block; }
@@ -146,9 +149,9 @@
     .dy-sun i.m { background: radial-gradient(circle closest-side, #fff0d4 0 17%, rgba(255, 207, 150, 0.85) 24%, rgba(255, 186, 128, 0.3) 38%, rgba(255, 186, 128, 0) 100%); }
     .dy-sun i.a { background: radial-gradient(circle closest-side, #fffdf6 0 15%, rgba(255, 248, 226, 0.85) 21%, rgba(255, 255, 255, 0.4) 34%, rgba(255, 255, 255, 0) 100%); }
     .dy-sun i.e { background: radial-gradient(circle closest-side, #ffb187 0 17%, rgba(255, 128, 92, 0.8) 25%, rgba(240, 110, 90, 0.32) 40%, rgba(240, 110, 90, 0) 100%); }
-    .dy-moon { position: absolute; left: 92px; top: 56px; width: 18px; height: 18px; border-radius: 50%; opacity: 0; pointer-events: none;
+    .dy-moon { position: absolute; left: 92px; top: 30px; width: 18px; height: 18px; border-radius: 50%; opacity: 0; pointer-events: none;
       box-shadow: inset 5px -3px 0 0 #f1eaff; filter: drop-shadow(0 0 6px rgba(225, 210, 255, 0.55)); }
-    .dy-top { position: absolute; left: 0; right: 0; top: 84px; display: flex; flex-direction: column; align-items: center; transition: color var(--t); }
+    .dy-top { position: absolute; left: 0; right: 0; top: 26px; display: flex; flex-direction: column; align-items: center; transition: color var(--t); }
     .dy-time { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px 0 7px; border-radius: 999px; font-size: 12.5px; color: #5f5f69;
       background: rgba(255, 255, 255, 0.62); box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.06); transition: background var(--t), color var(--t), box-shadow var(--t); }
     .dy-time b { font-weight: 500; color: #16151c; transition: color var(--t); }
@@ -163,7 +166,7 @@
     .dy.dark .dy-sub { color: rgba(255, 255, 255, 0.62); }
     .dy.dark .dy-time { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.72); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14); }
     .dy.dark .dy-time b { color: #fff; }
-    .dy-box { position: absolute; left: 94px; top: 206px; width: 452px; height: 112px; overflow: hidden; border-radius: 16px; border: 1.5px solid transparent;
+    .dy-box { position: absolute; left: 94px; top: 148px; width: 452px; height: 112px; overflow: hidden; border-radius: 16px; border: 1.5px solid transparent;
       background: linear-gradient(#fff, #fff) padding-box, linear-gradient(100deg, #f6b0cc, #d3b5f7 40%, #b8c3fb 65%, #f8c9ab) border-box;
       box-shadow: 0 12px 32px -10px rgba(70, 50, 150, 0.22); }
     .dy-in { position: absolute; left: 0; right: 0; top: 0; height: 109px; }
@@ -200,12 +203,28 @@
     .dy-li .av { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; font-size: 11px; font-weight: 600; color: #fff; flex: none; }
     .dy-li b { font-weight: 500; color: #16151c; }
     .dy-li em { font-style: normal; color: #8e8e96; overflow: hidden; text-overflow: ellipsis; }
-    .dy-chips { position: absolute; left: 94px; top: 332px; width: 452px; display: flex; justify-content: center; gap: 6px; }
+    .dy-chips { position: absolute; left: 94px; top: 272px; width: 452px; display: flex; justify-content: center; gap: 6px; }
     .dy-chips span { display: flex; flex: none; align-items: center; gap: 6px; height: 30px; padding: 0 11px 0 9px; border-radius: 9px; font-size: 12.5px; white-space: nowrap; color: #2a2a30;
       background: rgba(255, 255, 255, 0.78); box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.07); transition: background var(--t), color var(--t), box-shadow var(--t); }
     .dy-chips svg { width: 14px; height: 14px; color: #5f5f69; transition: color var(--t); }
     .dy.dark .dy-chips span { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.86); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14); }
     .dy.dark .dy-chips svg { color: rgba(255, 255, 255, 0.6); }
+    /* ---------- Halvest v2: the brand guide's gradients with the new logo ---------- */
+    .brand { position: absolute; inset: 0; overflow: hidden; }
+    .brand > .layer { background: linear-gradient(180deg, var(--a), var(--b)); }
+    .brand > .layer::after { content: ''; position: absolute; inset: 0; background-image: var(--grain); background-size: 180px; opacity: 0.55; mix-blend-mode: soft-light; }
+    .brand .wm { position: absolute; left: 50%; top: 50%; width: 30%; aspect-ratio: 160.24 / 39.84; translate: -50% -50%; background: var(--c);
+      -webkit-mask: var(--wm) center / contain no-repeat; mask: var(--wm) center / contain no-repeat; }
+    .brand .ic { position: absolute; left: 50%; top: 50%; width: 22%; translate: -50% -50%; border-radius: 22%; box-shadow: 0 24px 48px -16px rgba(40, 10, 90, 0.55); }
+    .brand-grid { position: absolute; inset: 9% 12%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3%; }
+    .brand-grid .brand { position: relative; inset: auto; border-radius: 8px; }
+    .brand-grid .wm { width: 52%; }
+    /* A cover still waiting for visuals: says what it needs instead of pretending. */
+    .todo { position: absolute; inset: 8%; display: grid; place-content: center; gap: 8px; padding: 0 12%; text-align: center; border-radius: 10px;
+      border: 1.5px dashed color-mix(in srgb, var(--ink) 20%, transparent); color: var(--ink-3); font-size: 12.5px; }
+    .todo b { font: 400 19px/1.3 var(--serif); color: var(--ink-2); text-wrap: balance; }
+    .todo.on-dark { color: rgba(255, 255, 255, 0.5); border-color: rgba(255, 255, 255, 0.2); }
+    .todo.on-dark b { color: rgba(255, 255, 255, 0.85); }
     .r-ring { position: absolute; z-index: 5; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; pointer-events: none; border: 2px solid rgba(109, 94, 245, 0.55); }
     .wcap { display: flex; flex-wrap: wrap; gap: 0 6px; margin-top: 10px; font: 400 14.5px/1.35 var(--sans); letter-spacing: -0.01em; }
     .wcap span { color: var(--ink-3); }
@@ -251,6 +270,13 @@
     .pa-desc { margin: 0 0 18px; color: var(--ink-2); font-size: 15px; line-height: 1.6; }
     .pa-frame { margin: 0 0 22px; padding: 10px 12px; border-radius: 10px; background: var(--paper); font-size: 13.5px; }
     .pa-frame .mono { color: var(--ink-3); margin-right: 6px; }
+    .pa-story { margin: 0 0 22px; display: grid; gap: 14px; }
+    .pa-story dt { margin-bottom: 4px; font: 500 10.5px/1.2 var(--mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+    .pa-story dd { margin: 0; font-size: 14.5px; line-height: 1.55; text-wrap: pretty; }
+    .pa-case { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 22px; padding: 9px 14px; border-radius: 999px; background: var(--ink); color: var(--paper);
+      font-size: 13.5px; font-weight: 500; text-decoration: none; transition: transform 200ms var(--ease); }
+    .pa-case:active { transform: scale(0.97); }
+    .fill-in { padding: 0 3px; border-radius: 3px; color: inherit; background: color-mix(in srgb, var(--accent) 20%, transparent); }
     .spec { margin: 0 0 24px; }
     .spec div { display: flex; align-items: baseline; gap: 8px; padding: 6px 0; font-size: 13.5px; }
     .spec dt { color: var(--ink-3); }
@@ -264,9 +290,8 @@
 
     @media (max-width: 860px) {
       .co__head { grid-template-columns: minmax(0, 1fr); gap: 24px; }
-      .wgrid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+      .wgrid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
       .wcol { display: contents; }
-      .wcol:nth-child(2) { padding-top: 0; }
       .wcard { order: var(--o); }
     }
     @media (max-width: 600px) {
@@ -340,7 +365,17 @@
     const panelStack = (items) => (box) => stackOf(items, `panel lift ${fitFor(items[0].c.w / items[0].c.h, box, 0.74, 0.82)}`);
     const bleedStack = (sources) => () =>
       `<div class="bleed lift" style="aspect-ratio:${sources[0].w}/${sources[0].h}">${sources.map((s, i) => `<div class="layer${i ? '' : ' on'}"><img src="${s.src}" alt="" loading="lazy" width="${s.w}" height="${s.h}" /></div>`).join('')}</div>`;
-    const photoStack = (sources) => () => sources.map((s, i) => `<div class="layer${i ? '' : ' on'}"><img class="fill" src="${s.src}" alt="" loading="lazy" /></div>`).join('');
+    // `pos` keeps the important part in a short card, e.g. 'top' for a site whose headline sits at the top.
+    const photoStack = (sources, pos = 'center') => () => sources.map((s, i) => `<div class="layer${i ? '' : ' on'}"><img class="fill" src="${s.src}" alt="" loading="lazy" style="object-position:${pos}" /></div>`).join('');
+    // The v2 brand, from the brand guide: six gradients (top → bottom), the logo in midnight purple on the light ones, white on the rest.
+    const BRAND_GRADS = [['#fff6c4', '#ff91f7', '#28134e'], ['#9bf7a2', '#cc8aff', '#28134e'], ['#32d0c6', '#005b50', '#fff'],
+      ['#ff8540', '#f2001e', '#fff'], ['#6935d3', '#4cb5ff', '#fff'], ['#2db272', '#4cb5ff', '#fff']];
+    const brandLayer = ([a, b, c], mark, on) => `<div class="layer${on ? ' on' : ''}" style="--a:${a};--b:${b};--c:${c}">${mark === 'icon'
+      ? `<img class="ic" src="${A('halvest/v2/app-icon.png')}" alt="" />` : `<i class="wm" style="--wm:url('${new URL(A('halvest/v2/wordmark.svg'), location.href)}')" role="img" aria-label="halvest"></i>`}</div>`;
+    // All six (the cover cycles through them), or one of them for a still frame.
+    const brand = ({ only, mark } = {}) => () => `<div class="brand">${(only === undefined ? BRAND_GRADS : [BRAND_GRADS[only]]).map((g, i) => brandLayer(g, mark, !i)).join('')}</div>`;
+    const brandGrid = () => () => `<div class="brand-grid">${BRAND_GRADS.map((g) => `<div class="brand">${brandLayer(g, 'wordmark', true)}</div>`).join('')}</div>`;
+    const todo = (what, dark = false) => () => `<div class="todo${dark ? ' on-dark' : ''}"><span>Visuals needed</span><b>${what}</b></div>`;
 
     /* ---------- the live Pulse command bar ---------- */
     const I = {
@@ -407,15 +442,15 @@
     };
     // Each beat: the time, a request (strings are typed; [typed, kind, chip] turns into an entity chip), and what comes back.
     const DY_BEATS = [
-      { sky: 'm', word: 'morning', time: '8:30 AM', mins: 8 * 60 + 30, sun: [52, 262],
+      { sky: 'm', word: 'morning', time: '8:30 AM', mins: 8 * 60 + 30, sun: [52, 200],
         ask: ['Prep me for my ', ['10am', 'time', '10:00 AM'], ' with ', ['Acme', 'co', 'Acme Corp']],
         out: { label: 'Meeting brief', title: 'Acme Corp · 10:00 AM', kind: 'dot',
           items: ['Proposal due Friday; they want the updated pricing', 'Last call: questions on seat-based billing', 'Open deal: $48k, in negotiation'] } },
-      { sky: 'a', word: 'afternoon', time: '2:00 PM', mins: 14 * 60, sun: [440, 34],
+      { sky: 'a', word: 'afternoon', time: '2:00 PM', mins: 14 * 60, sun: [440, 22],
         ask: ['Summarize the ', ['Q4 planning sync', 'meet', 'Q4 Planning sync']],
         out: { label: 'Meeting summary', title: 'Q4 Planning sync · 3 action items', kind: 'check',
           items: ['Campaign launch moves to Oct 14', 'Emmanuel: share the updated pricing sheet', 'Marketing: draft the Acme case study'] } },
-      { sky: 'e', word: 'evening', time: '7:45 PM', mins: 19 * 60 + 45, sun: [630, 536], dark: true,
+      { sky: 'e', word: 'evening', time: '7:45 PM', mins: 19 * 60 + 45, sun: [630, 420], dark: true,
         ask: ['Draft follow-ups for ', ['today’s deals', 'deal', 'Today’s deals · 3']],
         out: { label: 'Drafts', title: '3 follow-ups ready to send', kind: 'mail',
           items: [['A', 'Acme Corp', 'Re: proposal and pricing', '#16151c'], ['N', 'Northwind', 'Next steps after the demo', '#2f6fe4'], ['G', 'Globex', 'Contract redlines', '#e5484d']] } },
@@ -463,13 +498,13 @@
 
     /* ---------- live covers: coded components drawn at a fixed size, then scaled to their box ---------- */
     const LIVE = {
-      pulse: { cls: 'pl', w: 557, h: 600, inner: PL_INNER, script: 'pulseLive', still: staticPulse, narrow: [1000, 1080] },
-      day: { cls: 'dy', w: 640, h: 480, inner: DY_INNER, script: 'dayLive', still: staticDay, narrow: [1000, 800], full: true },
+      pulse: { cls: 'pl', w: 557, h: 600, inner: PL_INNER, script: 'pulseLive', still: staticPulse, narrow: [1000, 1080], rise: true },
+      day: { cls: 'dy', w: 640, h: 360, inner: DY_INNER, script: 'dayLive', still: staticDay, narrow: [1000, 600], full: true },
     };
-    // Cards: `lift` floats the component on the cover, `full` makes it the whole cover. Viewer: `fit-height`.
+    // Cards: `lift` floats the component on the cover, `rise` lets it run off the bottom edge, `full` makes it the whole cover. Viewer: `fit-height`.
     const liveCover = (name, { fitHeight = false } = {}) => () => {
       const L = LIVE[name];
-      return `<div class="live-wrap ${fitHeight ? 'fit-height' : L.full ? 'full' : 'lift'}" data-live="${name}"><div class="${L.cls}">${L.inner}</div></div>`;
+      return `<div class="live-wrap ${fitHeight ? 'fit-height' : L.full ? 'full' : L.rise ? 'rise lift' : 'lift'}" data-live="${name}"><div class="${L.cls}">${L.inner}</div></div>`;
     };
     function fitLive(wrap) {
       if (!wrap) return;
@@ -477,7 +512,7 @@
       const k = fit ? Math.min((host.clientHeight * 0.88) / h, (host.clientWidth * 0.9) / w) : wrap.clientWidth / w;
       wrap.style.setProperty('--k', k.toFixed(4));
       if (fit) wrap.style.width = w * k + 'px';
-      else wrap.style.top = Math.max(0, (host.clientHeight - h * k) / 2) + 'px';
+      else if (!wrap.classList.contains('rise')) wrap.style.top = Math.max(0, (host.clientHeight - h * k) / 2) + 'px';
       wrap.style.height = h * k + 'px';
     }
 
@@ -486,6 +521,7 @@
     const hv = F('halvest/Halvest Video.mp4', 956, 720, true);
     const h19 = F('halvest/image 19.png', 1392, 895), h20 = F('halvest/image 20.png', 1392, 1048), h5 = F('halvest/image 5.png', 1392, 894);
     const h2 = F('halvest/image 2.png', 1392, 1044), hStats = F('halvest/Frame 2085654841.png', 1392, 697);
+    const vestTeaser = F('halvest/vest-teaser.mp4', 1280, 720, true);
     const steps = [55, 322, 589, 856, 1123].map((x) => ({ x, y: 208, w: 213, h: 479 }));
     const prosp = F('impulse/prospecting_djdauy.webm', 2000, 1254, true);
     const search = (n) => F(`impulse/Search - ${n}.png`, 2880, 1800);
@@ -501,31 +537,36 @@
     const stage = (bg, build, cap) => ({ bg, build, cap });
     const asPhoto = (s, cap) => ({ photo: s, cap });
     const CFG = {
-      'halvest/fund-wallet': { ratio: 4 / 5, bg: 'tint', cover: phone(hv, { x: 337, y: 54, w: 281, h: 607 }), frames: [stage('tint', phone(hv, { x: 337, y: 54, w: 281, h: 607 }), 'Bank transfer → confirming → success')] },
-      'halvest/onboarding': { ratio: 1, bg: 'mesh', reel: 'onboarding', cover: pair(phone(h19, steps[0], { inPair: true }), phoneStack(steps.slice(1).map((c) => ({ s: h19, c })), { inPair: true })),
+      'halvest/mobile': { bg: 'tint', cover: pair(phone(hv, { x: 337, y: 54, w: 281, h: 607 }, { inPair: true }), phone(h5, { x: 222, y: 136, w: 287, h: 623 }, { inPair: true })),
+        frames: [stage('tint', phone(hv, { x: 337, y: 54, w: 281, h: 607 }), 'Funding the wallet: bank transfer → confirming → success'),
+          stage('dark', phone(h20, { x: 497, y: 84, w: 400, h: 878 }), 'Not enough funds: the amount stays, a sheet offers to top up'),
+          stage('tint', phone(h5, { x: 222, y: 136, w: 287, h: 623 }), 'Portfolio value and composition'), stage('tint', phone(h5, { x: 894, y: 121, w: 287, h: 623 }), 'Business financing breakdown'),
+          asPhoto(h2, 'In the hand'), asPhoto(hStats, 'Launch results')] },
+      'halvest/stocks': { tall: true, bg: 'tint', cover: todo('Stocks: browse, halal screening, buy'), frames: [stage('tint', todo('Stocks: browse, halal screening, buy'), 'Screens to come')] },
+      'halvest/vest': { bg: null, cover: photo(vestTeaser), frames: [asPhoto(vestTeaser, 'Meet Vest')] },
+      'halvest/onboarding': { bg: 'mesh', reel: 'onboarding', cover: pair(phone(h19, steps[0], { inPair: true }), phoneStack(steps.slice(1).map((c) => ({ s: h19, c })), { inPair: true })),
         frames: steps.map((c, i) => stage('tint', phone(h19, c), ['Welcome: the promise in one line', 'Country: search with flags', 'Email: checked as you type', 'Code: resend timer visible', 'Password: strength shown as you type'][i])) },
-      'halvest/not-enough-funds': { ratio: 4 / 5, bg: 'dark', reel: 'funds', cover: phone(h20, { x: 497, y: 84, w: 400, h: 878 }), frames: [stage('dark', phone(h20, { x: 497, y: 84, w: 400, h: 878 }), 'The amount stays; a sheet offers to top up')] },
-      'halvest/portfolio': { ratio: 4 / 5, bg: 'tint', reel: 'portfolio', cover: phoneStack([{ s: h5, c: { x: 222, y: 136, w: 287, h: 623 } }, { s: h5, c: { x: 894, y: 121, w: 287, h: 623 } }]),
-        frames: [stage('tint', phone(h5, { x: 222, y: 136, w: 287, h: 623 }), 'Portfolio value and composition'), stage('tint', phone(h5, { x: 894, y: 121, w: 287, h: 623 }), 'Business financing breakdown')] },
-      'halvest/launch': { ratio: 4 / 3, bg: null, reel: 'ken', cover: photo(h2), frames: [asPhoto(h2, 'In the hand'), asPhoto(hStats, 'Launch results')] },
+      'halvest/v2': { bg: null, reel: 'brandCycle', cover: brand(), frames: [stage('tint', brand({ only: 0 }), 'The new wordmark on the signature gradient'), stage('tint', brandGrid(), 'The logo across the brand gradients'), stage('tint', brand({ only: 4, mark: 'icon' }), 'The new app icon')] },
+      'halvest/halvest-os': { bg: 'dark', cover: todo('A clean recording of the workspace', true), frames: [stage('dark', todo('A clean recording of the workspace', true), 'Recording to come')] },
+      'halvest/admin': { bg: 'tint', cover: todo('Before and after: the dashboard structure'), frames: [stage('tint', todo('Before and after: the dashboard structure'), 'Screens to come')] },
 
-      'impulse/prospecting': { ratio: 4 / 3, bg: 'mesh', cover: bleed(prosp), frames: [stage('mesh', browser(prosp), 'From filters to a recurring automation')] },
-      'impulse/pulse-search': { ratio: 4 / 5, bg: 'dark', reel: 'pulseLive', cover: liveCover('pulse'),
+      'impulse/prospecting': { bg: 'mesh', cover: bleed(prosp), frames: [stage('mesh', browser(prosp), 'From filters to a recurring automation')] },
+      'impulse/pulse-search': { tall: true, bg: 'dark', reel: 'pulseLive', cover: liveCover('pulse'),
         frames: [{ live: 'pulse', bg: 'dark', cap: 'Live: ask Pulse and watch the answer stream in' }, ...['Ask in plain language', 'Pulse gathers what you asked for', 'An answer with sources and quick actions', 'Compose: suggested prompts', 'Compose an email', 'Describe what you need', 'A ready-to-send draft, with attachment', 'Create: notes, reports, emails', 'Create a meeting note', 'Describe the note']
           .map((cap, i) => stage('tint', panel(search(i + 1), PULSE_PANEL), cap)), stage('tint', browser(search(7)), 'In context: the full workspace')] },
-      'impulse/meetings': { ratio: 4 / 3, bg: 'tint', reel: 'cycle', cover: bleedStack([mac(83), mac(84), mac(88)]),
+      'impulse/meetings': { bg: 'tint', reel: 'cycle', cover: bleedStack([mac(83), mac(84), mac(88)]),
         frames: [stage('tint', browser(mac(83)), 'Summary, action items and talk time'), stage('tint', browser(mac(84)), 'What’s new today'), stage('tint', browser(mac(88)), 'A chat that knows who was in the room'), asPhoto(slide, 'Up close')] },
-      'impulse/home': { ratio: 4 / 3, bg: 'dark', reel: 'dayLive', cover: liveCover('day'),
+      'impulse/home': { bg: 'dark', reel: 'dayLive', cover: liveCover('day'),
         frames: [{ live: 'day', bg: 'dark', cap: 'Live: morning, afternoon and evening with Pulse' }, stage('dark', panel(home, { x: 1040, y: 400, w: 1280, h: 820 }), 'One prompt to start from'), stage('tint', browser(home), 'The full home')] },
-      'impulse/design-system': { ratio: 1400 / 918, bg: null, reel: 'ken', cover: photo(ds), frames: [asPhoto(ds, 'Core components')] },
-      'impulse/marketing': { ratio: 1, bg: null, reel: 'cyclePhotos', cover: photoStack([site1, site2]), frames: [asPhoto(site1, 'Launch site'), asPhoto(site2, 'Customer stories')] },
+      'impulse/design-system': { bg: null, reel: 'ken', cover: photo(ds), frames: [asPhoto(ds, 'Core components')] },
+      'impulse/marketing': { bg: null, reel: 'cyclePhotos', cover: photoStack([site1, site2], 'top'), frames: [asPhoto(site1, 'Launch site'), asPhoto(site2, 'Customer stories')] },
 
-      'kinfolk/deal-flow': { ratio: 1136 / 720, bg: null, cover: photo(kv), frames: [asPhoto(kv, 'Board, then a startup’s activity, team and risk'), stage('tint', browser(k(2, 882)), 'The deal-flow board')] },
-      'kinfolk/meeting-recording': { ratio: 4 / 3, bg: 'mesh', reel: 'pan', cover: bleed(k(3)), frames: [stage('mesh', browser(k(3)), 'Transcript, action items and follow-ups')] },
-      'kinfolk/applications': { ratio: 4 / 3, bg: 'tint', reel: 'pan', cover: bleed(k(4)), frames: [stage('tint', browser(k(4)), 'Every application and its status')] },
-      'kinfolk/transaction-rules': { ratio: 1, bg: 'dark', reel: 'rules', cover: panel(k(5), { x: 497, y: 43, w: 474, h: 430 }),
+      'kinfolk/deal-flow': { bg: null, cover: photo(kv), frames: [asPhoto(kv, 'Board, then a startup’s activity, team and risk'), stage('tint', browser(k(2, 882)), 'The deal-flow board')] },
+      'kinfolk/meeting-recording': { tall: true, bg: 'mesh', reel: 'pan', cover: bleed(k(3)), frames: [stage('mesh', browser(k(3)), 'Transcript, action items and follow-ups')] },
+      'kinfolk/applications': { bg: 'tint', reel: 'pan', cover: bleed(k(4)), frames: [stage('tint', browser(k(4)), 'Every application and its status')] },
+      'kinfolk/transaction-rules': { bg: 'dark', reel: 'rules', cover: panel(k(5), { x: 497, y: 43, w: 474, h: 430 }),
         frames: [stage('dark', panel(k(5), MODAL), 'The whole rule: type, conditions, actions, timing'), stage('tint', browser(k(5)), 'In context: the transactions page')] },
-      'kinfolk/site': { ratio: 1400 / 904, bg: null, reel: 'cyclePhotos', cover: photoStack([k(1, 904), k6]), frames: [asPhoto(k(1, 904), 'Landing page'), asPhoto(k6, 'AI features')] },
+      'kinfolk/site': { bg: null, reel: 'cyclePhotos', cover: photoStack([k(1, 904), k6], 'top'), frames: [asPhoto(k(1, 904), 'Landing page'), asPhoto(k6, 'AI features')] },
     };
 
     /* ---------- viewer frames: turn each config frame into a composed "media" item ---------- */
@@ -553,18 +594,19 @@
     });
 
     /* ---------- page ---------- */
+    // Cards are a short 16:9; one per company (`tall`, 5:4) sits at the top of the right column so the columns fall out of step.
+    const COVER = 16 / 9, TALL = 5 / 4;
     function card(s) {
       const cfg = CFG[`${s.company.id}/${s.id}`];
       const bg = cfg.bg ? `background:${BG[s.company.id][cfg.bg]};` : 'background:#ddd;';
       return `
         <button class="wcard" data-shot="${s.index}" ${cfg.reel ? `data-reel="${cfg.reel}"` : ''} style="--o:${s.index}" aria-label="${s.title}. Open">
-          <div class="cover" style="aspect-ratio:${cfg.ratio};${bg}">${cfg.cover(cfg.ratio)}</div>
-          <div class="wcap"><b>${s.title}</b><span>/ ${[s.status, s.year].filter(Boolean).join(' ')}</span></div>
+          <div class="cover" style="aspect-ratio:${cfg.tall ? '5/4' : '16/9'};${bg}">${cfg.cover(cfg.tall ? TALL : COVER)}</div>
+          <div class="wcap"><b>${s.title}</b><span>/ ${[s.status, s.year].filter(Boolean).join(' ')}${s.case ? ' · Case study' : ''}</span></div>
         </button>`;
     }
     document.getElementById('work').innerHTML = P.companies.map((c) => {
       const cards = c.shots.map(card);
-      const left = cards.filter((_, i) => i % 2 === 0).join(''), right = cards.filter((_, i) => i % 2 === 1).join('');
       return `
         <section class="co" id="${c.id}">
           <div class="wrap">
@@ -580,7 +622,7 @@
                 <div class="impact">${c.impact.map((i) => `<div><b>${i.value}</b><span>${i.label}</span></div>`).join('')}</div>
               </div>
             </div>
-            <div class="wgrid"><div class="wcol">${left}</div><div class="wcol">${right}</div></div>
+            <div class="wgrid"><div class="wcol">${cards.filter((_, i) => i % 2 === 0).join('')}</div><div class="wcol">${cards.filter((_, i) => i % 2 === 1).join('')}</div></div>
           </div>
         </section>`;
     }).join('');
@@ -626,7 +668,7 @@
 
       function reset() {
         cover.getAnimations({ subtree: true }).forEach((a) => a.cancel());
-        [cover, ...cover.querySelectorAll('.stack, .bleed')].forEach((el) => layersOf(el).forEach((l, i) => { l.classList.toggle('on', i === 0); l.style.zIndex = ''; }));
+        [cover, ...cover.querySelectorAll('.stack, .bleed, .brand')].forEach((el) => layersOf(el).forEach((l, i) => { l.classList.toggle('on', i === 0); l.style.zIndex = ''; }));
         cover.querySelectorAll('.r-tap, .r-ring').forEach((n) => n.remove());
         if (cursor) cursor.style.opacity = '0';
       }
@@ -977,6 +1019,11 @@
         await r.wait(2200); await r.show(b, 0);
         await r.wait(300);
       },
+      // Step through the brand gradients, like the guide's "logo on gradients" page.
+      async brandCycle(r) {
+        const el = r.$('.brand'), n = BRAND_GRADS.length;
+        for (let i = 1; i <= n; i++) { await r.wait(1600); await r.show(el, i % n); }
+      },
       async cyclePhotos(r) {
         await r.wait(2400); await r.show(r.cover, 1);
         await r.wait(2800); await r.show(r.cover, 0);
@@ -1041,8 +1088,11 @@
           <div class="pa-eyebrow"><img src="${P.asset(c.logo)}" alt="" />${c.name}${c.product ? ' · ' + c.product : ''}<span style="color:var(--ink-3)">· ${c.years}</span></div>
           <h2 class="pa-title">${s.title}</h2>
           <p class="pa-desc">${s.desc}</p>
+          ${s.story ? `<dl class="pa-story">${[['Problem', s.story.problem], ['What I did', s.story.did], ['Key decision', s.story.decision], ['Result', s.story.result]]
+            .filter(([, v]) => v).map(([k, v]) => `<div><dt>${k}</dt><dd>${v.replace(/\[([^\]]+)\]/g, '<mark class="fill-in">$1</mark>')}</dd></div>`).join('')}</dl>` : ''}
+          ${s.case ? `<a class="pa-case" href="${s.case}">Read the case study →</a>` : ''}
           <p class="pa-frame"><span class="mono">${n > 1 ? `<span data-frame-num>${frame + 1}</span> / ${n}` : 'Frame'}</span><span data-frame-cap>${s.media[frame].caption || ''}</span></p>
-          <dl class="spec">${specRow('Contribution', s.contributions.join(', '))}${specRow('Platform', s.platform)}${specRow('Status', s.status)}${specRow('Year', s.year)}</dl>
+          <dl class="spec">${specRow(s.story ? 'Role' : 'Contribution', s.contributions.join(', '))}${specRow('Methods', s.methods?.join(', '))}${specRow('Platform', s.platform)}${specRow('Status', s.status)}${specRow('Year', s.year)}</dl>
           <div class="pa-impact">${c.impact.map((i) => `<div><span>${i.label}</span><b>${i.value}</b></div>`).join('')}</div>
           <a class="link" href="${c.url}" target="_blank" rel="noopener">Visit ${c.url.replace(/^https?:\/\/(www\.)?/, '')} ↗</a>
           <div class="kbd"><span><kbd>←</kbd><kbd>→</kbd>frames</span><span><kbd>↑</kbd><kbd>↓</kbd>shots</span><span><kbd>esc</kbd>close</span></div>`;

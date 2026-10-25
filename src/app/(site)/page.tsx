@@ -1,14 +1,14 @@
 import { Aurora, CompanyTabs } from '@/components/client';
 import { Header, Hero, Sections } from '@/components/sections';
-import { ShotViewer } from '@/components/shots';
+import { WorkEngine } from '@/components/work-engine';
 import { getPortfolio } from '@/lib/content';
+import { present } from '@/lib/work/build';
+import { isUnlocked } from '@/lib/work/lock';
 
-// Safety net: <SanityLive> refreshes open pages instantly on publish; this makes sure
-// the page is also re-checked (at most once a minute, on the next visit) if nobody had it open.
-export const revalidate = 60;
-
+// Reads the case-study cookie, so the page renders per request: protected screens are only
+// included for visitors who have entered the password.
 export default async function Home() {
-  const portfolio = await getPortfolio();
+  const portfolio = present(await getPortfolio(), { unlocked: await isUnlocked() });
   const { settings } = portfolio;
   const companies = portfolio.sections.flatMap((s) => (s.type === 'work' ? s.companies : []));
 
@@ -21,7 +21,7 @@ export default async function Home() {
         <Hero settings={settings} />
       </div>
       <Sections portfolio={portfolio} />
-      <ShotViewer shots={portfolio.shots} />
+      <WorkEngine shots={portfolio.shots} />
     </>
   );
 }

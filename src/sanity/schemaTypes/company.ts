@@ -1,6 +1,6 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
-const STATUSES = ['Shipped', 'Live', 'Internal', 'Handed off', 'Concept', 'Beta'];
+const STATUSES = ['Shipped', 'Live', 'Internal', 'Handed off', 'Concept', 'Beta', 'Shipping soon', 'In progress', 'Prototype'];
 const TAGS = ['Fintech', 'AI', 'Mobile', 'Web', 'Motion', 'B2B', 'B2C'];
 
 /** One piece of UI you want to show: a screen, a flow, or a clip. Lives inside a company. */
@@ -38,6 +38,28 @@ export const shot = defineType({
       of: [{ type: 'string' }],
       options: { layout: 'tags' },
       description: `Suggested: ${TAGS.join(', ')}.`,
+    }),
+    defineField({
+      name: 'story',
+      title: 'Story',
+      type: 'object',
+      description: 'Shown beside the shot in the viewer. Put a number you don’t have yet in [brackets] and it’s highlighted as a gap.',
+      options: { collapsible: true },
+      fields: [
+        defineField({ name: 'problem', title: 'Problem', type: 'text', rows: 2 }),
+        defineField({ name: 'did', title: 'What I did', type: 'text', rows: 3 }),
+        defineField({ name: 'decision', title: 'Key decision', type: 'text', rows: 2 }),
+        defineField({ name: 'result', title: 'Result', type: 'text', rows: 2 }),
+      ],
+    }),
+    defineField({ name: 'methods', title: 'Methods', type: 'array', of: [{ type: 'string' }], options: { layout: 'tags' }, description: 'e.g. User interviews, Mixpanel' }),
+    defineField({ name: 'caseStudy', title: 'Case study link', type: 'string', description: 'e.g. /work/halvest/vest' }),
+    defineField({
+      name: 'locked',
+      title: 'Password protected',
+      type: 'boolean',
+      description: 'Blur the card and hide its screens until the case-study password is entered.',
+      initialValue: false,
     }),
   ],
   preview: {

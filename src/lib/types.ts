@@ -19,7 +19,22 @@ export type Media = {
   width: number;
   height: number;
   alt?: string;
+  /** A composed frame (stage, live component) rendered as-is instead of `src`. */
+  html?: string;
+  thumbHTML?: string;
+  caption?: string;
+  /** Live component to run while this frame is showing. */
+  live?: string;
+  /** Shape on phones, when it differs from `width` × `height`. */
+  nw?: number;
+  nh?: number;
 };
+
+/** The short story beside a shot: what was wrong, what I did, the call I made, what changed. */
+export type Story = { problem?: string; did?: string; decision?: string; result?: string };
+
+/** How a shot appears as a card: cover markup and the background it sits on. */
+export type Cover = { html: string; background: string; tall: boolean; reel?: string };
 
 export type Shot = {
   id: string;
@@ -33,6 +48,13 @@ export type Shot = {
   year?: string;
   contributions: string[];
   tags: string[];
+  story?: Story;
+  methods?: string[];
+  /** Link to the full case study, when there is one. */
+  caseStudy?: string;
+  /** Behind the case-study password until it's entered. */
+  locked?: boolean;
+  cover?: Cover;
 };
 
 export type Impact = { value: string; label: string };

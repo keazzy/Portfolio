@@ -8,6 +8,7 @@ import { isSanityConfigured } from '@/sanity/env';
 import { SanityLive } from '@/sanity/live';
 import './globals.css';
 import './viewer.css';
+import './work.css';
 
 const serif = Newsreader({ subsets: ['latin'], style: ['normal', 'italic'], axes: ['opsz'], variable: '--font-serif', display: 'swap' });
 const sans = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
@@ -26,7 +27,8 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
   const { settings } = await getPortfolio();
   const { isEnabled: isDraftMode } = await draftMode();
   return (
-    <html lang="en" data-accent={settings.accent} className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
+    // data-scroll-behavior: case studies scroll smoothly to their chapters, but page changes still jump straight to the top.
+    <html lang="en" data-accent={settings.accent} data-scroll-behavior="smooth" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
       <body>
         {children}
         {isSanityConfigured && <SanityLive />}

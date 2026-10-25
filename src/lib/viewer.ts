@@ -12,7 +12,8 @@ type Options = {
   theme: string;
   renderPanel: (shot: ViewerShot, index: number, frame: number) => string;
   getOrigin: (index: number) => HTMLElement | null;
-  onChange?: (index: number | null) => void;
+  /** Called after every shot or frame change (null when the viewer closes). */
+  onChange?: (index: number | null, frame: number) => void;
   originRadius?: number;
   mediaRadius?: number;
 };
@@ -86,7 +87,7 @@ export function createViewer(opts: Options) {
   /* ---------- rendering ---------- */
   function renderMedia() {
     const m = shot().media[state.frame];
-    mediaBox.innerHTML = mediaHTML(m, { cls: 'vw-el' });
+    mediaBox.innerHTML = m.html || mediaHTML(m, { cls: 'vw-el' });
     const el = mediaBox.firstElementChild as HTMLImageElement | null;
     if (el && el.tagName === 'IMG') el.loading = 'eager';
     sizeMedia();
@@ -98,7 +99,7 @@ export function createViewer(opts: Options) {
     if (media.length < 2) { frames.innerHTML = ''; return; }
     frames.innerHTML = media.map((m, i) => `
       <button class="vw-frame${i === state.frame ? ' is-active' : ''}" data-frame="${i}" aria-label="Frame ${i + 1} of ${media.length}">
-        ${m.kind === 'video' ? '<span class="vw-frame-play" aria-hidden="true"></span>' : `<img src="${esc(m.thumb)}" alt="" loading="lazy" />`}
+        ${m.thumbHTML || (m.kind === 'video' ? '<span class="vw-frame-play" aria-hidden="true"></span>' : `<img src="${esc(m.thumb)}" alt="" loading="lazy" />`)}
       </button>`).join('');
   }
 
@@ -113,7 +114,7 @@ export function createViewer(opts: Options) {
     renderMedia();
     renderFrames();
     renderPanel();
-    opts.onChange?.(state.index);
+    opts.onChange?.(state.index, state.frame);
   }
 
   function setFrame(i: number) {
@@ -121,6 +122,8 @@ export function createViewer(opts: Options) {
     renderMedia();
     renderFrames();
     body.querySelectorAll('[data-frame-num]').forEach((el) => { el.textContent = String(i + 1); });
+    body.querySelectorAll('[data-frame-cap]').forEach((el) => { el.textContent = shot().media[i].caption || ''; });
+    opts.onChange?.(state.index, i);
   }
 
   function sizeMedia() {
@@ -131,7 +134,7 @@ export function createViewer(opts: Options) {
     const framesH = frames.hidden ? 0 : 64;
     const availW = stage.clientWidth - padX;
     const availH = isNarrow() ? Math.min(window.innerHeight * 0.6, 640) : stage.clientHeight - padY - framesH;
-    const ratio = m.width / m.height;
+    const ratio = isNarrow() && m.nw && m.nh ? m.nw / m.nh : m.width / m.height;
     let w = availW, h = w / ratio;
     if (h > availH) { h = availH; w = h * ratio; }
     wrap.style.width = Math.round(w) + 'px';
@@ -219,7 +222,7 @@ export function createViewer(opts: Options) {
       mediaBox.innerHTML = '';
       lockScroll(false);
       history.replaceState(null, '', state.prevHash && !state.prevHash.startsWith('#/work/') ? state.prevHash : location.pathname + location.search);
-      opts.onChange?.(null);
+      opts.onChange?.(null, 0);
       const focusTo = (origin?.closest('a,button,[tabindex]') as HTMLElement | null) || (state.lastFocus as HTMLElement | null);
       focusTo?.focus?.({ preventScroll: true });
     };

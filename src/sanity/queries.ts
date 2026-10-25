@@ -22,6 +22,10 @@ const companyProjection = /* groq */ `
     year,
     contributions,
     tags,
+    story{ problem, did, decision, result },
+    methods,
+    caseStudy,
+    locked,
     media[]{
       _key,
       _type,

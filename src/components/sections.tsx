@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 import { formatUpdated, hostOf } from '@/lib/text';
 import type { Company, Paragraph, Portfolio, ProjectsSection, SayHelloSection, Settings } from '@/lib/types';
 import { LocalTime } from './client';
-import { ShotGrid, ShotRail, type CardShot } from './shots';
+import { WorkGrid } from './work';
 
 const ext = (external?: boolean) => (external ? { target: '_blank', rel: 'noopener' } : {});
 
@@ -79,15 +79,7 @@ export function Hero({ settings }: { settings: Settings }) {
   );
 }
 
-export function CompanySection({ company, layout, indexOf }: { company: Company; layout: 'rows' | 'grid'; indexOf: (key: string) => number }) {
-  const cards: CardShot[] = company.shots.map((s) => ({
-    index: indexOf(s.key),
-    title: s.title,
-    status: s.status,
-    year: s.year,
-    media: s.media[0],
-    frames: s.media.length,
-  }));
+export function CompanySection({ company, indexOf }: { company: Company; indexOf: (key: string) => number }) {
   return (
     <section className="co" id={company.id} aria-labelledby={`h-${company.id}`}>
       <div className="wrap">
@@ -120,9 +112,8 @@ export function CompanySection({ company, layout, indexOf }: { company: Company;
             )}
           </div>
         </div>
+        {company.shots.length > 0 && <WorkGrid shots={company.shots} indexOf={indexOf} />}
       </div>
-      {cards.length > 0 &&
-        (layout === 'grid' ? <ShotGrid shots={cards} /> : <ShotRail companyId={company.id} companyName={company.name} shots={cards} />)}
     </section>
   );
 }
@@ -191,7 +182,7 @@ export function Sections({ portfolio }: { portfolio: Portfolio }) {
         if (sec.type === 'work') {
           return (
             <main key={sec.key} id={sec.key === firstWork ? 'work' : undefined}>
-              {sec.companies.map((c) => <CompanySection key={c.id} company={c} layout={sec.layout} indexOf={indexOf} />)}
+              {sec.companies.map((c) => <CompanySection key={c.id} company={c} indexOf={indexOf} />)}
             </main>
           );
         }

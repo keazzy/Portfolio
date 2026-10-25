@@ -151,6 +151,10 @@ function sanityCompany(c: Raw): Company {
         year: s.year || undefined,
         contributions: s.contributions || [],
         tags: s.tags || [],
+        story: s.story || undefined,
+        methods: s.methods || undefined,
+        caseStudy: clean(s.caseStudy) || undefined,
+        locked: clean(s.locked) === true,
       }))
       .filter((s: Shot) => s.media.length > 0),
   };

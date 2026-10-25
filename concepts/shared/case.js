@@ -49,7 +49,7 @@
       <nav class="cs-nav"><a href="${C.back.href}">← Work</a><span class="sep">/</span><span>${C.crumbs.join(' <span class="sep">/</span> ')}</span></nav>
       <main class="gate-page">
         <p class="cs-eyebrow">${C.logo ? `<img src="${C.logo}" alt="" />` : ''}${C.eyebrow}</p>
-        <h1>${C.title}</h1>
+        <h1 class="develop">${C.title}</h1>
         <p class="cs-lede">This one is behind a password while Halvest’s v2 is unreleased. You’ll find it in my application.</p>
         <form><input type="password" placeholder="Password" aria-label="Password" autocomplete="off" required /><button>Unlock</button></form>
         <p class="err" aria-live="polite"></p>
@@ -92,7 +92,7 @@
         <main class="cs-main">
           <header class="cs-head">
             <p class="cs-eyebrow">${C.logo ? `<img src="${C.logo}" alt="" />` : ''}${C.eyebrow}</p>
-            <h1>${C.title}</h1>
+            <h1 class="develop">${C.title}</h1>
             <p class="cs-lede">${fill(C.lede)}</p>
             <dl class="cs-meta">${C.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
             ${C.results ? BLOCKS.stats({ items: C.results }) : ''}

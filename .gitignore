@@ -46,3 +46,6 @@ next-env.d.ts
 
 # concept prototypes' local server config
 .claude/
+
+# Licensed fonts (205TF Exposure etc.): never commit them
+concepts/fonts/

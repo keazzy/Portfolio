@@ -19,6 +19,8 @@ body::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-eve
 /* ---------- the new work grid ---------- */
 .wgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; margin-top: 48px; align-items: start; }
 .wcol { display: flex; flex-direction: column; gap: 40px; }
+/* On the 12-column grid (from 1200px) each cover spans exactly 4 of its columns. */
+@media (min-width: 1200px) { .wgrid { column-gap: var(--grid-gap); } }
 .wcard { display: block; width: 100%; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: zoom-in; }
 .cover { position: relative; width: 100%; overflow: hidden; border-radius: 4px; display: grid; place-items: center; isolation: isolate; }
 .cover::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background-image: var(--grain); opacity: 0.32; mix-blend-mode: soft-light; }

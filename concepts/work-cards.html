@@ -370,7 +370,11 @@
     const browser = (s, c = full(s.w, s.h)) => (box) =>
       `<div class="browser lift ${fitFor((c.w / c.h) * 0.96, box, 0.8, 0.84)}"><div class="browser__bar"><i></i><i></i><i></i><span></span></div>${crop(s.src, s.w, s.h, c, { video: s.video })}</div>`;
     const bleed = (s) => () => `<div class="bleed lift" style="aspect-ratio:${s.w}/${s.h}">${s.video ? `<video src="${s.src}#t=0.1" muted loop playsinline autoplay preload="metadata" width="${s.w}" height="${s.h}"></video>` : `<img src="${s.src}" alt="" loading="lazy" width="${s.w}" height="${s.h}" />`}</div>`;
-    const photo = (s) => () => (s.video ? `<video class="fill" src="${s.src}#t=0.1" muted loop playsinline autoplay preload="metadata"></video>` : `<img class="fill" src="${s.src}" alt="" loading="lazy" />`);
+    // `pos` and `zoom` frame a photo for the card, e.g. to bring a laptop in a wide scene forward.
+    const photo = (s, o = {}) => () => {
+      const st = `object-position:${o.pos || 'center'};${o.zoom ? `transform:scale(${o.zoom});transform-origin:${o.pos || 'center'};` : ''}`;
+      return s.video ? `<video class="fill" src="${s.src}#t=0.1" muted loop playsinline autoplay preload="metadata"></video>` : `<img class="fill" src="${s.src}" alt="" loading="lazy" style="${st}" />`;
+    };
 
     /* Stacks: several states of one thing, one visible at a time (the reels switch between them). */
     const layerMedia = (s, c) => {
@@ -540,6 +544,10 @@
     const h19 = F('halvest/image 19.png', 1392, 895), h20 = F('halvest/image 20.png', 1392, 1048), h5 = F('halvest/image 5.png', 1392, 894);
     const h2 = F('halvest/image 2.png', 1392, 1044), hStats = F('halvest/Frame 2085654841.png', 1392, 697);
     const vestTeaser = F('halvest/vest-teaser.mp4', 1280, 720, true);
+    // Device mockups (Mockuuups renders of already-public screens) for covers that don't need motion.
+    const mockPortfolio = F('halvest/mockups/portfolio-pink.webp', 1000, 666);
+    const mockMeetings = F('impulse/mockups/meetings-desk.webp', 1000, 666);
+    const mockApplications = F('kinfolk/mockups/applications-round-table.webp', 1000, 666), mockRecording = F('kinfolk/mockups/meeting-desk-blinds.webp', 1000, 666);
     const st = (n, h = 812) => F(`halvest/stocks/${n}.webp`, 375, h), TOP = { x: 0, y: 0, w: 375, h: 812 };
     const steps = [55, 322, 589, 856, 1123].map((x) => ({ x, y: 208, w: 213, h: 479 }));
     const prosp = F('impulse/prospecting_djdauy.webm', 2000, 1254, true);
@@ -556,8 +564,8 @@
     const stage = (bg, build, cap) => ({ bg, build, cap });
     const asPhoto = (s, cap) => ({ photo: s, cap });
     const CFG = {
-      'halvest/mobile': { bg: 'tint', cover: pair(phone(hv, { x: 337, y: 54, w: 281, h: 607 }, { inPair: true }), phone(h5, { x: 222, y: 136, w: 287, h: 623 }, { inPair: true })),
-        frames: [stage('tint', phone(hv, { x: 337, y: 54, w: 281, h: 607 }), 'Funding the wallet: bank transfer → confirming → success'),
+      'halvest/mobile': { bg: null, cover: photo(mockPortfolio),
+        frames: [asPhoto(mockPortfolio, 'The portfolio, in the hand'), stage('tint', phone(hv, { x: 337, y: 54, w: 281, h: 607 }), 'Funding the wallet: bank transfer → confirming → success'),
           stage('dark', phone(h20, { x: 497, y: 84, w: 400, h: 878 }), 'Not enough funds: the amount stays, a sheet offers to top up'),
           stage('tint', phone(h5, { x: 222, y: 136, w: 287, h: 623 }), 'Portfolio value and composition'), stage('tint', phone(h5, { x: 894, y: 121, w: 287, h: 623 }), 'Business financing breakdown'),
           asPhoto(h2, 'In the hand'), asPhoto(hStats, 'Launch results')] },
@@ -578,16 +586,16 @@
       'impulse/pulse-search': { tall: true, bg: 'dark', reel: 'pulseLive', cover: liveCover('pulse'),
         frames: [{ live: 'pulse', bg: 'dark', cap: 'Live: ask Pulse and watch the answer stream in' }, ...['Ask in plain language', 'Pulse gathers what you asked for', 'An answer with sources and quick actions', 'Compose: suggested prompts', 'Compose an email', 'Describe what you need', 'A ready-to-send draft, with attachment', 'Create: notes, reports, emails', 'Create a meeting note', 'Describe the note']
           .map((cap, i) => stage('tint', panel(search(i + 1), PULSE_PANEL), cap)), stage('tint', browser(search(7)), 'In context: the full workspace')] },
-      'impulse/meetings': { bg: 'tint', reel: 'cycle', cover: bleedStack([mac(83), mac(84), mac(88)]),
-        frames: [stage('tint', browser(mac(83)), 'Summary, action items and talk time'), stage('tint', browser(mac(84)), 'What’s new today'), stage('tint', browser(mac(88)), 'A chat that knows who was in the room'), asPhoto(slide, 'Up close')] },
+      'impulse/meetings': { bg: null, cover: photo(mockMeetings, { pos: '45% 42%', zoom: 1.18 }),
+        frames: [asPhoto(mockMeetings, 'On the desk'), stage('tint', browser(mac(83)), 'Summary, action items and talk time'), stage('tint', browser(mac(84)), 'What’s new today'), stage('tint', browser(mac(88)), 'A chat that knows who was in the room'), asPhoto(slide, 'Up close')] },
       'impulse/home': { bg: 'dark', reel: 'dayLive', cover: liveCover('day'),
         frames: [{ live: 'day', bg: 'dark', cap: 'Live: morning, afternoon and evening with Pulse' }, stage('dark', panel(home, { x: 1040, y: 400, w: 1280, h: 820 }), 'One prompt to start from'), stage('tint', browser(home), 'The full home')] },
       'impulse/design-system': { bg: null, reel: 'ken', cover: photo(ds), frames: [asPhoto(ds, 'Core components')] },
       'impulse/marketing': { bg: null, reel: 'cyclePhotos', cover: photoStack([site1, site2], 'top'), frames: [asPhoto(site1, 'Launch site'), asPhoto(site2, 'Customer stories')] },
 
       'kinfolk/deal-flow': { bg: null, cover: photo(kv), frames: [asPhoto(kv, 'Board, then a startup’s activity, team and risk'), stage('tint', browser(k(2, 882)), 'The deal-flow board')] },
-      'kinfolk/meeting-recording': { tall: true, bg: 'mesh', reel: 'pan', cover: bleed(k(3)), frames: [stage('mesh', browser(k(3)), 'Transcript, action items and follow-ups')] },
-      'kinfolk/applications': { bg: 'tint', reel: 'pan', cover: bleed(k(4)), frames: [stage('tint', browser(k(4)), 'Every application and its status')] },
+      'kinfolk/meeting-recording': { tall: true, bg: null, cover: photo(mockRecording, { pos: '80% 45%', zoom: 1.12 }), frames: [asPhoto(mockRecording, 'At the desk'), stage('mesh', browser(k(3)), 'Transcript, action items and follow-ups')] },
+      'kinfolk/applications': { bg: null, cover: photo(mockApplications, { pos: '50% 42%', zoom: 1.2 }), frames: [asPhoto(mockApplications, 'On the table'), stage('tint', browser(k(4)), 'Every application and its status')] },
       'kinfolk/transaction-rules': { bg: 'dark', reel: 'rules', cover: panel(k(5), { x: 497, y: 43, w: 474, h: 430 }),
         frames: [stage('dark', panel(k(5), MODAL), 'The whole rule: type, conditions, actions, timing'), stage('tint', browser(k(5)), 'In context: the transactions page')] },
       'kinfolk/site': { bg: null, reel: 'cyclePhotos', cover: photoStack([k(1, 904), k6], 'top'), frames: [asPhoto(k(1, 904), 'Landing page'), asPhoto(k6, 'AI features')] },

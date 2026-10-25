@@ -59,7 +59,7 @@ window.PORTFOLIO = {
             decision: 'Ship the core loop first (fund, invest, track) instead of matching every web feature on day one.',
             result: 'Most investors now use the app. Since launch, AUM grew by $2.06M and registered investors passed 950.',
           },
-          media: [{ type: 'video', src: 'assets/halvest/Halvest Video.mp4', w: 956, h: 720 }, { src: 'assets/halvest/image 20.png', w: 1392, h: 1048 }, { src: 'assets/halvest/image 5.png', w: 1392, h: 894 }, { src: 'assets/halvest/image 2.png', w: 1392, h: 1044 }],
+          media: [{ src: 'assets/halvest/mockups/portfolio-pink.webp', w: 1000, h: 666 }, { type: 'video', src: 'assets/halvest/Halvest Video.mp4', w: 956, h: 720 }, { src: 'assets/halvest/image 20.png', w: 1392, h: 1048 }, { src: 'assets/halvest/image 5.png', w: 1392, h: 894 }, { src: 'assets/halvest/image 2.png', w: 1392, h: 1044 }],
           platform: 'iOS · Android', status: 'Shipped', year: '2025',
           contributions: ['Product design', 'Interaction design', 'Prototyping in code'],
           tags: ['Fintech', 'Mobile'],

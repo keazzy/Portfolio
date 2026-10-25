@@ -70,13 +70,14 @@ window.PORTFOLIO = {
           desc: 'Stock investing for people who need to know every share is halal: US stocks first, then halal stocks on the Nigerian Exchange.',
           story: {
             problem: 'Ethically minded investors wanted stocks, but only if they could trust that each one was halal.',
-            did: 'Interviewed investors before designing US stocks and usability-tested the flows, then carried what we learned into the launch of halal NGX stocks.',
+            did: 'Ran six discovery calls with investors (I wrote the script and template) and five usability sessions on the prototype, then carried what we learned into the launch of halal NGX stocks.',
             decision: 'Show compliance status right where you decide to buy, with the screening detail one tap away, so trust never slows investing down.',
             result: 'Together with the app, the new stock products drove much of Halvest’s AUM growth: ethically minded investors finally had stocks they could buy with peace of mind.',
           },
           methods: ['User interviews', 'Usability testing'],
           media: [{ src: 'assets/halvest/stocks/stock.webp', w: 375, h: 1773 }],
           case: 'case-stocks.html',
+          locked: true, // unreleased v2 screens: password from the application
           platform: 'iOS · Android', status: 'Shipped', year: '2026',
           contributions: ['Product design', 'Research'],
           tags: ['Fintech', 'Mobile'],

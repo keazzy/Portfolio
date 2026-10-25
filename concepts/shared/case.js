@@ -41,8 +41,33 @@
     reflect: (b) => `<div class="reflect">${b.items.map(([t, d]) => `<div><b>${t}</b>${d ? `<span>${d}</span>` : ''}</div>`).join('')}</div>`,
   };
 
+  // Concept only: the real site checks the password on the server before sending any of the page.
+  const PASSWORD = 'halvest';
+  const unlocked = () => { try { return sessionStorage.getItem('unlocked') === '1'; } catch { return false; } };
+  function gate(C) {
+    document.body.innerHTML = `
+      <nav class="cs-nav"><a href="${C.back.href}">← Work</a><span class="sep">/</span><span>${C.crumbs.join(' <span class="sep">/</span> ')}</span></nav>
+      <main class="gate-page">
+        <p class="cs-eyebrow">${C.logo ? `<img src="${C.logo}" alt="" />` : ''}${C.eyebrow}</p>
+        <h1>${C.title}</h1>
+        <p class="cs-lede">This one is behind a password while Halvest’s v2 is unreleased. You’ll find it in my application.</p>
+        <form><input type="password" placeholder="Password" aria-label="Password" autocomplete="off" required /><button>Unlock</button></form>
+        <p class="err" aria-live="polite"></p>
+      </main>`;
+    document.querySelector('.gate-page form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (e.target.querySelector('input').value.trim().toLowerCase() !== PASSWORD) {
+        document.querySelector('.gate-page .err').textContent = 'That’s not it. Check the password in my application.';
+        return;
+      }
+      try { sessionStorage.setItem('unlocked', '1'); } catch {}
+      window.renderCase({ ...C, locked: false });
+    });
+  }
+
   window.renderCase = function (C) {
     document.title = `${C.title} · Adeleke Abdulazeez`;
+    if (C.locked && !unlocked()) return gate(C);
     if (C.palette) Object.entries(C.palette).forEach(([k, v]) => document.documentElement.style.setProperty(`--${k}`, v));
 
     // Chapters open a section; the blocks after them belong to it until the next chapter.

@@ -6,14 +6,14 @@
   <title>Work cards → viewer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="shared/viewer.css" />
   <style>
     :root {
       --paper: #f5f3ee; --paper-2: #ebe8e0; --ink: #1a1c19;
       --ink-2: rgba(26, 28, 25, 0.66); --ink-3: rgba(26, 28, 25, 0.44); --rule: rgba(26, 28, 25, 0.12);
       --accent: #b5441b; --accent-soft: #f7e2d5;
-      --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; --mono: 'Geist Mono', ui-monospace, monospace;
+      --serif: 'Libre Baskerville', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; --mono: 'Geist Mono', ui-monospace, monospace;
       --ease: cubic-bezier(0.23, 1, 0.32, 1);
       --gutter: 32px; --maxw: 960px;
       --lift: 0 1px 2px rgba(20, 18, 40, 0.06), 0 22px 44px -20px rgba(20, 18, 40, 0.38);
@@ -32,18 +32,18 @@
     .link { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
 
     .intro { padding: 56px 0 8px; }
-    .intro h1 { margin: 0 0 8px; font: 400 34px/1.15 var(--serif); letter-spacing: -0.015em; }
+    .intro h1 { margin: 0 0 8px; font: 400 29px/1.25 var(--serif); letter-spacing: -0.01em; }
     .intro p { margin: 0; color: var(--ink-2); max-width: 640px; }
 
     /* ---------- company header (unchanged from the site) ---------- */
     .co { padding: 72px 0 24px; border-top: 1px solid var(--rule); margin-top: 48px; }
     .co__head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 64px; }
     .co__logo { width: 40px; height: 40px; border-radius: 11px; border: 1px solid var(--rule); background: #fff; object-fit: cover; margin-bottom: 18px; }
-    .co__name { margin: 0; font: 400 28px/1.2 var(--serif); letter-spacing: -0.01em; }
+    .co__name { margin: 0; font: 400 24px/1.25 var(--serif); letter-spacing: -0.01em; }
     .co__name em { font-style: italic; color: var(--ink-2); }
-    .co__role { margin-top: 2px; color: var(--ink-2); font: 400 17px/1.4 var(--serif); }
+    .co__role { margin-top: 4px; color: var(--ink-2); font: 400 14.5px/1.5 var(--serif); }
     .co__meta { margin-top: 14px; color: var(--ink-3); display: grid; gap: 2px; }
-    .co__summary { margin: 0 0 22px; font: 400 20px/1.5 var(--serif); text-wrap: pretty; }
+    .co__summary { margin: 0 0 22px; font: 400 17.5px/1.65 var(--serif); text-wrap: pretty; }
     .impact { display: flex; border-top: 1px solid var(--rule); }
     .impact div { flex: 1; padding: 12px 16px 0 0; }
     .impact div + div { padding-left: 16px; border-left: 1px solid var(--rule); }
@@ -219,10 +219,24 @@
     .brand-grid { position: absolute; inset: 9% 12%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3%; }
     .brand-grid .brand { position: relative; inset: auto; border-radius: 8px; }
     .brand-grid .wm { width: 52%; }
+    /* ---------- protected work: blurred until the password from an application is entered ---------- */
+    .wcard.locked .cover > :not(.lockpill) { filter: blur(16px) saturate(0.8); transform: scale(1.08); }
+    .lockpill { position: absolute; z-index: 4; left: 50%; top: 50%; display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px;
+      translate: -50% -50%; background: rgba(20, 18, 28, 0.72); color: #fff; font-size: 13px; font-weight: 500; backdrop-filter: blur(8px); white-space: nowrap; }
+    .lockpill svg { width: 13px; height: 13px; }
+    .gate { width: min(400px, calc(100vw - 32px)); padding: 24px; border: 0; border-radius: 16px; background: var(--paper); color: var(--ink); box-shadow: var(--lift); }
+    .gate::backdrop { background: rgba(20, 18, 28, 0.45); backdrop-filter: blur(3px); }
+    .gate h3 { margin: 0 0 6px; font: 400 21px/1.35 var(--serif); }
+    .gate p { margin: 0 0 16px; font-size: 14px; color: var(--ink-2); }
+    .gate form { display: flex; gap: 8px; }
+    .gate input { flex: 1; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid var(--rule); border-radius: 10px; background: #fff; font: inherit; }
+    .gate input:focus { outline: 2px solid color-mix(in srgb, var(--ink) 25%, transparent); outline-offset: 1px; }
+    .gate button { height: 40px; padding: 0 16px; border: 0; border-radius: 10px; background: var(--ink); color: var(--paper); font: 500 14px var(--sans); cursor: pointer; }
+    .gate .err { min-height: 18px; margin: 8px 0 0; font-size: 13px; color: #b2341d; }
     /* A cover still waiting for visuals: says what it needs instead of pretending. */
     .todo { position: absolute; inset: 8%; display: grid; place-content: center; gap: 8px; padding: 0 12%; text-align: center; border-radius: 10px;
       border: 1.5px dashed color-mix(in srgb, var(--ink) 20%, transparent); color: var(--ink-3); font-size: 12.5px; }
-    .todo b { font: 400 19px/1.3 var(--serif); color: var(--ink-2); text-wrap: balance; }
+    .todo b { font: 400 16px/1.45 var(--serif); color: var(--ink-2); text-wrap: balance; }
     .todo.on-dark { color: rgba(255, 255, 255, 0.5); border-color: rgba(255, 255, 255, 0.2); }
     .todo.on-dark b { color: rgba(255, 255, 255, 0.85); }
     .r-ring { position: absolute; z-index: 5; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; pointer-events: none; border: 2px solid rgba(109, 94, 245, 0.55); }
@@ -266,7 +280,7 @@
     .vw-frame .vstage.mini .crop img { height: auto; object-fit: initial; }
     .pa-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); margin-top: 12px; }
     .pa-eyebrow img { width: 20px; height: 20px; border-radius: 6px; border: 1px solid var(--rule); }
-    .pa-title { margin: 14px 0 12px; font: 400 30px/1.12 var(--serif); letter-spacing: -0.015em; text-wrap: balance; }
+    .pa-title { margin: 14px 0 12px; font: 400 25px/1.25 var(--serif); letter-spacing: -0.01em; text-wrap: balance; }
     .pa-desc { margin: 0 0 18px; color: var(--ink-2); font-size: 15px; line-height: 1.6; }
     .pa-frame { margin: 0 0 22px; padding: 10px 12px; border-radius: 10px; background: var(--paper); font-size: 13.5px; }
     .pa-frame .mono { color: var(--ink-3); margin-right: 6px; }
@@ -594,20 +608,28 @@
       const thumbHTML = inner.includes('<video') ? '<span class="vw-frame-play" aria-hidden="true"></span>' : `<div class="vstage mini" style="background:${BG[co][f.bg]}">${inner}</div>`;
       return { html: `<div class="vstage" style="background:${BG[co][f.bg]}">${inner}</div>`, w: STAGE_W, h: STAGE_H, caption: f.cap, thumbHTML };
     }
+    // Concept only: the real site checks the password on the server, so nothing protected is ever sent before it's entered.
+    const PASSWORD = 'halvest';
+    const unlocked = () => { try { return sessionStorage.getItem('unlocked') === '1'; } catch { return false; } };
+    const isLocked = (s) => s.locked && !unlocked();
+    P.allShots.forEach((s) => {
+      if (isLocked(s)) CFG[`${s.company.id}/${s.id}`].frames = [stage('dark', todo('Password protected: unlock it from the card', true), 'Protected')];
+    });
     P.allShots.forEach((s) => {
       const cfg = CFG[`${s.company.id}/${s.id}`];
       if (cfg) s.media = cfg.frames.map((f) => toMedia(s.company.id, f));
     });
 
     /* ---------- page ---------- */
+    const LOCK = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>';
     // Cards are a short 16:9; one per company (`tall`, 5:4) sits at the top of the right column so the columns fall out of step.
     const COVER = 16 / 9, TALL = 5 / 4;
     function card(s) {
       const cfg = CFG[`${s.company.id}/${s.id}`];
       const bg = cfg.bg ? `background:${BG[s.company.id][cfg.bg]};` : 'background:#ddd;';
       return `
-        <button class="wcard" data-shot="${s.index}" ${cfg.reel ? `data-reel="${cfg.reel}"` : ''} style="--o:${s.index}" aria-label="${s.title}. Open">
-          <div class="cover" style="aspect-ratio:${cfg.tall ? '5/4' : '16/9'};${bg}">${cfg.cover(cfg.tall ? TALL : COVER)}</div>
+        <button class="wcard${isLocked(s) ? ' locked' : ''}" data-shot="${s.index}" ${cfg.reel && !isLocked(s) ? `data-reel="${cfg.reel}"` : ''} style="--o:${s.index}" aria-label="${s.title}. ${isLocked(s) ? 'Password protected' : 'Open'}">
+          <div class="cover" style="aspect-ratio:${cfg.tall ? '5/4' : '16/9'};${bg}">${cfg.cover(cfg.tall ? TALL : COVER)}${isLocked(s) ? `<span class="lockpill">${LOCK}Protected</span>` : ''}</div>
           <div class="wcap"><b>${s.title}</b><span>/ ${[s.status, s.year].filter(Boolean).join(' ')}${s.case ? ' · Case study' : ''}</span></div>
         </button>`;
     }
@@ -1104,11 +1126,35 @@
           <div class="kbd"><span><kbd>←</kbd><kbd>→</kbd>frames</span><span><kbd>↑</kbd><kbd>↓</kbd>shots</span><span><kbd>esc</kbd>close</span></div>`;
       },
     });
+    function openGate(shot) {
+      const d = document.createElement('dialog');
+      d.className = 'gate';
+      d.innerHTML = `<h3>${shot.title}</h3><p>Halvest’s v2 hasn’t launched yet, so this one is behind a password. You’ll find it in my application.</p>
+        <form method="dialog"><input type="password" placeholder="Password" aria-label="Password" autocomplete="off" required /><button>Unlock</button></form><p class="err" aria-live="polite"></p>`;
+      document.body.appendChild(d);
+      d.addEventListener('close', () => d.remove());
+      d.querySelector('form').addEventListener('submit', (e) => {
+        if (d.querySelector('input').value.trim().toLowerCase() !== PASSWORD) {
+          e.preventDefault();
+          d.querySelector('.err').textContent = 'That’s not it. Check the password in my application.';
+          return;
+        }
+        try { sessionStorage.setItem('unlocked', '1'); } catch {}
+        location.hash = `/work/${shot.company.id}/${shot.id}`;
+        location.reload();
+      });
+      d.showModal();
+    }
     document.addEventListener('click', (e) => {
       const c = e.target.closest('.wcard[data-shot]');
-      if (c) viewer.open(+c.dataset.shot, c.querySelector('.cover'));
+      if (!c) return;
+      const shot = P.allShots[+c.dataset.shot];
+      if (isLocked(shot)) openGate(shot);
+      else viewer.open(+c.dataset.shot, c.querySelector('.cover'));
     });
-    viewer.openFromHash();
+    const linked = P.allShots.find((s) => location.hash === `#/work/${s.company.id}/${s.id}`);
+    if (linked && isLocked(linked)) openGate(linked);
+    else viewer.openFromHash();
   </script>
 </body>
 </html>

@@ -6,7 +6,7 @@
   <title>Halal stocks · Adeleke Abdulazeez</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="shared/case.css" />
   <style>
     /* ---------- the two screening tests, drawn ---------- */
@@ -20,6 +20,27 @@
     .meter em { position: absolute; bottom: 16px; padding: 2px 7px; border-radius: 6px; background: var(--deep); color: #fff; font: 500 12px var(--mono); font-style: normal; transform: translateX(-50%); }
     .meter-scale { display: flex; justify-content: space-between; font: 400 11.5px var(--mono); color: var(--ink-3); }
     .test p { margin: 10px 0 0; font-size: 13.5px; color: var(--ink-2); }
+
+    /* ---------- what we heard, and what testing changed ---------- */
+    .themes { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .theme { padding: 16px 16px 14px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.07); }
+    .theme b { display: block; font: 400 16px/1.4 var(--serif); }
+    .theme p { margin: 6px 0 12px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+    .theme q { display: block; padding-top: 10px; border-top: 1px solid var(--rule); font: italic 400 13.5px/1.6 var(--serif); color: var(--deep); quotes: '“' '”'; }
+    .theme small { display: block; margin-top: 6px; font-size: 12px; color: var(--ink-3); }
+    .map { position: relative; z-index: 1; overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.07); }
+    .map-row { display: grid; grid-template-columns: 1fr 24px 1fr; align-items: center; gap: 10px; padding: 14px 16px; font-size: 14px; line-height: 1.45; }
+    .map-row + .map-row { border-top: 1px solid var(--rule); }
+    .map-row.head { padding-block: 10px; background: color-mix(in srgb, var(--tint) 60%, #fff); font: 500 10.5px var(--mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+    .map-row span:first-child { color: var(--ink-2); }
+    .map-row i { font-style: normal; text-align: center; color: var(--accent); }
+    @media (max-width: 640px) {
+      .themes { grid-template-columns: 1fr; }
+      .map-row { grid-template-columns: 1fr; gap: 4px; }
+      .map-row i { display: none; }
+      .map-row span:last-child::before { content: '→ '; color: var(--accent); }
+      .map-row.head { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -41,15 +62,33 @@
           </div>`).join('')}
       </div>`;
 
+    // From the May 2025 discovery calls (6) and the usability study (5 sessions). Names left out on purpose.
+    const THEMES = [
+      ['Halal, or not at all', 'All six investors made compliance a condition, not a preference.', 'I’d like to invest, but I need to know it’s genuinely halal and that I’m not walking blindly.', 'Prospective investor, cautious about stocks'],
+      ['Trust had been broken before', 'Half had been burned investing before: over halal concerns, poor transparency, or a broker who went quiet.', 'I don’t want to lose track of my portfolio again.', 'Investor who left a traditional broker'],
+      ['Explain it, without the jargon', 'People asked for plain summaries, not raw data or charts. In testing, terms like “lazy portfolio” and P/E lost them.', 'If it’s well-managed and I don’t have to figure everything out myself, I’m ready to start.', 'Prospective investor, new to stocks'],
+      ['Set it, and trust it', 'Many wanted to put money in regularly and leave it to grow, with control when they wanted it.', 'I want to put my money somewhere and forget it, but I need to trust where it’s going.', 'Prospective investor'],
+    ];
+    const themes = () => `<div class="themes">${THEMES.map(([t, d, q, who]) => `<div class="theme"><b>${t}</b><p>${d}</p><q>${q}</q><small>${who}</small></div>`).join('')}</div>`;
+    const MAP = [
+      ['“Questionable” and “non-compliant” labels caused the most hesitation', 'Only compliant stocks are listed, with one status and the reasoning a tap away'],
+      ['People asked about purification while testing', 'Purification on every stock page, and first at review'],
+      ['Commission, pricing and currency confused people at checkout', 'A review that lists the fee, the total and, for a US stock, the rate'],
+      ['Jargon like “investment themes” and “lazy portfolio” lost people', 'Plain filters: All, My watchlist, NGX and US'],
+      ['People wanted to invest regularly, not trade', 'Recurring buys, from daily to monthly'],
+    ];
+    const findings = () => `<div class="map"><div class="map-row head"><span>What testing showed</span><i></i><span>What shipped</span></div>${MAP.map(([a, b]) => `<div class="map-row"><span>${a}</span><i>→</i><span>${b}</span></div>`).join('')}</div>`;
+
     renderCase({
       palette: { tint: '#ece6fa', accent: '#6935d3', deep: '#28134e' },
+      locked: true,
       back: { href: 'work-cards.html#halvest' },
       crumbs: ['Halvest', 'Halal stocks'],
       logo: A('Logos/Halvest.png'),
       eyebrow: 'Halvest · Stocks · 2026',
       title: 'Halal stocks, bought with peace of mind',
       lede: 'Ethically minded investors wanted stocks, but only ones they could trust were halal. I designed Halvest’s stock investing, first for US stocks and then for halal stocks on the Nigerian Exchange, so the proof sits next to the price and doing the right thing is the default.',
-      meta: [['Role', 'Sole product designer'], ['Research', 'User interviews, usability tests'], ['When', '2026'], ['Platform', 'iOS and Android']],
+      meta: [['Role', 'Sole product designer'], ['Research', 'Discovery calls, usability tests'], ['When', '2025–2026'], ['Platform', 'iOS and Android']],
       results: [['2', 'markets: US stocks, then halal NGX stocks'], ['3', 'order types: market, limit and recurring'], ['On', 'by default: purification on every dividend and sale']],
       heroScreens: { items: [S('list'), { ...S('stock', 1773) }, { ...S('compliance', 1712), scroll: true }] },
       next: { href: 'case-vest.html', label: 'Also from Halvest', title: 'Vest: a design system that checks itself' },
@@ -59,8 +98,12 @@
             'They didn’t need another trading app. They needed one that let them invest with peace of mind.'] },
 
         { t: 'chapter', id: 'research', eyebrow: 'Research', title: 'It started with listening',
-          text: ['Before designing US stocks I interviewed investors and ran usability tests on the flows. What we learned shaped that launch, and then the launch of halal stocks on the Nigerian Exchange that followed.'] },
-        { t: 'todo', what: 'Themes and anonymised quotes from the 2025 discovery calls' },
+          text: ['In May 2025 I ran six discovery calls with investors about stocks: what they used, why they’d stopped or never started, and what would make them try. I wrote the interview script and the template we logged every call in. Then I put a Figma prototype in front of five people in moderated sessions over two weeks.'] },
+        { t: 'stats', items: [['6', 'discovery calls with investors'], ['5', 'moderated usability sessions'], ['6 of 6', 'made halal compliance a condition'], ['3 of 6', 'had been burned investing before']] },
+        { t: 'html', label: 'What we heard', html: themes },
+        { t: 'text', text: 'Investors also asked for names they already knew, like Dangote, which the halal NGX stocks later brought in.' },
+        { t: 'html', label: 'From finding to feature', html: findings, cap: 'The usability study ended with a clear brief: compliance education first, then a clearer buy flow. These are the changes that shipped.' },
+        { t: 'quote', text: 'Why show non-compliant stocks if I can’t buy them?', who: 'Usability participant, an existing Halvest investor' },
 
         { t: 'chapter', id: 'compliance', eyebrow: 'Compliance', toc: 'Compliance', title: 'The proof sits next to the price',
           text: ['Every stock carries a “Shariah compliant” pill right under its price. It opens a compliance report: the two tests a company has to pass, where it sits against each ceiling, and a summary in plain language.',
@@ -71,6 +114,7 @@
           { ...S('compliance-answered', 1712), cap: 'An answer, in plain language.' }] },
         { t: 'html', label: 'What the report checks', html: tests, cap: 'Redrawn from the Dangote Cement report: both tests are AAOIFI standards, and the company passes each with room to spare.' },
         { t: 'decision', title: 'Show the test, not just the badge', text: 'A “compliant” label asks people to trust us. Two bars against published ceilings let them check it for themselves, without leaving the stock.' },
+        { t: 'decision', title: 'One status, because only compliant stocks are listed', text: 'We tested “questionable” and “non-compliant” labels too, and they caused the most hesitation. Since Halvest lists only stocks that pass screening, we settled on a single status. It still changes if a company’s screening does, which answers the question one tester asked: “What if a stock becomes non-compliant?”' },
 
         { t: 'chapter', id: 'purification', eyebrow: 'Purification', toc: 'Purification', title: 'Doing the right thing is the default',
           text: ['Even a compliant company earns a little impermissible income, so a share of each dividend should go to charity. Halvest works out that share and gives it on the investor’s behalf.',

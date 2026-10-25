@@ -48,11 +48,11 @@ export const seed = {
     timezone: 'Africa/Lagos',
     headline: 'I’m Adeleke, a product designer who makes money and AI feel trustworthy.',
     emphasis: 'trustworthy',
+    intro: ['Based in Nigeria, with 5+ years across fintech, AI and B2B tools.'],
+    // \u00a0 keeps each @ on the same line as its name.
+    currently: ['Leading design @\u00a0[Halvest](#halvest) and building @\u00a0[Waqty](https://testflight.apple.com/join/f8TbJ9Qy) and @\u00a0[Minaroute](https://testflight.apple.com/join/7cghR8qf)'],
+    previously: ['I was the founding designer at [Impulse AI](#impulse), an agentic CRM, and led design on [Cuuro](#kinfolk), an AI due-diligence platform built inside Kinfolk VC.'],
     summary: [
-      'I’m a product designer based in Nigeria, with 5+ years across fintech, AI and B2B tools.',
-      'I currently design at [Halvest](#halvest), a halal investment platform, where I took the product from web-only to a mobile app that grew assets under management by $2.06M.',
-      'Previously, I was the founding designer at [Impulse AI](#impulse), an agentic CRM, and led design on [Cuuro](#kinfolk), an AI due-diligence platform built inside Kinfolk VC.',
-      'On the side I build iOS apps, [Waqty](https://testflight.apple.com/join/f8TbJ9Qy) and [Minaroute](https://testflight.apple.com/join/7cghR8qf), and design marketing sites in Webflow.',
       'You can find me on [LinkedIn](https://linkedin.com/in/deleke) and [Instagram](https://instagram.com/adeleke.design), or reach me via [email](mailto:delekeazzy1@gmail.com).',
     ],
     photo: { path: 'assets/Hero-image.avif', w: 960, h: 1280, alt: 'Stage at a Halvest event under an ‘A New Dawn’ banner', caption: 'Halvest, a new dawn' },

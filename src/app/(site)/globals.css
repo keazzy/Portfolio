@@ -76,6 +76,12 @@ img, video { display: block; max-width: 100%; }
 .summary { max-width: 540px; color: var(--ink-2); }
 .summary p { margin: 0 0 12px; }
 .summary a { color: var(--ink); }
+/* Currently / Previously: a muted label over each line, like the top of a CV. */
+.now { display: grid; gap: 16px; margin: 0 0 22px; }
+.now:not(:first-child) { margin-top: 22px; }
+.now dt { margin-bottom: 2px; color: var(--ink-3); }
+.now dd { margin: 0; color: var(--ink); }
+.now dd p { margin: 0; }
 .stamp { margin-top: 20px; display: flex; gap: 14px; flex-wrap: wrap; color: var(--ink-3); }
 .stamp span::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: 1px; }
 .stamp span + span::before { background: var(--ink-3); }

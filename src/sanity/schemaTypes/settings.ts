@@ -1,5 +1,31 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
+/** A paragraph that can carry links (to a site, an email, or a section like #halvest). */
+const paragraph = defineArrayMember({
+  type: 'block',
+  styles: [{ title: 'Paragraph', value: 'normal' }],
+  lists: [],
+  marks: {
+    decorators: [],
+    annotations: [
+      {
+        name: 'link',
+        type: 'object',
+        title: 'Link',
+        fields: [
+          defineField({
+            name: 'href',
+            title: 'URL',
+            type: 'url',
+            description: 'A web address, mailto: link, or a section on the page like #halvest.',
+            validation: (r) => r.uri({ allowRelative: true, scheme: ['http', 'https', 'mailto'] }),
+          }),
+        ],
+      },
+    ],
+  },
+});
+
 export const settings = defineType({
   name: 'settings',
   title: 'Site settings',
@@ -36,37 +62,36 @@ export const settings = defineType({
         }),
     }),
     defineField({
+      name: 'intro',
+      title: 'Intro',
+      type: 'array',
+      group: 'intro',
+      description: 'A short line before Currently, e.g. where you’re based and how long you’ve been designing.',
+      of: [paragraph],
+    }),
+    defineField({
+      name: 'currently',
+      title: 'Currently',
+      type: 'array',
+      group: 'intro',
+      description: 'One line, e.g. “Leading design @ Halvest”. Select text and use the link button to link it.',
+      of: [paragraph],
+    }),
+    defineField({
+      name: 'previously',
+      title: 'Previously',
+      type: 'array',
+      group: 'intro',
+      description: 'A sentence or two about earlier work.',
+      of: [paragraph],
+    }),
+    defineField({
       name: 'summary',
       title: 'Summary',
       type: 'array',
       group: 'intro',
-      description: 'A few short paragraphs. Select text and use the link button to link it.',
-      of: [
-        defineArrayMember({
-          type: 'block',
-          styles: [{ title: 'Paragraph', value: 'normal' }],
-          lists: [],
-          marks: {
-            decorators: [],
-            annotations: [
-              {
-                name: 'link',
-                type: 'object',
-                title: 'Link',
-                fields: [
-                  defineField({
-                    name: 'href',
-                    title: 'URL',
-                    type: 'url',
-                    description: 'A web address, mailto: link, or a section on the page like #halvest.',
-                    validation: (r) => r.uri({ allowRelative: true, scheme: ['http', 'https', 'mailto'] }),
-                  }),
-                ],
-              },
-            ],
-          },
-        }),
-      ],
+      description: 'Shown after Currently and Previously, e.g. where to find you. Select text and use the link button to link it.',
+      of: [paragraph],
     }),
     defineField({ name: 'photo', title: 'Photo', type: 'image', group: 'intro', description: 'Shown as a tilted polaroid next to your work history (hidden on phones).' }),
     defineField({ name: 'photoAlt', title: 'Photo description', type: 'string', group: 'intro', description: 'For screen readers.' }),

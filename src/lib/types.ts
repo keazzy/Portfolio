@@ -103,6 +103,10 @@ export type Settings = {
   timezone: string;
   /** Headline with the emphasised words pulled out so they can be set in italic. */
   headline: { before: string; emphasis: string; after: string };
+  /** The intro reads: a short line, “Currently” and “Previously”, then the summary paragraphs. */
+  intro: Paragraph[];
+  currently: Paragraph[];
+  previously: Paragraph[];
   summary: Paragraph[];
   photo?: { src: string; alt: string; caption?: string };
   email: string;

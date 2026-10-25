@@ -38,6 +38,7 @@ export function Header({ settings }: { settings: Settings }) {
 
 export function Hero({ settings }: { settings: Settings }) {
   const h = settings.headline;
+  const now = ([['Currently', settings.currently], ['Previously', settings.previously]] as const).filter(([, p]) => p.length > 0);
   return (
     <section className="hero">
       <h1>
@@ -47,6 +48,17 @@ export function Hero({ settings }: { settings: Settings }) {
       </h1>
       <div className="hero__summary">
         <div className="summary">
+          {settings.intro.map((p, i) => <Rich key={i} paragraph={p} />)}
+          {now.length > 0 && (
+            <dl className="now">
+              {now.map(([label, paragraphs]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{paragraphs.map((p, i) => <Rich key={i} paragraph={p} />)}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
           {settings.summary.map((p, i) => <Rich key={i} paragraph={p} />)}
         </div>
         <div className="stamp mono">

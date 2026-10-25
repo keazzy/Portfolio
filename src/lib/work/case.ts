@@ -39,8 +39,6 @@ export type CaseStudy = {
   lede: string;
   meta: [string, string][];
   results?: [string, string][];
-  hero?: Media;
-  heroScreens?: { items: Screen[] };
   next?: { href: string; label?: string; title: string };
   blocks: Block[];
 };
@@ -81,9 +79,6 @@ function block(b: Exclude<Block, { t: 'chapter' }>): string {
   }
 }
 
-export const caseNav = (C: CaseStudy) =>
-  `<nav class="cs-nav"><a href="${C.back.href}">← Work</a><span class="sep">/</span><span>${C.crumbs.join(' <span class="sep">/</span> ')}</span></nav>`;
-
 export function renderCase(C: CaseStudy) {
   // Chapters open a section; the blocks after them belong to it until the next chapter.
   let body = '', open = false;
@@ -101,7 +96,6 @@ export function renderCase(C: CaseStudy) {
   if (open) body += '</section>';
 
   return `
-    ${caseNav(C)}
     <div class="cs">
       <aside class="toc" aria-label="Contents">${chapters.map((c) => `<a href="#${c.id}">${c.toc || c.eyebrow}</a>`).join('')}</aside>
       <main class="cs-main">
@@ -111,8 +105,6 @@ export function renderCase(C: CaseStudy) {
           <p class="cs-lede">${fill(C.lede)}</p>
           <dl class="cs-meta">${C.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
           ${C.results ? stats(C.results) : ''}
-          ${C.hero ? `<div class="cs-hero">${media(C.hero)}</div>` : ''}
-          ${C.heroScreens ? `<div class="cs-hero screens-hero">${screens(C.heroScreens.items)}</div>` : ''}
         </header>
         ${body}
         ${C.next ? `<a class="next" href="${C.next.href}"><small>${C.next.label || 'Next'}</small><b>${C.next.title} →</b></a>` : ''}

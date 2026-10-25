@@ -8,9 +8,11 @@
 }
 html:has(.case) { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html:has(.case) { scroll-behavior: auto; } }
-/* The covers' phone notch and pair height don't belong on these phones. */
-.case .phone::after { content: none; }
-.case .pair { height: auto; align-items: start; }
+/* The project's cover opens the page, wide like a title card. It's the card's own cover, and morphs from it. */
+.case .cs-cover { width: min(100% - 2 * var(--gutter), 1200px); margin: 4px auto 0; aspect-ratio: 16 / 9; border-radius: 4px; }
+/* The covers' phone notch and pair height don't belong on the case's own phones. */
+.case .screen .phone::after { content: none; }
+.case .fig-card .pair { height: auto; align-items: start; }
 /* ---------- frame ---------- */
 .case .cs-nav { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 var(--gutter);
   font-size: 13.5px; color: var(--ink-2); background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); }
@@ -42,8 +44,6 @@ html:has(.case) { scroll-behavior: smooth; }
 .case .stats div + div { border-left: 1px solid var(--rule); }
 .case .stats b { display: block; font: 500 26px/1.1 var(--mono); letter-spacing: -0.03em; }
 .case .stats span { display: block; margin-top: 6px; font-size: 12.5px; color: var(--ink-2); }
-.case .cs-hero { margin-top: 36px; border-radius: 14px; overflow: hidden; background: var(--tint); box-shadow: 0 0 0 1px var(--rule); }
-.case .cs-hero video, .case .cs-hero img { width: 100%; height: auto; }
 
 /* ---------- chapters ---------- */
 .case .ch { padding-top: 88px; scroll-margin-top: 72px; }
@@ -66,7 +66,7 @@ html:has(.case) { scroll-behavior: smooth; }
 .case .fig.deep .fig-label { color: rgba(255, 255, 255, 0.6); }
 .case .fig figcaption { max-width: 620px; margin-top: 10px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
 .case .fig .sheet { position: relative; z-index: 1; border-radius: 10px; background: #fff; box-shadow: var(--lift), 0 0 0 1px rgba(20, 18, 40, 0.06); }
-.case .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.case .fig-card .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .case .todo-card { display: grid; place-content: center; gap: 6px; min-height: 220px; text-align: center; background: transparent !important;
   border: 1.5px dashed color-mix(in srgb, var(--ink) 18%, transparent); color: var(--ink-3); font-size: 12.5px; }
 .case .todo-card::after { display: none; }
@@ -76,13 +76,12 @@ html:has(.case) { scroll-behavior: smooth; }
 .case .screens { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 196px)); justify-content: center; gap: 18px; }
 .case .screen { min-width: 0; }
 .case .screen .tag { display: block; margin: 0 0 8px; font: 500 10.5px/1.2 var(--mono); letter-spacing: 0.07em; text-transform: uppercase; color: color-mix(in srgb, var(--deep) 65%, transparent); }
-.case .phone { position: relative; aspect-ratio: 375 / 812; overflow: hidden; border-radius: 13% / 6%; background: #0b0a10;
+.case .screen .phone { position: relative; aspect-ratio: 375 / 812; overflow: hidden; border-radius: 13% / 6%; background: #0b0a10;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 0 5px #101016, var(--lift); }
-.case .phone img { width: 100%; height: auto; }
+.case .screen .phone img { width: 100%; height: auto; }
 .case .screen p { margin: 12px 2px 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-2); }
 .case .fig.dark .screen p, .case .fig.deep .screen p { color: rgba(255, 255, 255, 0.64); }
 .case .fig.dark .screen .tag, .case .fig.deep .screen .tag { color: rgba(255, 255, 255, 0.5); }
-.case .cs-hero.screens-hero { padding: 40px 24px; background: #15131c; }
 .case .quote { max-width: 620px; margin: 28px 0; padding: 4px 0 4px 20px; border-left: 2px solid var(--accent); }
 .case .quote p { margin: 0; font: 400 21px/1.45 var(--serif); text-wrap: pretty; }
 .case .quote cite { display: block; margin-top: 8px; font-size: 13px; font-style: normal; color: var(--ink-3); }
@@ -125,10 +124,9 @@ html:has(.case) { scroll-behavior: smooth; }
   .case .ch { padding-top: 64px; }
   .case .ch h2 { font-size: 24px; }
   .case .fig-card { padding: 40px 14px 14px; border-radius: 12px; }
-  .case .pair { grid-template-columns: 1fr; }
+  .case .fig-card .pair { grid-template-columns: 1fr; }
   .case .screens { grid-template-columns: repeat(var(--m), minmax(0, 1fr)); gap: 12px; }
-  .case .cs-hero.screens-hero { padding: 24px 14px; }
-  .case .quote p { font-size: 18px; }
+    .case .quote p { font-size: 18px; }
 }
 
 /* ---------- Vest ---------- */

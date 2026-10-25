@@ -90,7 +90,6 @@ export const vest: CaseStudy = {
   lede: 'As Halvest’s only designer, I built Vest in Figma and in code, then wrote the tools that keep the two in step. Design changes now reach the app as pull requests I open myself.',
   meta: [['Role', 'Sole designer, design engineering'], ['With', 'Halvest’s engineers'], ['When', '2026'], ['Status', 'Shipping soon']],
   results: [['346', 'design tokens, generated from Figma'], ['44', 'components, each with a doc card'], ['2', 'Figma plugins I built: Tokens and Say'], ['Seconds', 'from a change in Figma to checked code']],
-  hero: { video: A('halvest/vest-teaser.mp4'), w: 1280, h: 720 },
   next: { href: '/#/work/halvest/mobile', label: 'Next', title: 'Halvest goes mobile' },
   blocks: [
     { t: 'chapter', id: 'overview', eyebrow: 'Overview', title: 'Designed in one place, built in another',

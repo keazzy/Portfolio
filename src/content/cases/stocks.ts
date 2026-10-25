@@ -44,7 +44,6 @@ export const stocks: CaseStudy = {
   lede: 'Ethically minded investors wanted stocks, but only ones they could trust were halal. I designed Halvest’s stock investing, first for US stocks and then for halal stocks on the Nigerian Exchange, so the proof sits next to the price and doing the right thing is the default.',
   meta: [['Role', 'Sole product designer'], ['Research', 'Discovery calls, usability tests'], ['When', '2025–2026'], ['Platform', 'iOS and Android']],
   results: [['2', 'markets: US stocks, then halal NGX stocks'], ['3', 'order types: market, limit and recurring'], ['On', 'by default: purification on every dividend and sale']],
-  heroScreens: { items: [S('list'), { ...S('stock', 1773) }, { ...S('compliance', 1712), scroll: true }] },
   next: { href: '/work/halvest/vest', label: 'Also from Halvest', title: 'Vest: a design system that checks itself' },
   blocks: [
     { t: 'chapter', id: 'overview', eyebrow: 'Overview', title: 'Halal investors wanted stocks, on their terms',

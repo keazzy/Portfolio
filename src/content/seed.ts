@@ -22,6 +22,8 @@ export type SeedShot = {
   methods?: string[];
   caseStudy?: string;
   locked?: boolean;
+  /** Kept in the content but left off the site. */
+  hidden?: boolean;
 };
 export type SeedCompany = {
   id: string;

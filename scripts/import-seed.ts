@@ -89,6 +89,7 @@ async function companyDoc(c: SeedCompany) {
       methods: s.methods,
       caseStudy: s.caseStudy,
       locked: s.locked ?? false,
+      hidden: s.hidden ?? false,
     });
   }
   return {

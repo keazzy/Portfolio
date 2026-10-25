@@ -47,7 +47,7 @@ function seedCompany(c: SeedCompany): Company {
   return {
     ...c,
     logo: local(c.logo),
-    shots: c.shots.map((s): Shot => ({ ...s, key: `${c.id}/${s.id}`, media: s.media.map(seedMedia) })),
+    shots: c.shots.filter((s) => !s.hidden).map((s): Shot => ({ ...s, key: `${c.id}/${s.id}`, media: s.media.map(seedMedia) })),
   };
 }
 

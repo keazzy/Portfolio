@@ -61,10 +61,17 @@ export const shot = defineType({
       description: 'Blur the card and hide its screens until the case-study password is entered.',
       initialValue: false,
     }),
+    defineField({
+      name: 'hidden',
+      title: 'Hide from the site',
+      type: 'boolean',
+      description: 'Keeps the project here, with everything in it, but leaves it off the site until you switch this off.',
+      initialValue: false,
+    }),
   ],
   preview: {
-    select: { title: 'title', status: 'status', year: 'year', image: 'media.0.image' },
-    prepare: ({ title, status, year, image }) => ({ title, subtitle: [status, year].filter(Boolean).join(' · '), media: image }),
+    select: { title: 'title', status: 'status', year: 'year', hidden: 'hidden', image: 'media.0.image' },
+    prepare: ({ title, status, year, hidden, image }) => ({ title, subtitle: [hidden && 'Hidden', status, year].filter(Boolean).join(' · '), media: image }),
   },
 });
 

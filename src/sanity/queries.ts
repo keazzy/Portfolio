@@ -12,7 +12,7 @@ const companyProjection = /* groq */ `
   url,
   summary,
   impact[]{ value, label },
-  shots[]{
+  shots[hidden != true]{
     _key,
     "id": coalesce(slug.current, _key),
     title,

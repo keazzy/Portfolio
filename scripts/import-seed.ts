@@ -85,6 +85,10 @@ async function companyDoc(c: SeedCompany) {
       year: s.year,
       contributions: s.contributions,
       tags: s.tags,
+      story: s.story,
+      methods: s.methods,
+      caseStudy: s.caseStudy,
+      locked: s.locked ?? false,
     });
   }
   return {

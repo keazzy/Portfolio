@@ -40,7 +40,7 @@ const isVideo = (p: string) => /\.(mp4|webm|mov)$/i.test(p);
 
 function seedMedia(m: SeedMedia): Media {
   const src = local(m.path);
-  return { kind: isVideo(m.path) ? 'video' : 'image', src, card: src, thumb: src, width: m.w, height: m.h, alt: m.alt };
+  return { kind: isVideo(m.path) ? 'video' : 'image', src, card: src, thumb: src, width: m.w, height: m.h, alt: m.alt, file: m.path.split('/').pop() };
 }
 
 function seedCompany(c: SeedCompany): Company {
@@ -114,7 +114,7 @@ function sanityMedia(m: Raw): Media | null {
   if (m._type === 'videoFrame') {
     const url = clean(m.url);
     if (!url) return null;
-    return { kind: 'video', src: url, card: url, thumb: url, width: m.width || 1600, height: m.height || 1000, alt: m.alt };
+    return { kind: 'video', src: url, card: url, thumb: url, width: m.width || 1600, height: m.height || 1000, alt: m.alt, file: clean(m.file) || undefined };
   }
   const assetId = clean(m.assetId);
   if (!assetId) return null;
@@ -126,6 +126,7 @@ function sanityMedia(m: Raw): Media | null {
     width: m.width || 1600,
     height: m.height || 1000,
     alt: m.alt,
+    file: clean(m.file) || undefined,
   };
 }
 

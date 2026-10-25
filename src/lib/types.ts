@@ -19,6 +19,8 @@ export type Media = {
   width: number;
   height: number;
   alt?: string;
+  /** The uploaded file's name: tells whether a designed cover still matches the project's first image. */
+  file?: string;
   /** A composed frame (stage, live component) rendered as-is instead of `src`. */
   html?: string;
   thumbHTML?: string;

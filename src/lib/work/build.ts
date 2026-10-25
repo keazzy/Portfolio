@@ -1,5 +1,6 @@
 import 'server-only';
 import type { Company, Media as FrameMedia, Portfolio, Shot } from '@/lib/types';
+import { seed } from '@/content/seed';
 import { esc, mediaHTML } from '@/lib/viewer';
 import { LIVE, liveCover, type LiveName } from './live';
 
@@ -172,22 +173,26 @@ function toMedia(co: string, f: Frame): FrameMedia {
 const LOCKED_COVER = F('halvest/stocks/locked-cover.webp', 1000, 800);
 const LOCK_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>';
 
+// The file each designed cover was made from: the first image or video of that shot in the seed.
+const DESIGNED_FROM = new Map<string, string | undefined>(seed.companies.flatMap((c) => c.shots.map((s) => [`${c.id}/${s.id}`, s.media[0]?.path.split('/').pop()] as const)));
+
 /**
- * A shot's card cover and viewer frames. Shots with a hand-made presentation above use it; anything
- * added later in the Studio falls back to its own media. Locked shots get a pre-blurred cover and a
- * single "protected" frame, so none of their screens are in the page until they're unlocked.
+ * A shot's card cover and viewer frames. Shots with a hand-made presentation above use it while their
+ * first image is still the one it was designed from; change that image in the Studio (or add a new shot)
+ * and the shot shows its own media instead. Locked shots get a pre-blurred cover and a single
+ * "protected" frame, so none of their screens are in the page until they're unlocked.
  */
 function presentShot(company: Company, shot: Shot, locked: boolean): Shot {
-  const cfg = CFG[`${company.id}/${shot.id}`];
-  const tall = !!cfg?.tall;
-  const background = cfg?.bg ? BG[company.id][cfg.bg] : '#ddd';
+  const key = `${company.id}/${shot.id}`, first = shot.media[0];
+  const cfg = !first?.file || first.file === DESIGNED_FROM.get(key) ? CFG[key] : undefined;
+  const tall = !!CFG[key]?.tall, bg = CFG[key]?.bg;
+  const background = bg ? BG[company.id][bg] : '#ddd';
   if (locked) {
     return { ...shot, locked: true,
       cover: { html: `<img class="fill" src="${LOCKED_COVER.src}" alt="" /><span class="lockpill">${LOCK_ICON}Protected</span>`, background, tall },
       media: [toMedia(company.id, stage('dark', todo('Password protected: unlock it from the card', true), 'Protected'))] };
   }
   if (!cfg) {
-    const first = shot.media[0];
     return { ...shot, locked: false, cover: { html: first ? mediaHTML(first, { cls: 'fill', size: 'card' }) : '', background, tall } };
   }
   return { ...shot, locked: false,

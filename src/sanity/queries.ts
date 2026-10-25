@@ -32,11 +32,13 @@ const companyProjection = /* groq */ `
       alt,
       _type == "imageFrame" => {
         "assetId": image.asset->_id,
+        "file": image.asset->originalFilename,
         "width": image.asset->metadata.dimensions.width,
         "height": image.asset->metadata.dimensions.height
       },
       _type == "videoFrame" => {
         "url": file.asset->url,
+        "file": file.asset->originalFilename,
         width,
         height
       }

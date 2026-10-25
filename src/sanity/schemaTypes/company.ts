@@ -23,7 +23,7 @@ export const shot = defineType({
       name: 'media',
       title: 'Images & videos',
       type: 'array',
-      description: 'Drag to reorder. The first one is the cover; more than one becomes a step-through in the viewer.',
+      description: 'Drag to reorder. The first one is the cover; more than one becomes a step-through in the viewer. Some projects have a designed or animated cover: it stays until you change the first item here.',
       of: [defineArrayMember({ type: 'imageFrame' }), defineArrayMember({ type: 'videoFrame' })],
       validation: (r) => r.min(1),
     }),

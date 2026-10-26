@@ -253,10 +253,11 @@ img, video { display: block; max-width: 100%; }
 .kbd kbd { font: inherit; padding: 1px 5px; border: 1px solid var(--rule); border-radius: 4px; background: #fff; color: var(--ink-2); margin-right: 4px; }
 
 /* ---------- responsive ---------- */
-/* On the grid the column is too narrow for the photo too, so it hangs in the right margin beside "From". */
+/* On the grid the photo has no column of its own: it's dropped onto "From", over its rules, like a print
+   left on the page. It starts just past the longest line of text, and runs into the margin when "From" is narrow. */
 @media (min-width: 1200px) {
   .hero { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); grid-template-areas: 'h h' 's f'; }
-  .polaroid { grid-area: f; width: 176px; margin-right: calc(-176px - 2 * var(--grid-gap)); }
+  .polaroid { grid-area: f; justify-self: start; position: relative; z-index: 1; margin: -10px 0 0 292px; }
 }
 @media (max-width: 1080px) {
   .hero { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-areas: 'h h' 's f' 's p'; }

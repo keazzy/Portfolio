@@ -37,47 +37,6 @@ function renderPanel(s: ViewerShot, _index: number, frame: number) {
     <div class="kbd"><span><kbd>←</kbd><kbd>→</kbd>frames</span><span><kbd>↑</kbd><kbd>↓</kbd>shots</span><span><kbd>esc</kbd>close</span></div>`;
 }
 
-/**
- * Keeps a card's hover label on the cursor, a step behind it and always inside the cover.
- * Positions are offsets from the cover's centre, where the label sits for keyboard focus.
- */
-function followCursor(box: HTMLElement, instant: boolean) {
-  const cue = box.querySelector<HTMLElement>('.wcue');
-  if (!cue) return () => {};
-  let x = 0, y = 0, tx = 0, ty = 0, raf = 0;
-  const target = (e: PointerEvent) => {
-    const r = box.getBoundingClientRect(), w = cue.offsetWidth / 2 + 8, h = cue.offsetHeight / 2 + 8;
-    tx = Math.min(Math.max(e.clientX - r.left, w), r.width - w) - r.width / 2;
-    ty = Math.min(Math.max(e.clientY - r.top, h), r.height - h) - r.height / 2;
-  };
-  const place = () => { cue.style.translate = `${x.toFixed(1)}px ${y.toFixed(1)}px`; };
-  const tick = () => {
-    x += (tx - x) * 0.25;
-    y += (ty - y) * 0.25;
-    if (Math.abs(tx - x) + Math.abs(ty - y) < 0.5) { x = tx; y = ty; raf = 0; }
-    else raf = requestAnimationFrame(tick);
-    place();
-  };
-  // Enter where the cursor is, rather than gliding in from wherever it last left.
-  const enter = (e: PointerEvent) => { target(e); x = tx; y = ty; place(); };
-  const move = (e: PointerEvent) => {
-    target(e);
-    if (instant) { x = tx; y = ty; place(); }
-    else if (!raf) raf = requestAnimationFrame(tick);
-  };
-  const focus = () => { if (!box.matches(':hover')) cue.style.translate = ''; };
-  const card = box.parentElement!;
-  box.addEventListener('pointerenter', enter);
-  box.addEventListener('pointermove', move);
-  card.addEventListener('focus', focus);
-  return () => {
-    cancelAnimationFrame(raf);
-    box.removeEventListener('pointerenter', enter);
-    box.removeEventListener('pointermove', move);
-    card.removeEventListener('focus', focus);
-  };
-}
-
 export function WorkEngine({ shots }: { shots: ViewerShot[] }) {
   const [gate, setGate] = useState<ViewerShot | null>(null);
 
@@ -94,11 +53,6 @@ export function WorkEngine({ shots }: { shots: ViewerShot[] }) {
       // Reduced motion: a finished state instead of an empty box.
       if (reduce) LIVE[w.dataset.live as LiveName].still(w.firstElementChild as HTMLElement);
     });
-
-    // The hover label follows the cursor (mouse and trackpad only; touch has no hover).
-    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      document.querySelectorAll<HTMLElement>('.wcover').forEach((box) => cleanup.push(followCursor(box, reduce)));
-    }
 
     // Card videos only play while they're on screen.
     const vio = new IntersectionObserver((es) => es.forEach((en) => {

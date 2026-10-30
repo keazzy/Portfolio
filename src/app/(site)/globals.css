@@ -310,3 +310,27 @@ html { scroll-behavior: smooth; }
   box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.4);
 }
 .draft-badge span { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Cursor: an ink arrow with a white edge, so it reads on the paper and on dark covers.
+   <Cursor> adds .has-cursor on the first mouse move; until then (and on touch) the native pointer shows. */
+html.has-cursor, html.has-cursor * { cursor: none !important; }
+.cursor { --cursor: var(--ink); position: fixed; left: 0; top: 0; z-index: 10000; pointer-events: none; opacity: 0; will-change: transform; }
+.has-cursor .cursor { opacity: 1; }
+.cursor.away { opacity: 0; }
+.cursor > svg { display: block; overflow: visible; transform-origin: 3px 2.5px; transition: transform 120ms var(--ease); }
+.cursor.down > svg { transform: scale(0.88); }
+.cursor-shadow { fill: rgba(26, 28, 25, 0.16); stroke: rgba(26, 28, 25, 0.16); }
+.cursor-body { fill: var(--cursor); stroke: var(--cursor); }
+.cursor-pill {
+  position: absolute; left: 19px; top: 21px; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+  background: var(--cursor); color: #fff; box-shadow: 0 0 0 1.5px #fff; font: 500 13px/1.2 var(--sans); white-space: nowrap;
+  transform-origin: 0 0; opacity: 0; transform: scale(0.6); transition: opacity 120ms ease-out, transform 220ms var(--ease);
+}
+.cursor.flip .cursor-pill { left: auto; right: calc(100% - 4px); transform-origin: 100% 0; }
+.cursor.labelled .cursor-pill { opacity: 1; transform: none; }
+.cursor-pill i { font-style: normal; }
+.cursor-pill svg { width: 12px; height: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .cursor > svg { transition: none; }
+  .cursor-pill { transform: none; }
+}

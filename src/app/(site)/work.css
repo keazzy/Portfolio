@@ -30,8 +30,8 @@ body::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-eve
 .wcard:focus-visible { outline: none; }
 .wcard:focus-visible .cover { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink); }
 a.wcard { text-decoration: none; cursor: pointer; }
-/* What a click does, said on hover: a light shade over the cover, and a label that follows the cursor
-   (it stands in for the pointer; <WorkEngine> moves it with `translate`, as an offset from the centre). */
+/* What a click does, said on hover: a light shade over the cover, and a label the cursor carries
+   (<Cursor> copies it from .wcue). The .wcue in the card shows, centred, for keyboard focus. */
 .wcover { position: relative; }
 .wshade { position: absolute; inset: 0; z-index: 4; border-radius: 4px; background: rgba(16, 14, 24, 0.2); opacity: 0; pointer-events: none; transition: opacity 220ms ease-out; }
 .wcue { position: absolute; left: 50%; top: 50%; z-index: 5; display: flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 999px;
@@ -41,9 +41,7 @@ a.wcard { text-decoration: none; cursor: pointer; }
 .wcue svg { width: 12px; height: 12px; }
 .lockpill { transition: opacity 200ms ease-out; }
 @media (hover: hover) and (pointer: fine) {
-  .wcover { cursor: none; }
   .wcover:hover .wshade { opacity: 1; }
-  .wcover:hover .wcue { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   .wcover:hover .lockpill { opacity: 0; }
 }
 .wcard:focus-visible .wshade { opacity: 1; }

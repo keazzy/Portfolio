@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { VisualEditing } from 'next-sanity/visual-editing';
 import { Geist_Mono, Inter, Newsreader } from 'next/font/google';
 import { draftMode } from 'next/headers';
-import { DraftModeBadge } from '@/components/client';
+import { Cursor, DraftModeBadge } from '@/components/client';
 import { getPortfolio } from '@/lib/content';
 import { isSanityConfigured } from '@/sanity/env';
 import { SanityLive } from '@/sanity/live';
@@ -31,6 +31,7 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
     <html lang="en" data-accent={settings.accent} data-scroll-behavior="smooth" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
       <body>
         {children}
+        <Cursor />
         {isSanityConfigured && <SanityLive />}
         {isDraftMode && (
           <>

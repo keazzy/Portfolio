@@ -1,7 +1,7 @@
 'use client';
 
 /*
-  Small client-only pieces: the aurora, the live clock and the sticky company tabs.
+  Small client-only pieces: the aurora, the live clock, the sticky company tabs and the cursor.
 */
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { mount, type AuroraTheme } from '@/lib/aurora';
@@ -94,6 +94,76 @@ export function CompanyTabs({ label, tabs }: { label: string; tabs: Tab[] }) {
         ))}
       </div>
     </nav>
+  );
+}
+
+/* ---------- The cursor: an arrow that carries a label over the work ---------- */
+
+const ARROW = 'M3 2.5 L20 10 L11.5 13.5 L6 21.5 Z';
+
+// Mouse and trackpad only. The native pointer stays until the first mouse move, so it's never missing.
+export function Cursor() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const el = ref.current!, pill = el.querySelector<HTMLElement>('.cursor-pill')!, root = document.documentElement;
+    let x = -100, y = -100, raf = 0, over: Element | null = null, pillW = 0;
+
+    // Over a cover, the arrow carries the card's cue (the cue in the card itself is for keyboard focus).
+    const label = (target: Element | null) => {
+      const box = target?.closest('.wcover') ?? null;
+      if (box === over) return;
+      over = box;
+      const cue = box?.querySelector('.wcue');
+      if (cue) { pill.innerHTML = cue.innerHTML; pillW = pill.offsetWidth; }
+      el.classList.toggle('labelled', !!cue);
+    };
+    const place = () => {
+      raf = 0;
+      el.style.transform = `translate3d(${x - 3}px, ${y - 2.5}px, 0)`;
+      // Near the right edge the label hangs to the left instead.
+      el.classList.toggle('flip', x + 24 + pillW > innerWidth);
+    };
+    const move = (e: PointerEvent) => {
+      // A pen or a touch screen on a hybrid laptop gets the native pointer back.
+      if (e.pointerType !== 'mouse') { root.classList.remove('has-cursor'); return; }
+      root.classList.add('has-cursor');
+      el.classList.remove('away');
+      x = e.clientX; y = e.clientY;
+      label(e.target as Element);
+      if (!raf) raf = requestAnimationFrame(place);
+    };
+    // Scrolling moves the page under a still cursor, so look again at what it's over.
+    const scroll = () => { if (root.classList.contains('has-cursor')) label(document.elementFromPoint(x, y)); };
+    const out = (e: PointerEvent) => { if (!e.relatedTarget) el.classList.add('away'); };
+    const down = () => el.classList.add('down');
+    const up = () => el.classList.remove('down');
+
+    addEventListener('pointermove', move, { passive: true });
+    addEventListener('scroll', scroll, { passive: true });
+    document.addEventListener('pointerout', out);
+    addEventListener('pointerdown', down);
+    addEventListener('pointerup', up);
+    return () => {
+      cancelAnimationFrame(raf);
+      removeEventListener('pointermove', move);
+      removeEventListener('scroll', scroll);
+      document.removeEventListener('pointerout', out);
+      removeEventListener('pointerdown', down);
+      removeEventListener('pointerup', up);
+      root.classList.remove('has-cursor');
+    };
+  }, []);
+
+  return (
+    <div className="cursor" ref={ref} aria-hidden="true">
+      <svg width="26" height="28" viewBox="0 0 26 28" strokeLinejoin="round">
+        <path d={ARROW} transform="translate(0 3)" className="cursor-shadow" strokeWidth="3" />
+        <path d={ARROW} fill="#fff" stroke="#fff" strokeWidth="6" />
+        <path d={ARROW} className="cursor-body" strokeWidth="2.4" />
+      </svg>
+      <span className="cursor-pill" />
+    </div>
   );
 }
 

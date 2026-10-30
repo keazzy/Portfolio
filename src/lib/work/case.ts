@@ -36,7 +36,8 @@ export type CaseStudy = {
   logo?: string;
   eyebrow: string;
   title: string;
-  lede: string;
+  /** For search results and link previews; on the page, the Overview chapter does this job. */
+  description: string;
   meta: [string, string][];
   results?: [string, string][];
   next?: { href: string; label?: string; title: string };
@@ -102,7 +103,6 @@ export function renderCase(C: CaseStudy) {
         <header class="cs-head">
           <p class="cs-eyebrow">${C.logo ? `<img src="${C.logo}" alt="" />` : ''}${C.eyebrow}</p>
           <h1 class="develop">${C.title}</h1>
-          <p class="cs-lede">${fill(C.lede)}</p>
           <dl class="cs-meta">${C.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
           ${C.results ? stats(C.results) : ''}
         </header>

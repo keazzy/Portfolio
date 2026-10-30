@@ -41,14 +41,22 @@ export const stocks: CaseStudy = {
   logo: A('Logos/Halvest.png'),
   eyebrow: 'Halvest · Stocks · 2026',
   title: 'Halal stocks, bought with peace of mind',
-  lede: 'Ethically minded investors wanted stocks, but only ones they could trust were halal. I designed Halvest’s stock investing, first for US stocks and then for halal stocks on the Nigerian Exchange, so the proof sits next to the price and doing the right thing is the default.',
+  description: 'Ethically minded investors wanted stocks, but only ones they could trust were halal. I designed Halvest’s stock investing, first for US stocks and then for halal stocks on the Nigerian Exchange, so the proof sits next to the price and doing the right thing is the default.',
   meta: [['Role', 'Sole product designer'], ['Research', 'Discovery calls, usability tests'], ['When', '2025–2026'], ['Platform', 'iOS and Android']],
   results: [['2', 'markets: US stocks, then halal NGX stocks'], ['3', 'order types: market, limit and recurring'], ['On', 'by default: purification on every dividend and sale']],
   next: { href: '/work/halvest/vest', label: 'Also from Halvest', title: 'Vest: a design system that checks itself' },
   blocks: [
     { t: 'chapter', id: 'overview', eyebrow: 'Overview', title: 'Halal investors wanted stocks, on their terms',
       text: ['Halvest’s investors kept asking for stocks. But for them, buying a share comes with questions a normal brokerage doesn’t answer: is this company actually halal, what do I do with the part of its income that isn’t, and how do I pay for a US share from a naira wallet?',
-        'They didn’t need another trading app. They needed one that let them invest with peace of mind.'] },
+        'They didn’t need another trading app. They needed one where the proof sits next to the price and doing the right thing is the default.'] },
+
+    // The result comes first; the rest of the story is how we got there.
+    { t: 'chapter', id: 'shipped', eyebrow: 'What shipped', toc: 'What shipped', title: 'Stocks you can check before you buy',
+      text: ['Halal US stocks first, then halal stocks on the Nigerian Exchange. Every stock shows its compliance status right under its price, with the full screening one tap away. Purification is on by default, and a naira wallet can buy a US share.'] },
+    { t: 'screens', frame: 'dark', label: 'The stock experience', items: [
+      { ...S('list'), cap: 'Halal stocks from the NGX and the US, in one list.' },
+      { ...S('stock', 1773), cap: 'The compliance status sits under the price.' },
+      { ...S('compliance', 1712), scroll: true, cap: 'Tap it for the full report.' }] },
 
     { t: 'chapter', id: 'research', eyebrow: 'Research', title: 'It started with listening',
       text: ['In May 2025 I ran six discovery calls with investors about stocks: what they used, why they’d stopped or never started, and what would make them try. I wrote the interview script and the template we logged every call in. Then I put a Figma prototype in front of five people in moderated sessions over two weeks.'] },
@@ -106,6 +114,11 @@ export const stocks: CaseStudy = {
     { t: 'chapter', id: 'handoff', eyebrow: 'Design × Engineering', toc: 'Design × Engineering', title: 'Every screen says how it behaves',
       text: ['Beside each group of screens in Figma sits a behaviour card, tied to the file in the codebase that builds it: what each part does, what happens at the edges, and why. Engineering builds from it, and when the code changes, the card is updated to match.'] },
     { t: 'figure', label: 'Behaviour · Buy', src: A('halvest/stocks/behaviour-buy.webp'), w: 760, h: 1394, cap: 'The behaviour card for Buy, from order type to the order’s end, with the screens it maps to in code.' },
+
+    { t: 'chapter', id: 'impact', eyebrow: 'Impact', toc: 'Impact', title: 'Stocks people could buy with peace of mind',
+      text: ['Together with the mobile app, the stock products drove much of Halvest’s growth in assets under management. Ethically minded investors finally had stocks they could check before they bought them.',
+        'What we learned with US stocks carried straight into the launch of halal NGX stocks, which brought in the names investors had asked for, like Dangote.'] },
+    { t: 'stats', items: [['[Amount]', 'invested in stocks since launch'], ['[Number]', 'investors who bought a stock'], ['[Share]', 'of purchases with purification left on']] },
 
     { t: 'chapter', id: 'reflection', eyebrow: 'Reflection', toc: 'Reflection', title: 'What I’d keep doing' },
     { t: 'reflect', items: [['Put the proof where the decision happens.', 'Trust came from showing the screening next to the price, not from a badge or a help page.'],

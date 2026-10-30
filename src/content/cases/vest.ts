@@ -87,7 +87,7 @@ export const vest: CaseStudy = {
   logo: A('Logos/Halvest.png'),
   eyebrow: 'Halvest · Design system · 2026',
   title: 'Vest: a design system that checks itself',
-  lede: 'As Halvest’s only designer, I built Vest in Figma and in code, then wrote the tools that keep the two in step. Design changes now reach the app as pull requests I open myself.',
+  description: 'As Halvest’s only designer, I built Vest in Figma and in code, then wrote the tools that keep the two in step. Design changes now reach the app as pull requests I open myself.',
   meta: [['Role', 'Sole designer, design engineering'], ['With', 'Halvest’s engineers'], ['When', '2026'], ['Status', 'Shipping soon']],
   results: [['346', 'design tokens, generated from Figma'], ['44', 'components, each with a doc card'], ['2', 'Figma plugins I built: Tokens and Say'], ['Seconds', 'from a change in Figma to checked code']],
   next: { href: '/#/work/halvest/mobile', label: 'Next', title: 'Halvest goes mobile' },
@@ -97,10 +97,14 @@ export const vest: CaseStudy = {
         'Vest is how I stopped relying on that.'] },
     { t: 'html', label: 'How drift happens', html: drift, cap: 'An illustration of the problem: every difference needed someone to notice it and send a message.' },
 
-    { t: 'chapter', id: 'system', eyebrow: 'The system', toc: 'The system', title: 'So Vest starts in Figma…',
+    // The result comes first; it's still shipping, so it's what I built rather than what shipped.
+    { t: 'chapter', id: 'built', eyebrow: 'What I built', toc: 'What I built', title: 'One system, in Figma and in code',
+      text: ['Vest is Halvest’s design system, both as a Figma library and as the package the app imports. Two Figma plugins I built carry changes from one to the other: Halvest Tokens for colour, type and motion, and Halvest Say for copy. A drift check fails the moment the two disagree.'] },
+    { t: 'figure', label: 'One component, 336 variants', src: V('button-set.webp'), w: 1600, h: 1206, cap: 'Button: seven styles, three sizes, four states and four icon positions, all one component in Figma and in code.' },
+
+    { t: 'chapter', id: 'system', eyebrow: 'The system', toc: 'The system', title: 'Vest starts in Figma…',
       text: ['Every component gets a doc card: what it’s for, when not to use it, its parts, every variant and state, how it moves, and what a screen reader says. One page explains how to read them all, and every card says when it last matched the code.'] },
     { t: 'figure', label: 'Start here', src: V('start-here.webp'), w: 1360, h: 1050, cap: 'The page every designer and engineer reads first: how to read a card, what each status means, and how things are named.' },
-    { t: 'figure', label: 'One component, 336 variants', src: V('button-set.webp'), w: 1600, h: 1206, cap: 'Button: seven styles, three sizes, four states and four icon positions, all one component in Figma and in code.' },
     { t: 'figure', label: 'Components carry decisions', src: V('action-items.webp'), w: 1600, h: 733, cap: 'An action item already knows its four tones, from urgent to neutral, so no screen has to choose colours for itself.' },
     { t: 'figure', frame: 'flush deep', label: 'Illustrations live in Vest too', src: V('illustrations.webp'), w: 2400, h: 128 },
 
@@ -136,6 +140,11 @@ export const vest: CaseStudy = {
     { t: 'chapter', id: 'engineering', eyebrow: 'Engineering × Design', toc: 'Engineering × Design', title: 'Now I open pull requests',
       text: ['Working in the codebase changed how I design. Constraints show up while I’m still deciding, I can fix a token or a string myself, and engineering reviews a change instead of rebuilding it from a handoff. Token and copy changes no longer need a ticket or a message: they arrive as pull requests that only need a review.'] },
     { t: 'html', label: 'How a design change arrives now', html: pr, cap: 'An illustration of the workflow: the change, the files it touches, and the checks it has to pass.' },
+
+    { t: 'chapter', id: 'impact', eyebrow: 'Impact', toc: 'Impact', title: 'Design and code stay in step on their own',
+      text: ['Before Vest, every difference between Figma and the app needed someone to notice it and send a message. Now the drift check fails the moment the two disagree, and a design change reaches the codebase as a reviewed pull request in seconds, not a ticket.',
+        'For a team with one designer, that’s the difference between a system that holds and one that slowly drifts. Halvest v2 is being designed on Vest from the start.'] },
+    { t: 'stats', items: [['[Number]', 'design changes shipped as pull requests'], ['[Number]', 'differences caught by the drift check before release']] },
 
     { t: 'chapter', id: 'reflection', eyebrow: 'Reflection', toc: 'Reflection', title: 'What I’d keep doing' },
     { t: 'reflect', items: [['Make rules fail loudly.', 'A guideline nobody can fail is only a suggestion. Writing each principle as a check is what made Vest hold.'],

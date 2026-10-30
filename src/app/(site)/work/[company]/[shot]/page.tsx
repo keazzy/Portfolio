@@ -20,7 +20,7 @@ export const generateStaticParams = () => Object.keys(CASES).map((key) => {
 export async function generateMetadata({ params }: PageProps<'/work/[company]/[shot]'>): Promise<Metadata> {
   const { company, shot } = await params;
   const c = CASES[`${company}/${shot}`];
-  return c ? { title: `${c.title} · Adeleke Abdulazeez`, description: c.lede } : {};
+  return c ? { title: `${c.title} · Adeleke Abdulazeez`, description: c.description } : {};
 }
 
 function CaseNav({ c }: { c: CaseStudy }) {

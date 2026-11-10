@@ -172,7 +172,7 @@ window.PORTFOLIO = {
       tags: ['AI', 'CRM', 'B2B'],
       url: 'https://impulsecrm.io',
       color: '#5B5BD6',
-      summary: 'First designer at an AI-native, agentic CRM. Set the product direction and built the Pulse design system from zero. Five companies signed on from the designs alone.',
+      summary: 'First designer at an AI-native, agentic CRM. Set the product direction and built the Impulse design system from zero. Five companies signed on from the designs alone.',
       impact: [
         { value: '5', label: 'Companies onboarded pre-launch' },
         { value: 'V1', label: 'Full product shipped' },
@@ -222,7 +222,7 @@ window.PORTFOLIO = {
         },
         {
           id: 'design-system',
-          title: 'Pulse design system',
+          title: 'Impulse design system',
           desc: 'High-leverage components first (agent cards, task surfaces, pipeline views, automation states) to cover 80% of the product fast.',
           media: [{ src: 'assets/impulse/image 3.png', w: 1400, h: 918 }],
           platform: 'Figma · Web', status: 'Shipped', year: '2023',

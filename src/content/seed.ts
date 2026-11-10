@@ -207,7 +207,7 @@ export const seed = {
       years: '2023—2024',
       tags: ['AI', 'CRM', 'B2B'],
       url: 'https://impulsecrm.io',
-      summary: 'First designer at an AI-native, agentic CRM. Set the product direction and built the Pulse design system from zero. Five companies signed on from the designs alone.',
+      summary: 'First designer at an AI-native, agentic CRM. Set the product direction and built the Impulse design system from zero. Five companies signed on from the designs alone.',
       impact: [
         { value: '5', label: 'Companies onboarded pre-launch' },
         { value: 'V1', label: 'Full product shipped' },
@@ -227,6 +227,7 @@ export const seed = {
           title: 'Pulse: search, ask, compose',
           description: 'One command bar for everything: find records, ask follow-ups about your pipeline, and draft emails or notes from what Pulse already knows. Step through the flow frame by frame.',
           media: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => img(`assets/impulse/Search - ${n}.png`, 2880, 1800)),
+          caseStudy: '/work/impulse/pulse-search',
           platform: 'Web', status: 'Shipped', year: '2024',
           contributions: ['Interaction design', 'AI UX'], tags: ['AI', 'Web'],
         },
@@ -253,7 +254,7 @@ export const seed = {
         },
         {
           id: 'design-system',
-          title: 'Pulse design system',
+          title: 'Impulse design system',
           description: 'High-leverage components first (agent cards, task surfaces, pipeline views, automation states) to cover 80% of the product fast.',
           media: [img('assets/impulse/image 3.png', 1400, 918)],
           platform: 'Figma · Web', status: 'Shipped', year: '2023',

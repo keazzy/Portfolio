@@ -1,15 +1,31 @@
 'use client';
 
-/* The moving parts of a case study: live blocks, self-scrolling phone screens and the contents highlight. */
+/* The moving parts of a case study: live covers and blocks, self-scrolling phone screens and the contents highlight. */
 import { useActionState, useEffect } from 'react';
 import { unlock, type UnlockState } from '@/app/(site)/actions';
 import { CASE_LIVE } from '@/lib/work/case-live';
+import { fitLive, LIVE, type LiveName } from '@/lib/work/live';
+import { makeReel, SCRIPTS } from '@/lib/work/reels';
 
 export function CaseEngine() {
   useEffect(() => {
     const root = document.querySelector<HTMLElement>('.case');
     if (!root) return;
     const cleanup: (() => void)[] = [];
+
+    // A live cover (Pulse's command bar) is scaled to the cover and plays while it's on screen, as it does on its card.
+    root.querySelectorAll<HTMLElement>('.cs-cover .live-wrap').forEach((w) => {
+      const cover = w.parentElement!, live = LIVE[w.dataset.live as LiveName];
+      fitLive(w);
+      const ro = new ResizeObserver(() => fitLive(w));
+      ro.observe(cover);
+      cleanup.push(() => ro.disconnect());
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return live.still(w.firstElementChild as HTMLElement);
+      const reel = makeReel(cover, SCRIPTS[live.script]);
+      const io = new IntersectionObserver(([e]) => (e.isIntersecting ? reel.start() : reel.stop()), { threshold: 0.5 });
+      io.observe(cover);
+      cleanup.push(() => { io.disconnect(); reel.stop(); });
+    });
 
     root.querySelectorAll<HTMLElement>('[data-live]').forEach((el) => {
       const mount = CASE_LIVE[el.dataset.live!];

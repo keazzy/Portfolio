@@ -1,5 +1,6 @@
 import type { CaseStudy } from '@/lib/work/case';
 import { mobile } from './mobile';
+import { pulse } from './pulse';
 import { stocks } from './stocks';
 import { vest } from './vest';
 
@@ -8,4 +9,5 @@ export const CASES: Record<string, CaseStudy> = {
   'halvest/vest': vest,
   'halvest/mobile': mobile,
   'halvest/stocks': stocks,
+  'impulse/pulse-search': pulse,
 };

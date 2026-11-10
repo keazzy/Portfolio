@@ -36,7 +36,7 @@ export type Media = {
 export type Story = { problem?: string; did?: string; decision?: string; result?: string };
 
 /** How a shot appears as a card: cover markup and the background it sits on. */
-export type Cover = { html: string; background: string; tall: boolean; reel?: string };
+export type Cover = { html: string; background: string; tall: boolean; ratio?: string; reel?: string };
 
 export type Shot = {
   id: string;

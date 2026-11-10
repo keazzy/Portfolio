@@ -258,3 +258,105 @@ html:has(.case) { scroll-behavior: smooth; }
       .case .map-row.head { display: none; }
     }
   
+/* ---------- Halvest goes mobile ---------- */
+
+    /* the sliders (slider in case-live.ts, v1 app and stocks): sized in container units, so they match the 960×720 original at any width */
+    .case .fig.slide .fig-card::after { content: none; }
+    .case [data-live$="slider"], .case .slider { aspect-ratio: 4 / 3; }
+    .case .slider { position: relative; z-index: 1; overflow: hidden; container-type: size; background: #dddfe1; }
+    .case .slider img { position: absolute; left: 50%; top: 50%; width: 26.0417cqh; height: 56.3889cqh; margin: -28.1944cqh 0 0 -13.0208cqh; border-radius: 1.5278cqh; will-change: transform; }
+
+/* ---------- A flow played like a screen recording (the flow block; each one's moves are in case-live.ts) ---------- */
+
+    .case .flow { margin: 28px 0 32px; }
+    .case .flow-label { margin: 0 0 12px; font-size: 13.5px; color: var(--ink-3); }
+    /* Rachel's proportions, scaled to this column's type: the panel takes the row, the caption a narrow column beside it. */
+    .case .flow-row { display: grid; grid-template-columns: minmax(0, 1fr) 232px; gap: 32px; align-items: end; }
+    .case .flow-row figcaption { padding-bottom: 4px; font-size: 14px; line-height: 1.5; }
+    .case .flow-row figcaption b { display: block; font-weight: 500; color: var(--ink); }
+    .case .flow-row figcaption span { display: block; margin-top: 4px; color: var(--ink-3); }
+    .case .flow-panel { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 4px; background: #7a583c; container-type: size; }
+    .case .fl-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .case .fl-phone { position: absolute; top: 8cqh; left: 50%; height: 84cqh; aspect-ratio: 483 / 1000; transform: translateX(-50%); filter: drop-shadow(0 2cqh 4cqh rgba(48, 26, 8, 0.35)); }
+    .case .fl-frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    /* The screen in the frame's 375-wide units (--u), the same box as the Stocks cover's. */
+    .case .fl-screen { position: absolute; left: 3.934%; top: 1.7%; width: 92.133%; height: 96.7%; overflow: hidden; border-radius: 14.8% / 6.8%; background: #06030c; container-type: inline-size; --u: calc(100cqw / 375); }
+    .case .fl-on, .case .fl-off { position: absolute; left: 0; top: 0; width: 100%; }
+    .case .fl-off { opacity: 0; }
+    .case .fl-switch { position: absolute; left: calc(294 * var(--u)); top: calc(281 * var(--u)); width: calc(48 * var(--u)); height: calc(28 * var(--u)); border-radius: 999px; background: #6935d3; }
+    .case .fl-switch > i { position: absolute; left: calc(22 * var(--u)); top: calc(2 * var(--u)); width: calc(24 * var(--u)); height: calc(24 * var(--u)); border-radius: 50%; background: #06030c; }
+    .case .fl-scrim { position: absolute; inset: 0; background: rgba(6, 3, 12, 0.45); opacity: 0; }   /* surface/overlay, dark */
+    .case .fl-sheet { position: absolute; left: 0; bottom: 0; width: 100%; transform: translateY(100%); }
+    .case .fl-dot { position: absolute; width: calc(42 * var(--u)); height: calc(42 * var(--u)); border-radius: 50%; background: rgba(255, 255, 255, 0.34); box-shadow: 0 0 0 calc(1.5 * var(--u)) rgba(255, 255, 255, 0.6); opacity: 0; transform: translate(-50%, -50%); pointer-events: none; }
+    .case .fl-controls { position: absolute; top: 12px; right: 12px; z-index: 2; display: flex; gap: 8px; }
+    .case .fl-controls button { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: rgba(36, 28, 22, 0.55); color: #fff; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); cursor: pointer; transition: background 160ms ease; }
+    .case .fl-controls button:hover { background: rgba(36, 28, 22, 0.72); }
+    .case .fl-controls button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .case .fl-controls svg { width: 14px; height: 14px; }
+    /* Compliance (comply in case-live.ts): the stock's page shrinks back as the report rises over it, as a page sheet does. */
+    .case .fl-screen.cf { background: #000; }
+    .case .cf-back { position: absolute; inset: 0; overflow: hidden; transform-origin: 50% 0; }
+    .case .cf-back img { display: block; width: 100%; }
+    .case .cf-dim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.28); opacity: 0; }
+    .case .cf-sheet { position: absolute; left: 0; right: 0; top: calc(60 * var(--u)); bottom: 0; overflow: hidden; border-radius: calc(12 * var(--u)) calc(12 * var(--u)) 0 0; background: #06030c; transform: translateY(100%); }
+    .case .cf-scroll { position: relative; }
+    .case .cf-scroll img { display: block; width: 100%; }
+    .case .cf-scroll .cf-ans { position: absolute; left: 0; top: calc(1132 * var(--u)); opacity: 0; }   /* row 1190 of the report, less the 58 above the sheet */
+    .case .cf-edge { position: absolute; left: 0; right: 0; top: 0; height: calc(64 * var(--u)); background: linear-gradient(#06030c 35%, rgba(6, 3, 12, 0)); }
+    .case .cf-close { position: absolute; left: calc(318 * var(--u)); top: calc(14 * var(--u)); width: calc(34 * var(--u)); }
+    .case .cf-status { position: absolute; left: 0; top: 0; width: 100%; }
+    /* Orders (orders in case-live.ts): pages pushed and popped over each other, sheets over them, states as strips. */
+    .case .fl-screen.of { background: #000; }
+    .case .of-page { position: absolute; inset: 0; background: #06030c; }
+    .case .of-amount, .case .of-limit { transform: translateX(110%); box-shadow: calc(-8 * var(--u)) 0 calc(24 * var(--u)) rgba(0, 0, 0, 0.3); }
+    .case .of-page > img { position: absolute; left: 0; top: 0; width: 100%; }
+    .case .of-page > .of-strip { top: calc(48 * var(--u)); opacity: 0; }
+    .case .of-dim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.2); opacity: 0; }
+    .case .of-sheet { position: absolute; left: 0; right: 0; bottom: 0; transform: translateY(100%); }
+    .case .of-sheet img { display: block; width: 100%; }
+    .case .of-sheet .of-tick { position: absolute; left: 0; top: 0; opacity: 0; }
+    /* Across markets (markets in case-live.ts): the naira wallet row as a strip; the review's body scrolls between its bar and footer. */
+    .case .of-page > .mf-ngn { top: calc(370 * var(--u)); }
+    .case .mf-review { transform: translateX(110%); box-shadow: calc(-8 * var(--u)) 0 calc(24 * var(--u)) rgba(0, 0, 0, 0.3); }
+    .case .of-page > .mf-body { top: calc(119 * var(--u)); }
+    .case .mf-edge { position: absolute; left: 0; right: 0; top: calc(119 * var(--u)); height: calc(24 * var(--u)); background: linear-gradient(#06030c, rgba(6, 3, 12, 0)); }
+    .case .of-page > .mf-foot { top: auto; bottom: 0; }
+    @media (max-width: 640px) {
+      .case .flow-row { grid-template-columns: 1fr; gap: 12px; }
+    }
+
+/* ---------- Before and after, marked up by hand (the compare block; strokes and layout in compare.ts) ---------- */
+
+    .case .fig.marked .fig-card { padding: 52px 16px 24px; --pen: #ff5a36; --hand: var(--deep); }
+    .case .cmp { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .case .cmp-g { container-type: inline-size; }
+    .case .cmp-in { --u: calc(100cqw / 330); position: relative; }
+    .case .cmp-tag { position: absolute; top: 0; font: 500 calc(10.5 * var(--u))/1.2 var(--mono); letter-spacing: 0.07em; text-transform: uppercase; color: color-mix(in srgb, var(--deep) 65%, transparent); }
+    .case .cmp-phone { position: absolute; width: calc(210 * var(--u)); overflow: hidden; border-radius: calc(26 * var(--u)); background: #0b0a10;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 0 calc(4 * var(--u)) #101016, var(--lift); }
+    .case .cmp-phone img { display: block; width: 100%; height: auto; }
+    .case .cmp-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+    .case .cmp-ink { fill: none; stroke: var(--pen); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 1; stroke-dashoffset: 0; }
+    .case .cmp-note { position: absolute; width: calc(108 * var(--u)); margin: 0; font: 600 calc(20 * var(--u))/1.1 var(--font-hand), cursive; color: var(--hand); text-wrap: balance; }
+    .case .cmp-l .cmp-note { text-align: right; }
+    /* Written in once (CaseEngine arms them, then adds .on): each stroke draws on its own delay, after its note. */
+    .case .cmp-g.armed .cmp-ink { stroke-dashoffset: 1; visibility: hidden; }
+    .case .cmp-g.armed .cmp-note { opacity: 0; transform: translateY(calc(5 * var(--u))) rotate(-1deg); }
+    .case .cmp-g.armed.on .cmp-ink { stroke-dashoffset: 0; visibility: visible;
+      transition: stroke-dashoffset var(--len) cubic-bezier(0.45, 0.05, 0.4, 1) calc(var(--wait, 0ms) + var(--d)), visibility 0s linear calc(var(--wait, 0ms) + var(--d)); }
+    .case .cmp-g.armed.on .cmp-note { opacity: 1; transform: none;
+      transition: opacity 360ms ease-out calc(var(--wait, 0ms) + var(--d)), transform 520ms var(--ease) calc(var(--wait, 0ms) + var(--d)); }
+    /* A row of screens with handwritten captions (the marked block): four across, two by two on a phone. */
+    .case .mk { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 20px; }
+    .case .mk-g { --u: calc(100cqw / 375); min-width: 0; }
+    .case .mk-phone { position: relative; aspect-ratio: 375 / 812; border-radius: 13% / 6%; background: #fff;
+      box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.06), 0 0 0 calc(12 * var(--u)) #101016, var(--lift); }
+    .case .mk-phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: inherit; }
+    .case .mk-g .cmp-svg { stroke-width: 0; }
+    .case .mk-g .cmp-ink { stroke-width: 5.5; }
+    .case .mk-note { position: static; width: auto; margin: calc(40 * var(--u)) calc(6 * var(--u)) 0; font-size: calc(48 * var(--u)); line-height: 1.08; }
+    @media (max-width: 640px) {
+      .case .fig.marked .fig-card { padding: 44px 10px 16px; }
+      .case .cmp { grid-template-columns: 1fr; gap: 28px; }
+      .case .mk { grid-template-columns: 1fr 1fr; gap: 28px 14px; }
+    }

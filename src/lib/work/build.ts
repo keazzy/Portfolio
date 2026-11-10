@@ -3,6 +3,7 @@ import type { Company, Media as FrameMedia, Portfolio, Shot } from '@/lib/types'
 import { seed } from '@/content/seed';
 import { esc, mediaHTML } from '@/lib/viewer';
 import { LIVE, liveCover, type LiveName } from './live';
+import { stockCover } from './stock-cover';
 
 /*
   How each piece of work is presented: its card cover and its viewer frames.
@@ -90,6 +91,8 @@ const h2 = F('halvest/image 2.png', 1392, 1044), hStats = F('halvest/Frame 20856
 const vestTeaser = F('halvest/vest-teaser.mp4', 1280, 720, true);
 // Device mockups (Mockuuups renders of already-public screens) for covers that don't need motion.
 const mockPortfolio = F('halvest/mockups/portfolio-pink.webp', 1000, 666);
+// v1 Home, set into a hand-held photo with its perspective, corners and Dynamic Island matched.
+const mockHome = F('halvest/mockups/home-in-hand.webp', 1920, 1080);
 const mockMeetings = F('impulse/mockups/meetings-desk.webp', 1000, 666);
 const mockApplications = F('kinfolk/mockups/applications-round-table.webp', 1000, 666), mockRecording = F('kinfolk/mockups/meeting-desk-blinds.webp', 1000, 666);
 const st = (n: string, h = 812) => F(`halvest/stocks/${n}.webp`, 375, h), TOP = { x: 0, y: 0, w: 375, h: 812 };
@@ -106,16 +109,17 @@ const MODAL = { x: 497, y: 43, w: 474, h: 786 };
 /* ---------- presentation per shot: cover + viewer frames ---------- */
 // A frame is a composed stage ({ bg, build }), a photo or video at its own shape ({ photo }), or a live component ({ live }).
 type Frame = { cap?: string; bg?: Bg; build?: Build; photo?: Src; live?: LiveName };
-type Cfg = { cover: Build; frames: Frame[]; bg: Bg | null; reel?: string; tall?: boolean };
+// `ratio` overrides the card's shape, for a cover drawn to its own (Halal stocks' 4:3).
+type Cfg = { cover: Build; frames: Frame[]; bg: Bg | null; reel?: string; tall?: boolean; ratio?: string };
 const stage = (bg: Bg, build: Build, cap: string): Frame => ({ bg, build, cap });
 const asPhoto = (s: Src, cap: string): Frame => ({ photo: s, cap });
 const CFG: Record<string, Cfg> = {
-  'halvest/mobile': { bg: null, cover: photo(mockPortfolio),
-    frames: [asPhoto(mockPortfolio, 'The portfolio, in the hand'), stage('tint', phone(hv, { x: 337, y: 54, w: 281, h: 607 }), 'Funding the wallet: bank transfer → confirming → success'),
+  'halvest/mobile': { bg: null, cover: photo(mockHome),
+    frames: [asPhoto(mockHome, 'Home, in the hand'), asPhoto(mockPortfolio, 'The portfolio, in the hand'), stage('tint', phone(hv, { x: 337, y: 54, w: 281, h: 607 }), 'Funding the wallet: bank transfer → confirming → success'),
       stage('dark', phone(h20, { x: 497, y: 84, w: 400, h: 878 }), 'Not enough funds: the amount stays, a sheet offers to top up'),
       stage('tint', phone(h5, { x: 222, y: 136, w: 287, h: 623 }), 'Portfolio value and composition'), stage('tint', phone(h5, { x: 894, y: 121, w: 287, h: 623 }), 'Business financing breakdown'),
       asPhoto(h2, 'In the hand'), asPhoto(hStats, 'Launch results')] },
-  'halvest/stocks': { tall: true, bg: 'dark', cover: pair(phone(st('stock', 1773), TOP, { inPair: true }), phone(st('compliance', 1712), TOP, { inPair: true })),
+  'halvest/stocks': { tall: true, ratio: '4/3', bg: 'dark', reel: 'stocksLive', cover: () => stockCover(),
     frames: [stage('dark', pair(phone(st('stock', 1773), TOP, { inPair: true }), phone(st('compliance', 1712), TOP, { inPair: true })), 'The pill under the price opens the compliance report'),
       stage('dark', pair(phone(st('buy-review', 900), TOP, { inPair: true }), phone(st('buy-handover'), TOP, { inPair: true })), 'Purification: on by default, and off only on purpose'),
       stage('dark', pair(phone(st('buy-naira-closed', 1058), TOP, { inPair: true }), phone(st('stock-us-closed', 961), TOP, { inPair: true })), 'A US share from a naira wallet: the rate, and when it fills'),
@@ -170,7 +174,7 @@ function toMedia(co: string, f: Frame): FrameMedia {
     thumbHTML: inner.includes('<video') ? PLAY : `<div class="vstage mini" style="background:${bg}">${inner}</div>` };
 }
 
-const LOCKED_COVER = F('halvest/stocks/locked-cover.webp', 1000, 800);
+const LOCKED_COVER = F('halvest/stocks/cover/locked.webp', 1200, 900);
 const LOCK_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>';
 
 // The file each designed cover was made from: the first image or video of that shot in the seed.
@@ -185,18 +189,18 @@ const DESIGNED_FROM = new Map<string, string | undefined>(seed.companies.flatMap
 function presentShot(company: Company, shot: Shot, locked: boolean): Shot {
   const key = `${company.id}/${shot.id}`, first = shot.media[0];
   const cfg = !first?.file || first.file === DESIGNED_FROM.get(key) ? CFG[key] : undefined;
-  const tall = !!CFG[key]?.tall, bg = CFG[key]?.bg;
+  const tall = !!CFG[key]?.tall, ratio = CFG[key]?.ratio, bg = CFG[key]?.bg;
   const background = bg ? BG[company.id][bg] : '#ddd';
   if (locked) {
     return { ...shot, locked: true,
-      cover: { html: `<img class="fill" src="${LOCKED_COVER.src}" alt="" /><span class="lockpill">${LOCK_ICON}Protected</span>`, background, tall },
+      cover: { html: `<img class="fill" src="${LOCKED_COVER.src}" alt="" /><span class="lockpill">${LOCK_ICON}Protected</span>`, background, tall, ratio },
       media: [toMedia(company.id, stage('dark', todo('Password protected: unlock it from the card', true), 'Protected'))] };
   }
   if (!cfg) {
-    return { ...shot, locked: false, cover: { html: first ? mediaHTML(first, { cls: 'fill', size: 'card' }) : '', background, tall } };
+    return { ...shot, locked: false, cover: { html: first ? mediaHTML(first, { cls: 'fill', size: 'card' }) : '', background, tall, ratio } };
   }
   return { ...shot, locked: false,
-    cover: { html: cfg.cover(tall ? 5 / 4 : 16 / 9), background, tall, reel: cfg.reel },
+    cover: { html: cfg.cover(tall ? 5 / 4 : 16 / 9), background, tall, ratio, reel: cfg.reel },
     media: cfg.frames.map((f) => toMedia(company.id, f)) };
 }
 

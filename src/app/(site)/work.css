@@ -291,3 +291,23 @@ a.wcard { text-decoration: none; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation-duration: 0s !important; animation-delay: 0s !important; }
 }
+
+/* Halal stocks' cover (stock-cover.ts): the phone sized by the cover's height, its screen in the frame's 375-wide units (--u).
+   The pill's two edges are registered numbers, so each can run on its own spring. */
+@property --sk-l { syntax: '<number>'; inherits: true; initial-value: 16; }
+@property --sk-r { syntax: '<number>'; inherits: true; initial-value: 52.52; }
+.sk { position: absolute; inset: 0; overflow: hidden; container-type: size; }
+/* The slope is softened in the file; it drifts in and out slowly behind the phone. */
+.sk-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; transform-origin: 50% 60%; animation: sk-drift 24s ease-in-out infinite alternate; }
+@keyframes sk-drift { from { transform: scale(1.02); } to { transform: scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .sk-bg { animation: none; transform: scale(1.02); } }
+.sk-phone { position: absolute; top: 13cqh; left: 50%; height: 108cqh; aspect-ratio: 483 / 1000; transform: translateX(-50%); filter: drop-shadow(0 2.4cqh 4.8cqh rgba(30, 12, 52, 0.38)); }
+.sk-frame { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sk-screen { position: absolute; left: 3.934%; top: 1.7%; width: 92.133%; height: 96.7%; overflow: hidden; border-radius: 14.8% / 6.8%; background: #06030c; container-type: inline-size; --u: calc(100cqw / 375); }
+.sk-still { position: absolute; left: 0; top: 0; width: 100%; }
+.sk-chart { position: absolute; left: 0; top: calc(327 * var(--u)); width: 100%; height: calc(220 * var(--u)); overflow: visible; }
+.sk-range { position: absolute; left: 0; top: calc(571 * var(--u)); width: 100%; height: calc(32 * var(--u)); }
+.sk-words { position: absolute; inset: 0; }
+.sk-words svg { position: absolute; height: auto; }
+.sk-words.on { clip-path: inset(0 calc(100% - var(--sk-r) * var(--u)) 0 calc(var(--sk-l) * var(--u)) round calc(16 * var(--u))); }
+.sk-pill { position: absolute; top: 0; height: 100%; left: calc(var(--sk-l) * var(--u)); width: calc((var(--sk-r) - var(--sk-l)) * var(--u)); border-radius: 999px; background: #6935d3; }

@@ -7,6 +7,8 @@ import 'server-only';
   in src/content/cases, so its strings are trusted markup.
 */
 
+import { compare, marked, type Marked, type Side } from './compare';
+
 export const A = (p: string) => '/assets/' + p.split('/').map(encodeURIComponent).join('/');
 
 type Media = { src?: string; video?: string; w?: number; h?: number; alt?: string };
@@ -22,6 +24,12 @@ export type Block =
   | ({ t: 'live'; name: string } & Fig)
   | ({ t: 'screens'; items: Screen[] } & Fig)
   | { t: 'quote'; text: string; who?: string }
+  // A flow played like a screen recording (a live block in case-live.ts), with its caption beside it.
+  | { t: 'flow'; name: string; label?: string; title: string; text: string }
+  // Two screens marked up by hand: notes and pen strokes on what changed (compare.ts).
+  | ({ t: 'compare'; before: Side; after: Side } & Fig)
+  // Screens in a row with handwritten captions, each one's point circled (compare.ts).
+  | ({ t: 'marked'; items: Marked[] } & Fig)
   | { t: 'todo'; what: string }
   | { t: 'decision'; title: string; text: string; eyebrow?: string }
   | { t: 'stats'; items: [string, string][] }
@@ -72,10 +80,13 @@ function block(b: Exclude<Block, { t: 'chapter' }>): string {
     case 'html': return frame(b, b.html());
     case 'live': return frame(b, `<div data-live="${b.name}"></div>`);
     case 'screens': return frame(b, screens(b.items));
+    case 'compare': return frame({ ...b, frame: `marked ${b.frame || ''}` }, compare(b.before, b.after));
+    case 'marked': return frame({ ...b, frame: `marked ${b.frame || ''}` }, marked(b.items));
     case 'quote': return `<blockquote class="quote"><p>“${b.text}”</p>${b.who ? `<cite>${b.who}</cite>` : ''}</blockquote>`;
     case 'todo': return `<figure class="fig"><div class="fig-card todo-card"><span>Visual needed</span><b>${b.what}</b></div></figure>`;
     case 'decision': return `<aside class="decision"><p class="ch-eyebrow">${b.eyebrow || 'Decision'}</p><h3>${b.title}</h3><p>${fill(b.text)}</p></aside>`;
     case 'stats': return stats(b.items);
+    case 'flow': return `<figure class="flow">${b.label ? `<p class="flow-label">${b.label}</p>` : ''}<div class="flow-row"><div class="flow-panel" data-live="${b.name}"></div><figcaption><b>${b.title}</b><span>${fill(b.text)}</span></figcaption></div></figure>`;
     case 'reflect': return `<div class="reflect">${b.items.map(([t, d]) => `<div><b>${t}</b>${d ? `<span>${d}</span>` : ''}</div>`).join('')}</div>`;
   }
 }
@@ -103,7 +114,7 @@ export function renderCase(C: CaseStudy) {
         <header class="cs-head">
           <p class="cs-eyebrow">${C.logo ? `<img src="${C.logo}" alt="" />` : ''}${C.eyebrow}</p>
           <h1 class="develop">${C.title}</h1>
-          <dl class="cs-meta">${C.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+          <dl class="cs-meta">${C.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${fill(v)}</dd></div>`).join('')}</dl>
           ${C.results ? stats(C.results) : ''}
         </header>
         ${body}

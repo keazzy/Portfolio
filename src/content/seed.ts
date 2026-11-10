@@ -94,14 +94,15 @@ export const seed = {
         {
           id: 'mobile',
           title: 'Halvest goes mobile',
-          description: 'Halvest’s first mobile app, designed for the phone rather than shrunk from the web. It now serves most of Halvest’s investors.',
+          description: 'Halvest’s first mobile app, designed for the phone rather than shrunk from the web. Most new investors now sign up in it.',
           story: {
             problem: 'Halvest ran on a responsive website: usable on a phone, but never designed for one, and the phone is where investors were.',
             did: 'Designed the app end to end: funding the wallet, investing, the portfolio, and edge cases like a short balance. Built interactive prototypes in code so engineering could feel the interactions before building them.',
             decision: 'Ship the core loop first (fund, invest, track) instead of matching every web feature on day one.',
-            result: 'Most investors now use the app. Since launch, AUM grew by $2.06M and registered investors passed 950.',
+            result: '83% of new sign-ups now happen in the app, and six in ten investments are made in it. Since launch, AUM grew by $2.06M and registered investors passed 950.',
           },
           media: [img('assets/halvest/mockups/portfolio-pink.webp', 1000, 666), img('assets/halvest/Halvest Video.mp4', 956, 720), img('assets/halvest/image 20.png', 1392, 1048), img('assets/halvest/image 5.png', 1392, 894), img('assets/halvest/image 2.png', 1392, 1044)],
+          caseStudy: '/work/halvest/mobile',
           platform: 'iOS · Android', status: 'Shipped', year: '2025',
           contributions: ['Product design', 'Interaction design', 'Prototyping in code'], tags: ['Fintech', 'Mobile'],
         },

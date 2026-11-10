@@ -4,6 +4,7 @@
   Only transform/opacity/filter are animated. The caller skips them for reduced motion.
 */
 import { DY_BEATS, PL_ANSWER, PL_INNER, DY_INNER, dyChip, dyOut, dySet } from './live';
+import { SK_ORDER, skSet, skStep } from './stock-cover';
 
 const STOP = Symbol('stop');
 const EASE_UI = 'cubic-bezier(0.23, 1, 0.32, 1)';
@@ -30,6 +31,7 @@ function makeApi(cover: HTMLElement, alive: () => boolean, cursorRef: { el: HTML
     $: (sel: string) => $(cover, sel),
     cover,
     wait,
+    alive,
 
     // Switch the visible layer: 'fade' (blur crossfade), 'push' (iOS navigation), 'back'.
     async show(el: HTMLElement, i: number, mode: 'fade' | 'push' | 'back' = 'fade') {
@@ -121,7 +123,8 @@ export function makeReel(cover: HTMLElement, script: (r: Api) => Promise<void>):
   const pos = { x: 0, y: 0 };
 
   function reset() {
-    cover.getAnimations({ subtree: true }).forEach((a) => a.cancel());
+    // The script's own moves; a cover's CSS loops (a caret, Halal stocks' drifting slope) keep running.
+    cover.getAnimations({ subtree: true }).forEach((a) => { if (!(a instanceof CSSAnimation)) a.cancel(); });
     [cover, ...cover.querySelectorAll('.stack, .bleed, .brand')].forEach((el) => layersOf(el).forEach((l, i) => { l.classList.toggle('on', i === 0); l.style.zIndex = ''; }));
     cover.querySelectorAll('.r-tap, .r-ring').forEach((n) => n.remove());
     if (cursorRef.el) cursorRef.el.style.opacity = '0';
@@ -145,6 +148,16 @@ export function makeReel(cover: HTMLElement, script: (r: Api) => Promise<void>):
 }
 
 export const SCRIPTS: Record<string, (r: Api) => Promise<void>> = {
+  // Dangote's page tapping through its ranges, 1D to All and back to 1D, as the app moves (stock-cover.ts).
+  async stocksLive(r) {
+    const root = r.$('.sk');
+    skSet(root, '1D');
+    for (let i = 1; i <= SK_ORDER.length; i++) {
+      await r.wait(1500);
+      await skStep(root, SK_ORDER[i - 1], SK_ORDER[i % SK_ORDER.length], r.alive);
+    }
+  },
+
   // Type a query → results → Ask Pulse AI → thinking → streamed answer → actions and sources.
   async pulseLive(r) {
     const root = r.$('.pl');

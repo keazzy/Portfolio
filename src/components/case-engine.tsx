@@ -29,6 +29,22 @@ export function CaseEngine() {
       });
     }
 
+    // Marked-up figures write themselves in, once, the first time each side is seen. When both sides show
+    // up together, the second waits for the first to finish.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let busy = 0;
+      const io = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        const el = e.target as HTMLElement, now = performance.now(), wait = Math.max(0, busy - now);
+        el.style.setProperty('--wait', `${wait}ms`);
+        busy = now + wait + Number(el.dataset.dur);
+        el.classList.add('on');
+      }), { threshold: 0.4 });
+      root.querySelectorAll<HTMLElement>('.cmp-g').forEach((g) => { g.classList.add('armed'); io.observe(g); });
+      cleanup.push(() => io.disconnect());
+    }
+
     // Contents: highlight the chapter being read.
     const links = new Map([...root.querySelectorAll<HTMLAnchorElement>('.toc a')].map((a) => [a.hash.slice(1), a]));
     const io = new IntersectionObserver((es) => es.forEach((e) => {

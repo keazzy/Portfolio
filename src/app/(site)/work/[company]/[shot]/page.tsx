@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Caveat } from 'next/font/google';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ViewTransition } from 'react';
@@ -10,6 +11,9 @@ import { present } from '@/lib/work/build';
 import { renderCase, type CaseStudy } from '@/lib/work/case';
 import { isUnlocked } from '@/lib/work/lock';
 import '../../case.css';
+
+// The handwriting on marked-up figures (compare blocks). Only loaded once one is on the page.
+const hand = Caveat({ subsets: ['latin'], variable: '--font-hand', display: 'swap', preload: false });
 
 export const dynamicParams = false;
 export const generateStaticParams = () => Object.keys(CASES).map((key) => {
@@ -70,7 +74,7 @@ export default async function CaseStudyPage({ params }: PageProps<'/work/[compan
   }
 
   return (
-    <div className="case" style={style}>
+    <div className={`case ${hand.variable}`} style={style}>
       <CaseNav c={c} />
       {cover}
       <div dangerouslySetInnerHTML={{ __html: renderCase(c) }} />

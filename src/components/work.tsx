@@ -30,7 +30,7 @@ function WorkCard({ shot, index, order }: { shot: Shot; index: number; order: nu
     <>
       <div className="wcover">
         <MaybeMorph name={shot.caseStudy ? coverTransitionName(shot.key) : undefined}>
-          <div className="cover" style={{ aspectRatio: cover.tall ? '5/4' : '16/9', background: cover.background }} dangerouslySetInnerHTML={{ __html: cover.html }} />
+          <div className="cover" style={{ aspectRatio: cover.ratio ?? (cover.tall ? '5/4' : '16/9'), background: cover.background }} dangerouslySetInnerHTML={{ __html: cover.html }} />
         </MaybeMorph>
         <span className="wshade" aria-hidden="true" />
         <span className="wcue" aria-hidden="true">{shot.locked && <Lock />}{cue}{shot.caseStudy && <i>→</i>}</span>

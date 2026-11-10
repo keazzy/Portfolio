@@ -53,10 +53,7 @@ export const stocks: CaseStudy = {
     // The result comes first; the rest of the story is how we got there.
     { t: 'chapter', id: 'shipped', eyebrow: 'What shipped', toc: 'What shipped', title: 'Stocks you can check before you buy',
       text: ['Halal US stocks first, then halal stocks on the Nigerian Exchange. Every stock shows its compliance status right under its price, with the full screening one tap away. Purification is on by default, and a naira wallet can buy a US share.'] },
-    { t: 'screens', frame: 'dark', label: 'The stock experience', items: [
-      { ...S('list'), cap: 'Halal stocks from the NGX and the US, in one list.' },
-      { ...S('stock', 1773), cap: 'The compliance status sits under the price.' },
-      { ...S('compliance', 1712), scroll: true, cap: 'Tap it for the full report.' }] },
+    { t: 'live', frame: 'flush slide', name: 'stocks-slider', cap: 'Invest, the stock list, a stock with its compliance status under the price, the full report, buying and the order going in.' },
 
     { t: 'chapter', id: 'research', eyebrow: 'Research', title: 'It started with listening',
       text: ['In May 2025 I ran six discovery calls with investors about stocks: what they used, why they’d stopped or never started, and what would make them try. I wrote the interview script and the template we logged every call in. Then I put a Figma prototype in front of five people in moderated sessions over two weeks.'] },
@@ -69,10 +66,8 @@ export const stocks: CaseStudy = {
     { t: 'chapter', id: 'compliance', eyebrow: 'Compliance', toc: 'Compliance', title: 'The proof sits next to the price',
       text: ['Every stock carries a “Shariah compliant” pill right under its price. It opens a compliance report: the two tests a company has to pass, where it sits against each ceiling, and a summary in plain language.',
         'Investors can ask follow-up questions in the report itself, answered by HalAI in the same plain language and pointing back to the standard.'] },
-    { t: 'screens', frame: 'dark', label: 'From the price to the proof', items: [
-      { ...S('stock', 1773), cap: 'The pill under the price opens the report.' },
-      { ...S('compliance', 1712), scroll: true, cap: 'Two tests, a summary, and questions you can ask.' },
-      { ...S('compliance-answered', 1712), cap: 'An answer, in plain language.' }] },
+    { t: 'flow', name: 'comply', label: 'Core flow', title: 'From the price to the proof',
+      text: 'The pill under the price opens the report over the stock: two tests against their ceilings, a summary, then questions to ask. A related question answers itself below the list.' },
     { t: 'html', label: 'What the report checks', html: tests, cap: 'Redrawn from the Dangote Cement report: both tests are AAOIFI standards, and the company passes each with room to spare.' },
     { t: 'decision', title: 'Show the test, not just the badge', text: 'A “compliant” label asks people to trust us. Two bars against published ceilings let them check it for themselves, without leaving the stock.' },
     { t: 'decision', title: 'One status, because only compliant stocks are listed', text: 'We tested “questionable” and “non-compliant” labels too, and they caused the most hesitation. Since Halvest lists only stocks that pass screening, we settled on a single status. It still changes if a company’s screening does, which answers the question one tester asked: “What if a stock becomes non-compliant?”' },
@@ -80,36 +75,36 @@ export const stocks: CaseStudy = {
     { t: 'chapter', id: 'purification', eyebrow: 'Purification', toc: 'Purification', title: 'Doing the right thing is the default',
       text: ['Even a compliant company earns a little impermissible income, so a share of each dividend should go to charity. Halvest works out that share and gives it on the investor’s behalf.',
         'At review, purification comes first and is on by default. Switching it off opens a sheet that hands the job over to the investor; switching it back on asks nothing.'] },
-    { t: 'screens', frame: 'dark', label: 'On by default, off on purpose', items: [
-      { ...S('buy-review', 900), cap: 'Purification leads the review, already on.' },
-      { ...S('buy-handover'), cap: 'Off hands it over, and says what that means.' },
-      { ...S('purification-sheet'), cap: 'How purification works, for this company.' }] },
-    { t: 'screens', frame: 'dark', label: 'Before and after', items: [
-      { ...S('old-buy-review'), tag: 'Earlier design', cap: 'Purification wasn’t part of the decision.' },
-      { ...S('buy-review', 900), tag: 'As shipped', cap: 'It’s the first thing you see, and it’s on.' }] },
+    { t: 'flow', name: 'purify', label: 'Core flow', title: 'On by default, off on purpose',
+      text: 'Purification leads the review, already on. Switching it off hands the job over and says what that means; How purification works explains it for this company.' },
+    { t: 'compare', label: 'Before and after',
+      before: { ...S('old-buy-review'), tag: 'Earlier design', alt: 'The earlier review screen', notes: [
+        { text: 'Just the ticker', y: 45, to: [150, 88], loop: [158, 76, 60, 24], bend: -6 },
+        { text: 'No word on purification', y: 590, brace: [8, 505, 705] }] },
+      after: { ...S('buy-review', 900), tag: 'As shipped', alt: 'The review screen as shipped', notes: [
+        { text: 'The company, by name', y: 192, to: [182, 196], bend: -5 },
+        { text: 'Purification comes first, and it’s on', y: 345, to: [338, 314], loop: [16, 264, 343, 92], bend: 6 },
+        { text: 'The total, fee included', y: 712, under: [281, 382, 716] },
+        { text: 'A way back to the amount', y: 846, to: [238, 841], bend: -5 }] } },
     { t: 'decision', title: 'Off asks, on doesn’t', text: 'Opting out of giving should be a choice someone makes knowingly, never something they slide past. Opting back in should take one tap.' },
 
     { t: 'chapter', id: 'currencies', eyebrow: 'Across markets', toc: 'Across markets', title: 'A US share, paid for in naira',
       text: ['Buying Apple from a naira wallet means an exchange rate and a market that might be asleep. The review shows the rate in one line, and when New York is closed the order is queued, with a card saying when it will fill.'] },
-    { t: 'screens', frame: 'dark', label: 'The rate, and when it fills', items: [
-      { ...S('stock-us-closed', 961), cap: 'A US stock says when its market is closed.' },
-      { ...S('buy-naira-closed', 1058), scroll: true, cap: 'The rate is part of the review; the order waits for the open.' },
-      { ...S('holdings-dollars'), cap: 'Holdings can be read in dollars, converted at the same rate.' }] },
+    { t: 'flow', name: 'markets', label: 'Core flow', title: 'Paid for in naira',
+      text: 'Apple pays from the dollar wallet unless you change it. Switch to naira and the review shows the rate in one line, and with New York closed, queues the order and says when it fills.' },
 
     { t: 'chapter', id: 'orders', eyebrow: 'Orders', toc: 'Orders', title: 'Market, limit or recurring, in one flow',
-      text: ['Buy opens with no order type chosen, so the kind of order is a decision rather than a default. Flipping between money and shares keeps what you typed. A key that would break the figure shakes instead of failing later, and running short offers to add or convert money rather than ending in an error.'] },
-    { t: 'screens', frame: 'dark', label: 'Choosing, sizing and placing an order', items: [
-      { ...S('buy-type'), cap: 'Nothing chosen to start.' },
-      { ...S('buy-amount', 861), cap: 'Money or shares, one tap apart.' },
-      { ...S('buy-need-more', 861), cap: 'Short? Add money or convert.' },
-      { ...S('buy-submitted'), cap: 'Submitted, with the settlement day.' }] },
+      text: ['Buy opens with no order type chosen, so the kind of order is a decision rather than a default. Flipping between money and shares keeps what you typed.'] },
+    { t: 'flow', name: 'orders', label: 'Core flow', title: 'One flow, three kinds of order',
+      text: 'Buy starts with nothing chosen. The pill in the bar reopens the choice at any point: Recurring asks how often, Limit asks for a price. Money and shares are one tap apart.' },
 
     { t: 'chapter', id: 'holdings', eyebrow: 'Holdings', toc: 'Holdings and selling', title: 'What you own, and what you give',
       text: ['The stock portfolio adds every holding up in one currency. Selling gives the purification share from the gross proceeds, unless the investor chooses to give it themselves, and the sheet says so before they confirm.'] },
-    { t: 'screens', frame: 'dark', label: 'Holding and selling', items: [
-      { ...S('holdings'), cap: 'Every holding, every holding screened.' },
-      { ...S('sell-review', 999), cap: 'Purification comes from the gross proceeds.' },
-      { ...S('sell-purify-yourself'), cap: 'Or it’s yours to give, said plainly.' }] },
+    { t: 'marked', label: 'Holding and selling', items: [
+      { ...S('holdings'), cap: 'One total, every holding screened', loop: [16, 246, 169, 34] },
+      { ...S('stock-us-light'), cap: 'What each dividend gives, worked out for you', loop: [16, 636, 342, 170] },
+      { ...S('sell-review', 999), cap: 'Purification comes from the gross proceeds', loop: [17, 267, 340, 138] },
+      { ...S('sell-purify-yourself'), cap: 'Or it’s yours to give, said plainly', loop: [16, 398, 268, 50] }] },
 
     { t: 'chapter', id: 'handoff', eyebrow: 'Design × Engineering', toc: 'Design × Engineering', title: 'Every screen says how it behaves',
       text: ['Beside each group of screens in Figma sits a behaviour card, tied to the file in the codebase that builds it: what each part does, what happens at the edges, and why. Engineering builds from it, and when the code changes, the card is updated to match.'] },

@@ -92,6 +92,14 @@ const ICON = {
   expand: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.8h3.7v3.7M6.5 13.2H2.8V9.5M13.2 2.8 9 7M2.8 13.2 7 9"/></svg>',
 };
 
+// Up close, pause and replay, over every flow (the Pulse flows in pulse-flows.ts too).
+export const CONTROLS = `
+    <div class="fl-controls">
+      <button type="button" class="fl-expand" aria-label="View up close">${ICON.expand}</button>
+      <button type="button" class="fl-toggle" aria-label="Pause">${ICON.pause}</button>
+      <button type="button" class="fl-replay" aria-label="Play from the start">${ICON.replay}</button>
+    </div>`;
+
 // The room, the phone (screen in the frame's 375-wide units), and the controls.
 const stage = (label: string, screen: string, cls = '', room = `${PF}interior.webp`) => `
     <img class="fl-bg" src="${room}" alt="" />
@@ -99,11 +107,7 @@ const stage = (label: string, screen: string, cls = '', room = `${PF}interior.we
       <div class="fl-screen ${cls}" role="img" aria-label="${label}">${screen}</div>
       <img class="fl-frame" src="/assets/halvest/stocks/cover/iphone-air.webp" alt="" />
     </div>
-    <div class="fl-controls">
-      <button type="button" class="fl-expand" aria-label="View up close">${ICON.expand}</button>
-      <button type="button" class="fl-toggle" aria-label="Pause">${ICON.pause}</button>
-      <button type="button" class="fl-replay" aria-label="Play from the start">${ICON.replay}</button>
-    </div>`;
+    ${CONTROLS}`;
 
 // A touch, at [x, y] in screen units: it lands a beat before the change, presses, and lifts. A drag
 // lands, travels to [x, y2] over `drag` ms, then lifts where it let go.
@@ -119,7 +123,7 @@ function touch(el: HTMLElement, d: Touch, loop: number) {
 }
 
 // Plays while on screen, unless paused by hand; reduced motion starts paused on the first frame.
-function player(el: HTMLElement, anims: Animation[]) {
+export function player(el: HTMLElement, anims: Animation[]) {
   const toggle = el.querySelector<HTMLButtonElement>('.fl-toggle')!;
   let held = matchMedia('(prefers-reduced-motion: reduce)').matches, seen = false;
   const sync = () => {

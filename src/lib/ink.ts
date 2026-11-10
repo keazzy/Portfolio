@@ -33,7 +33,7 @@ export const SIZE_ADJUST = 1.05;
 /** Where each kind of headline sits on the dial. Everything else in the serif stays at 0, with no spread. */
 export const INKED: [selector: string, level: number][] = [
   ['.hero h1, .hello__mail, .cs-head h1, .gate-page h1, .case .stats b', -20],
-  ['.section h2, .co__name, .pa-title, .ch h2, .case .next b', -10],
+  ['.section h2, .co__name, .pa-title, .ch h2, .case .next b, .case .hmw .rule b', -10],
 ];
 
 export function at(level: number): Stop {

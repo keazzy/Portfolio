@@ -24,8 +24,9 @@ export type Block =
   | ({ t: 'live'; name: string } & Fig)
   | ({ t: 'screens'; items: Screen[] } & Fig)
   | { t: 'quote'; text: string; who?: string }
-  // A flow played like a screen recording (a live block in case-live.ts), with its caption beside it.
-  | { t: 'flow'; name: string; label?: string; title: string; text: string }
+  // A flow played like a screen recording (a live block in case-live.ts or pulse-flows.ts), with its caption beside it;
+  // `wide` gives a web app the column and puts the caption under it.
+  | { t: 'flow'; name: string; label?: string; title: string; text: string; wide?: boolean }
   // Two screens marked up by hand: notes and pen strokes on what changed (compare.ts).
   | ({ t: 'compare'; before: Side; after: Side } & Fig)
   // Screens in a row with handwritten captions, each one's point circled (compare.ts).
@@ -87,7 +88,7 @@ function block(b: Exclude<Block, { t: 'chapter' }>): string {
     case 'todo': return `<figure class="fig"><div class="fig-card todo-card"><span>Visual needed</span><b>${b.what}</b></div></figure>`;
     case 'decision': return `<aside class="decision"><p class="ch-eyebrow">${b.eyebrow || 'Decision'}</p><h3>${b.title}</h3><p>${fill(b.text)}</p></aside>`;
     case 'stats': return stats(b.items);
-    case 'flow': return `<figure class="flow">${b.label ? `<p class="flow-label">${b.label}</p>` : ''}<div class="flow-row"><div class="flow-panel" data-live="${b.name}" data-cue="View up close"></div><figcaption><b>${b.title}</b><span>${fill(b.text)}</span></figcaption></div></figure>`;
+    case 'flow': return `<figure class="flow${b.wide ? ' wide' : ''}">${b.label ? `<p class="flow-label">${b.label}</p>` : ''}<div class="flow-row"><div class="flow-panel" data-live="${b.name}" data-cue="View up close"></div><figcaption><b>${b.title}</b><span>${fill(b.text)}</span></figcaption></div></figure>`;
     case 'reflect': return `<div class="reflect">${b.items.map(([t, d]) => `<div><b>${t}</b>${d ? `<span>${d}</span>` : ''}</div>`).join('')}</div>`;
   }
 }

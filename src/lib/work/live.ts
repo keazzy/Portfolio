@@ -4,7 +4,7 @@
   each is drawn at a fixed size and scaled to its box with --k.
 */
 
-const I = {
+export const I = {
   search: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg>',
   mail: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="2.5" y="4.5" width="15" height="11" rx="2.5"/><path d="m3.5 6 6.5 5 6.5-5"/></svg>',
   clip: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="3.5" width="12" height="14" rx="2.5"/><path d="M7.5 3.5h5v2.5h-5zM7 10l1.5 1.5L11 9M7 14h6"/></svg>',

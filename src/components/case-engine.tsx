@@ -4,8 +4,12 @@
 import { useActionState, useEffect } from 'react';
 import { unlock, type UnlockState } from '@/app/(site)/actions';
 import { CASE_LIVE } from '@/lib/work/case-live';
+import { PULSE_FLOWS } from '@/lib/work/pulse-flows';
 import { fitLive, LIVE, type LiveName } from '@/lib/work/live';
 import { makeReel, SCRIPTS } from '@/lib/work/reels';
+
+// Every live block a case study can mount, by name: the phone flows and demos, and Pulse's web flows.
+const BLOCKS = { ...CASE_LIVE, ...PULSE_FLOWS };
 
 export function CaseEngine() {
   useEffect(() => {
@@ -28,7 +32,7 @@ export function CaseEngine() {
     });
 
     root.querySelectorAll<HTMLElement>('[data-live]').forEach((el) => {
-      const mount = CASE_LIVE[el.dataset.live!];
+      const mount = BLOCKS[el.dataset.live!];
       if (mount) cleanup.push(mount(el));
     });
 
@@ -38,9 +42,11 @@ export function CaseEngine() {
     const GROW = 'cubic-bezier(0.32, 0.72, 0, 1)';
     let closeUpClose: (() => void) | null = null;
     const openUpClose = (panel: HTMLElement, from: HTMLElement) => {
-      const name = panel.dataset.live!, mount = CASE_LIVE[name];
+      const name = panel.dataset.live!, mount = BLOCKS[name];
       if (!mount || closeUpClose) return;
-      const now = panel.getAnimations({ subtree: true })[0]?.currentTime;
+      // The flow's own timeline, not a CSS loop inside it (a caret's blink, a skeleton's shimmer).
+      const timed = (el: HTMLElement) => el.getAnimations({ subtree: true }).filter((a) => !(a instanceof CSSAnimation));
+      const now = timed(panel)[0]?.currentTime;
       const modal = document.createElement('div');
       modal.className = 'flow-modal';
       modal.setAttribute('role', 'dialog');
@@ -51,7 +57,7 @@ export function CaseEngine() {
       root.appendChild(modal);
       const big = modal.querySelector<HTMLElement>('.flow-panel')!, backdrop = modal.querySelector<HTMLElement>('.flow-backdrop')!;
       const unmount = mount(big);
-      if (typeof now === 'number') big.getAnimations({ subtree: true }).forEach((a) => { a.currentTime = now; });
+      if (typeof now === 'number') timed(big).forEach((a) => { a.currentTime = now; });
       const scroll = document.documentElement.style.overflow;
       document.documentElement.style.overflow = 'hidden';
       // From the small panel's place and size to the big one's, and back.

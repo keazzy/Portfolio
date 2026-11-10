@@ -11,6 +11,13 @@ export type AuroraHandle = { el: HTMLCanvasElement; setTheme(t: Partial<AuroraTh
 
 const LOOP_MS = 14000;
 const MAX_PULL = 0.34;
+// The curtain is a soft glow, so it's drawn small and the browser scales it up: canvas px per CSS px.
+// Full density cost a phone's GPU nine rays per pixel at 60fps; at 0.4 it's about a fourteenth of the pixels.
+const RES = 0.4;
+// It drifts on a 14-second loop, so 30 frames a second is as smooth to the eye at half the work.
+const FRAME_MS = 1000 / 30;
+const PROBE_FRAMES = 6;
+const PROBE_LIMIT_MS = 24;
 
 const VERT = `
 attribute vec2 p;
@@ -120,7 +127,8 @@ export function mount(host: HTMLElement, opts: MountOptions = {}): AuroraHandle 
   canvas.className = 'aurora';
   canvas.setAttribute('role', 'img');
   canvas.setAttribute('aria-label', 'Animated curtain of light across the top of the page.');
-  Object.assign(canvas.style, { position: 'absolute', left: '0', top: '0', width: '100%', pointerEvents: 'none', display: 'block' });
+  // It fades in once it has drawn, since it starts after the page has settled.
+  Object.assign(canvas.style, { position: 'absolute', left: '0', top: '0', width: '100%', pointerEvents: 'none', display: 'block', opacity: '0', transition: 'opacity 900ms ease-out' });
   host.prepend(canvas);
 
   const glMaybe = canvas.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
@@ -139,15 +147,15 @@ export function mount(host: HTMLElement, opts: MountOptions = {}): AuroraHandle 
   const U: Record<string, WebGLUniformLocation | null> = {};
   ['u_res', 'u_canvas', 'u_t', 'u_pull', 'u_gain', 'u_grain', 'u_cell', 'u_tiles', 'u_tintA', 'u_tintB'].forEach((n) => (U[n] = gl.getUniformLocation(prog, n)));
 
-  let dpr = 1, refW = 1, refH = 1, tiles = 1;
+  let scale = 1, refW = 1, refH = 1, tiles = 1;
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    scale = RES; // canvas px per CSS px, whatever the screen's density
     refH = refEl ? refEl.clientHeight : window.innerHeight;
     const cssW = host.clientWidth;
     const cssH = Math.round(refH * heightFrac);
     canvas.style.height = cssH + 'px';
-    canvas.width = Math.max(1, Math.round(cssW * dpr));
-    canvas.height = Math.max(1, Math.round(cssH * dpr));
+    canvas.width = Math.max(1, Math.round(cssW * scale));
+    canvas.height = Math.max(1, Math.round(cssH * scale));
     // Keep rays about phone-width apart; tile the field across wider screens.
     refW = Math.min(cssW, Math.max(refH * 0.9, 420));
     const span = cssW / refW;
@@ -200,13 +208,13 @@ export function mount(host: HTMLElement, opts: MountOptions = {}): AuroraHandle 
   /* ---------- render loop ---------- */
   const currentT = () => (reduce.matches ? 0.18 : (performance.now() % LOOP_MS) / LOOP_MS);
   function draw(t: number) {
-    gl.uniform2f(U.u_res, refW * dpr, refH * dpr);
+    gl.uniform2f(U.u_res, refW * scale, refH * scale);
     gl.uniform2f(U.u_canvas, canvas.width, canvas.height);
     gl.uniform1f(U.u_t, t);
     gl.uniform1f(U.u_pull, pull);
     gl.uniform1f(U.u_gain, theme.gain);
     gl.uniform1f(U.u_grain, theme.grain ?? 1);
-    gl.uniform1f(U.u_cell, Math.max(1, dpr));
+    gl.uniform1f(U.u_cell, Math.max(1, scale));
     gl.uniform1f(U.u_tiles, tiles);
     gl.uniform3fv(U.u_tintA, theme.tintA);
     gl.uniform3fv(U.u_tintB, theme.tintB);
@@ -215,16 +223,34 @@ export function mount(host: HTMLElement, opts: MountOptions = {}): AuroraHandle 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
+  // The first few frames are timed to the GPU's finish. A device that takes longer than PROBE_LIMIT_MS a frame
+  // (drawing in software, or simply struggling) keeps the curtain as a still and stops redrawing it.
+  let probed = 0, probeMs = 0, still = false;
+  function timedDraw() {
+    if (probed >= PROBE_FRAMES) return draw(currentT());
+    const t0 = performance.now();
+    draw(currentT());
+    gl.finish();
+    probeMs += performance.now() - t0;
+    if (++probed === PROBE_FRAMES) {
+      still = probeMs / PROBE_FRAMES > PROBE_LIMIT_MS;
+      canvas.dataset.motion = still ? 'still' : 'live';
+    }
+  }
+
   let raf = 0, visible = true, last = performance.now();
   function frame(now: number) {
     raf = 0;
-    const dt = (now - last) / 1000; last = now;
-    stepPull(dt);
-    draw(currentT());
     const settling = pull > 0 || vel !== 0;
-    if (visible && (!reduce.matches || settling)) raf = requestAnimationFrame(frame);
+    // Between frames there's nothing to draw yet; a pull is still followed at the screen's own rate.
+    if (now - last >= FRAME_MS - 1 || settling) {
+      const dt = (now - last) / 1000; last = now;
+      stepPull(dt);
+      timedDraw();
+    }
+    if (visible && !still && (!reduce.matches || pull > 0 || vel !== 0)) raf = requestAnimationFrame(frame);
   }
-  function kick() { if (!raf && visible) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+  function kick() { if (!raf && visible && !still) { last = performance.now(); raf = requestAnimationFrame(frame); } }
 
   const io = new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) kick(); });
   io.observe(canvas);
@@ -235,6 +261,7 @@ export function mount(host: HTMLElement, opts: MountOptions = {}): AuroraHandle 
   reduce.addEventListener?.('change', kick);
   resize();
   kick();
+  requestAnimationFrame(() => { canvas.style.opacity = '1'; });
 
   return {
     el: canvas,
@@ -253,7 +280,7 @@ export function mount(host: HTMLElement, opts: MountOptions = {}): AuroraHandle 
   // No WebGL: a still, soft gradient in the same tint so the page keeps its mood.
   function fallback(): AuroraHandle {
     const [r, g, b] = theme.tintA.map((c) => Math.round(c * 255));
-    Object.assign(canvas.style, { height: Math.round(window.innerHeight * 0.3) + 'px', background: `linear-gradient(rgba(${r},${g},${b},${theme.gain}) , rgba(${r},${g},${b},0))` });
+    Object.assign(canvas.style, { height: Math.round(window.innerHeight * 0.3) + 'px', background: `linear-gradient(rgba(${r},${g},${b},${theme.gain}) , rgba(${r},${g},${b},0))`, opacity: '1' });
     return { el: canvas, setTheme() { /* static fallback */ }, destroy() { canvas.remove(); } };
   }
 }

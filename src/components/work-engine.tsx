@@ -6,6 +6,7 @@
 */
 import { useActionState, useEffect, useRef, useState } from 'react';
 import { unlock, type UnlockState } from '@/app/(site)/actions';
+import { lazyVideos } from '@/lib/lazy-video';
 import { hostOf } from '@/lib/text';
 import { createViewer, esc, type ViewerShot } from '@/lib/viewer';
 import { fitLive, LIVE, type LiveName } from '@/lib/work/live';
@@ -54,14 +55,8 @@ export function WorkEngine({ shots }: { shots: ViewerShot[] }) {
       if (reduce) LIVE[w.dataset.live as LiveName].still(w.firstElementChild as HTMLElement);
     });
 
-    // Card videos only play while they're on screen.
-    const vio = new IntersectionObserver((es) => es.forEach((en) => {
-      const v = en.target as HTMLVideoElement;
-      if (en.isIntersecting) v.play().catch(() => {});
-      else v.pause();
-    }), { threshold: 0.3 });
-    document.querySelectorAll<HTMLVideoElement>('.cover video').forEach((v) => { v.pause(); vio.observe(v); });
-    cleanup.push(() => vio.disconnect());
+    // Card videos load as they come near the screen and only play while they're on it.
+    cleanup.push(lazyVideos(document.querySelectorAll<HTMLVideoElement>('.cover video')));
 
     // Reels run while their card is at least half on screen.
     if (!reduce) {

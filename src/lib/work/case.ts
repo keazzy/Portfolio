@@ -1,4 +1,5 @@
 import 'server-only';
+import { lazyVideo } from '@/lib/lazy-video';
 
 /*
   Case studies, rendered from a list of blocks (ported from concepts/shared/case.js).
@@ -57,7 +58,7 @@ export type CaseStudy = {
 const fill = (s = '') => s.replace(/\[([^\]]+)\]/g, '<mark class="fill-in">$1</mark>');
 const size = (b: { w?: number; h?: number }) => (b.w ? ` width="${b.w}" height="${b.h}"` : '');
 const media = (b: Media) => (b.video
-  ? `<video src="${b.video}#t=0.1" muted loop playsinline autoplay preload="metadata"${size(b)}></video>`
+  ? lazyVideo(b.video, size(b).trim())
   : `<img src="${b.src}" alt="${b.alt || ''}" loading="lazy"${size(b)} />`);
 const frame = (b: Fig, inner: string) => `
   <figure class="fig ${b.frame || ''}"${b.id ? ` id="${b.id}"` : ''}>

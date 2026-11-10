@@ -3,6 +3,7 @@
 /* The moving parts of a case study: live covers and blocks, self-scrolling phone screens and the contents highlight. */
 import { useActionState, useEffect } from 'react';
 import { unlock, type UnlockState } from '@/app/(site)/actions';
+import { lazyVideos } from '@/lib/lazy-video';
 import { CASE_LIVE } from '@/lib/work/case-live';
 import { PULSE_FLOWS } from '@/lib/work/pulse-flows';
 import { fitLive, LIVE, type LiveName } from '@/lib/work/live';
@@ -35,6 +36,9 @@ export function CaseEngine() {
       const mount = BLOCKS[el.dataset.live!];
       if (mount) cleanup.push(mount(el));
     });
+
+    // Videos load as they come near the screen and only play while they're on it.
+    cleanup.push(lazyVideos(root.querySelectorAll<HTMLVideoElement>('video[data-src]')));
 
     // A prototype, up close: the same flow mounted again at the size of the window, carrying on from the
     // moment it was opened, grown out of the panel it came from. Esc, the × or a click outside closes it.

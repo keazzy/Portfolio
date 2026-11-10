@@ -1,4 +1,5 @@
 import 'server-only';
+import { lazyVideo } from '@/lib/lazy-video';
 import type { Company, Media as FrameMedia, Portfolio, Shot } from '@/lib/types';
 import { seed } from '@/content/seed';
 import { CASES } from '@/content/cases';
@@ -44,7 +45,7 @@ type Build = (box: number) => string;
 function crop(src: string, iw: number, ih: number, c: Crop, { video = false, cls = '' } = {}) {
   const w = (iw / c.w) * 100, l = (-c.x / c.w) * 100, t = (-c.y / c.h) * 100;
   const media = video
-    ? `<video src="${src}#t=0.1" muted loop playsinline autoplay preload="metadata" style="width:${w}%;left:${l}%;top:${t}%"></video>`
+    ? lazyVideo(src, `style="width:${w}%;left:${l}%;top:${t}%"`)
     : `<img src="${src}" alt="" loading="lazy" width="${iw}" height="${ih}" style="width:${w}%;left:${l}%;top:${t}%" />`;
   return `<div class="crop ${cls}" style="aspect-ratio:${c.w}/${c.h}">${media}</div>`;
 }
@@ -55,11 +56,11 @@ const pair = (a: Build, b: Build): Build => (box) => `<div class="pair lift">${a
 const panel = (s: Src, c: Crop): Build => (box) => crop(s.src, s.w, s.h, c, { video: s.video, cls: `panel lift ${fitFor(c.w / c.h, box, 0.74, 0.82)}` });
 const browser = (s: Src, c = full(s.w, s.h)): Build => (box) =>
   `<div class="browser lift ${fitFor((c.w / c.h) * 0.96, box, 0.8, 0.84)}"><div class="browser__bar"><i></i><i></i><i></i><span></span></div>${crop(s.src, s.w, s.h, c, { video: s.video })}</div>`;
-const bleed = (s: Src): Build => () => `<div class="bleed lift" style="aspect-ratio:${s.w}/${s.h}">${s.video ? `<video src="${s.src}#t=0.1" muted loop playsinline autoplay preload="metadata" width="${s.w}" height="${s.h}"></video>` : `<img src="${s.src}" alt="" loading="lazy" width="${s.w}" height="${s.h}" />`}</div>`;
+const bleed = (s: Src): Build => () => `<div class="bleed lift" style="aspect-ratio:${s.w}/${s.h}">${s.video ? lazyVideo(s.src, `width="${s.w}" height="${s.h}"`) : `<img src="${s.src}" alt="" loading="lazy" width="${s.w}" height="${s.h}" />`}</div>`;
 // `pos` and `zoom` frame a photo for the card, e.g. to bring a laptop in a wide scene forward.
 const photo = (s: Src, o: { pos?: string; zoom?: number } = {}): Build => () => {
   const st = `object-position:${o.pos || 'center'};${o.zoom ? `transform:scale(${o.zoom});transform-origin:${o.pos || 'center'};` : ''}`;
-  return s.video ? `<video class="fill" src="${s.src}#t=0.1" muted loop playsinline autoplay preload="metadata"></video>` : `<img class="fill" src="${s.src}" alt="" loading="lazy" style="${st}" />`;
+  return s.video ? lazyVideo(s.src, 'class="fill"') : `<img class="fill" src="${s.src}" alt="" loading="lazy" style="${st}" />`;
 };
 
 /* Stacks: several states of one thing, one visible at a time (the reels switch between them). */
@@ -201,7 +202,7 @@ function presentShot(company: Company, shot: Shot, locked: boolean): Shot {
       media: [toMedia(company.id, stage('dark', todo('Password protected: unlock it from the card', true), 'Protected'))] };
   }
   if (!cfg) {
-    return { ...shot, locked: false, soon, cover: { html: first ? mediaHTML(first, { cls: 'fill', size: 'card' }) : '', background, tall, ratio } };
+    return { ...shot, locked: false, soon, cover: { html: first ? mediaHTML(first, { cls: 'fill', size: 'card', lazy: true }) : '', background, tall, ratio } };
   }
   return { ...shot, locked: false, soon,
     cover: { html: cfg.cover(tall ? 5 / 4 : 16 / 9), background, tall, ratio, reel: cfg.reel },

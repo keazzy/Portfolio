@@ -15,10 +15,22 @@ const AURORA_THEMES: Record<Accent, AuroraTheme> = {
   claret: { tintA: [0.62, 0.18, 0.28], tintB: [0.8, 0.36, 0.44], gain: 0.32, grain: 0.6 },
 };
 
+// The curtain waits for the page to load and go quiet, so setting up WebGL never competes with the first paint or
+// with hydration. It fades in when it starts (lib/aurora.ts).
 export function Aurora({ accent }: { accent: Accent }) {
   useEffect(() => {
-    const handle = mount(document.body, { theme: AURORA_THEMES[accent] });
-    return () => handle.destroy();
+    let handle: ReturnType<typeof mount> | null = null, timer = 0;
+    const start = () => { handle = mount(document.body, { theme: AURORA_THEMES[accent] }); };
+    // Safari has no requestIdleCallback; a short wait after load does the same job there.
+    const idle = typeof requestIdleCallback === 'function';
+    const whenIdle = () => { timer = idle ? requestIdleCallback(start, { timeout: 2500 }) : window.setTimeout(start, 600); };
+    if (document.readyState === 'complete') whenIdle();
+    else addEventListener('load', whenIdle, { once: true });
+    return () => {
+      removeEventListener('load', whenIdle);
+      if (idle) cancelIdleCallback(timer); else window.clearTimeout(timer);
+      handle?.destroy();
+    };
   }, [accent]);
   return null;
 }

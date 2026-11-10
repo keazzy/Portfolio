@@ -4,6 +4,7 @@
   Framework-free on purpose: FLIP + WAAPI run outside React so the motion stays smooth.
 */
 import type { Media, Portfolio } from './types';
+import { lazyVideo } from './lazy-video';
 
 export type ViewerShot = Portfolio['shots'][number];
 
@@ -25,8 +26,10 @@ const isNarrow = () => window.matchMedia('(max-width: 820px)').matches;
 export const esc = (s: string | undefined | null) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
-export function mediaHTML(m: Media, { autoplay = true, cls = '', size = 'src' as 'src' | 'card' | 'thumb' } = {}) {
+// `lazy` is for covers: the video waits to load until it comes near the screen (lib/lazy-video.ts).
+export function mediaHTML(m: Media, { autoplay = true, cls = '', size = 'src' as 'src' | 'card' | 'thumb', lazy = false } = {}) {
   if (m.kind === 'video') {
+    if (lazy) return lazyVideo(esc(m.src), `class="${cls}" width="${m.width}" height="${m.height}"`);
     return `<video class="${cls}" src="${esc(m.src)}#t=0.1" ${autoplay ? 'autoplay' : ''} muted loop playsinline preload="metadata" width="${m.width}" height="${m.height}"></video>`;
   }
   return `<img class="${cls}" src="${esc(m[size])}" alt="${esc(m.alt)}" loading="lazy" decoding="async" width="${m.width}" height="${m.height}" />`;

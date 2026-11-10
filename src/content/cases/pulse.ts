@@ -64,7 +64,6 @@ export const pulse: CaseStudy = {
       text: ['Search and AI share one list. Matching records appear as you type, and the first row offers to ask Pulse instead: ↵ opens a record, ⌘↵ asks. While Pulse looks, you can stop it.'] },
     { t: 'flow', wide: true, name: 'pulse-search', label: 'Prototype', title: '↵ opens, ⌘↵ asks',
       text: 'Records narrow as each letter lands, and ↓ ↵ opens one. Type a question instead and the same list offers to ask it; Stop hands the bar back while Pulse looks.' },
-    { t: 'todo', what: 'Earlier directions from Figma, like a separate AI chat panel' },
     { t: 'decision', title: 'One place to type', text: 'A separate AI chat would have meant two places to look, and a decision before every question. Making “Ask” the first result lets the same words do both.' },
 
     { t: 'chapter', id: 'ask', eyebrow: 'Ask', toc: 'Answers', title: 'Answers you can check, then act on',
@@ -80,8 +79,7 @@ export const pulse: CaseStudy = {
     { t: 'decision', title: 'Pulse drafts; people send', text: 'Nothing leaves without a person pressing Send. Recreate and Refine let them steer the draft without starting over.' },
 
     { t: 'chapter', id: 'impact', eyebrow: 'Impact', toc: 'Impact', title: 'The default way to find things',
-      text: ['Engineering built Pulse straight away, and it replaced the page-by-page search as the default. People stopped moving between pages: from one bar they could find a record, ask about it, draft the follow-up and plan the next step.',
-        '[A line from the CEO, PM or a design partner about using it.]'] },
+      text: ['Engineering built Pulse straight away, and it replaced the page-by-page search as the default. People stopped moving between pages: from one bar they could find a record, ask about it, draft the follow-up and plan the next step.'] },
 
     { t: 'chapter', id: 'reflection', eyebrow: 'Reflection', toc: 'Reflection', title: 'What I’d keep doing' },
     { t: 'reflect', items: [['Start with the people who carry the decision.', 'Hearing what the CEO, PM and CTO each needed from AI told me what Pulse had to be before I drew a single screen.'],

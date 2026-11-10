@@ -92,8 +92,8 @@ const ICON = {
 };
 
 // The room, the phone (screen in the frame's 375-wide units), and the controls.
-const stage = (label: string, screen: string, cls = '') => `
-    <img class="fl-bg" src="${PF}interior.webp" alt="" />
+const stage = (label: string, screen: string, cls = '', room = `${PF}interior.webp`) => `
+    <img class="fl-bg" src="${room}" alt="" />
     <div class="fl-phone">
       <div class="fl-screen ${cls}" role="img" aria-label="${label}">${screen}</div>
       <img class="fl-frame" src="/assets/halvest/stocks/cover/iphone-air.webp" alt="" />
@@ -370,6 +370,162 @@ function markets(el: HTMLElement) {
   ]);
 }
 
+/*
+  Mobile · Running short: the amount to invest, then Review Investment, and the wallet can't cover it. The
+  "Not enough funds" sheet rises; Fund my wallet grows it into the bank transfer details, on the same page;
+  "I have made the transfer" closes it, and the review is pushed. Back returns to the amount. The layers are
+  the v1.1 frames in the Not Enough Funds section, with the account holder and number blurred. There's no
+  v1 code to time it from, so the sheets move as the file's own prototype links do (Smart Animate,
+  ease-in-out, 450ms) and the push is iOS's, as in the Stocks flows. The file's next two sheets, confirming
+  the transfer and "Funding Successful", still have placeholder copy, so they're left out.
+*/
+const MS = '/assets/halvest/mobile/flow/short/';
+// The Mobile flows' own room: lavender on a white table, blurred (Pexels 4857869, by Vie Studio), lighter than
+// Stocks' interior to sit behind the v1 app's light screens.
+const LILAC = '/assets/halvest/mobile/flow/lavender.webp';
+const V1 = 'cubic-bezier(0.42, 0, 0.58, 1)', V1_MS = 450;
+const SHORT_LOOP = 9200;
+const SHORT_TOUCHES: Touch[] = [
+  { x: 187, y: 752, t: 900 },     // Review Investment
+  { x: 187, y: 752, t: 2400 },    // Fund my wallet
+  { x: 187, y: 759, t: 4400 },    // I have made the transfer
+  { x: 28, y: 68, t: 7300 },      // back
+];
+
+function short(el: HTMLElement) {
+  const LOOP = SHORT_LOOP, tr = (stops: Stop[]) => track(LOOP, stops);
+  el.innerHTML = stage('Investing ₦5,000,000 with too little in the wallet: a sheet says so and offers to fund it, grows into the bank transfer details without leaving the page, and once the transfer is made the investment goes on to review.', `
+        <div class="of-page ms-amount"><img src="${MS}amount.webp" alt="" /><i class="of-dim"></i></div>
+        <div class="of-page ms-review"><img src="${MS}review.webp" alt="" /></div>
+        <i class="ms-scrim"></i>
+        <div class="ms-sheet"><img class="ms-transfer" src="${MS}transfer.webp" alt="" /><img class="ms-short" src="${MS}short.webp" alt="" /></div>
+        <img class="cf-status" src="${MS}status.webp" alt="" />
+        ${SHORT_TOUCHES.map(dot).join('')}`, 'ms', LILAC);
+  el.classList.add('fl-lilac');
+  const $ = <T extends Element>(s: string) => el.querySelector<T>(s)!;
+  const opts = { duration: LOOP, iterations: Infinity };
+  const { o, x } = moves(LOOP);
+  const UP = 1000, GROW = 2500, DOWN = 4500, PUSH_AT = 5100, POP_AT = 7400;
+  const down = { transform: 'translateY(100%)' }, up = { transform: 'none' };
+  // The transfer sheet is the short one grown upward: shown from the short one's height, then all of it.
+  const clip = (top: number) => ({ clipPath: `inset(${top}% 0 0 0 round 4.27% 4.27% 0 0 / 2.36% 2.36% 0 0)` });
+  const SMALL = ((677 - 374) / 677) * 100;
+  return player(el, [
+    $<HTMLElement>('.ms-sheet').animate(tr([[0, down], [UP, down, V1], [UP + V1_MS, up], [DOWN, up, V1], [DOWN + V1_MS, down], [LOOP, down]]), opts),
+    $<HTMLElement>('.ms-scrim').animate(tr([[0, o(0)], [UP, o(0), V1], [UP + V1_MS, o(1)], [DOWN, o(1), V1], [DOWN + V1_MS, o(0)], [LOOP, o(0)]]), opts),
+    $<HTMLElement>('.ms-transfer').animate(tr([[0, { ...clip(SMALL), opacity: 0 }], [GROW, { ...clip(SMALL), opacity: 0 }, 'linear'], [GROW + 1, { ...clip(SMALL), opacity: 1 }, V1], [GROW + V1_MS, { ...clip(0), opacity: 1 }], [DOWN + V1_MS + 100, { ...clip(0), opacity: 1 }, 'linear'], [DOWN + V1_MS + 101, { ...clip(SMALL), opacity: 0 }], [LOOP, { ...clip(SMALL), opacity: 0 }]]), opts),
+    $<HTMLElement>('.ms-short').animate(tr([[0, o(1)], [GROW, o(1), V1], [GROW + 220, o(0)], [DOWN + V1_MS + 100, o(0), 'linear'], [DOWN + V1_MS + 101, o(1)], [LOOP, o(1)]]), opts),
+    // The review is pushed over the amount, and back pops it.
+    $<HTMLElement>('.ms-amount').animate(tr([[0, x(0)], [PUSH_AT, x(0), SHEET], [PUSH_AT + PUSH, x(-30)], [POP_AT, x(-30), SHEET], [POP_AT + PUSH, x(0)], [LOOP, x(0)]]), opts),
+    $<HTMLElement>('.ms-amount .of-dim').animate(tr([[0, o(0)], [PUSH_AT, o(0), SHEET], [PUSH_AT + PUSH, o(1)], [POP_AT, o(1), SHEET], [POP_AT + PUSH, o(0)], [LOOP, o(0)]]), opts),
+    $<HTMLElement>('.ms-review').animate(tr([[0, x(110)], [PUSH_AT, x(110), SHEET], [PUSH_AT + PUSH, x(0)], [POP_AT, x(0), SHEET], [POP_AT + PUSH, x(110)], [LOOP, x(110)]]), opts),
+    ...[...el.querySelectorAll<HTMLElement>('.fl-dot')].map((d, i) => touch(d, SHORT_TOUCHES[i], LOOP)),
+  ]);
+}
+
+/*
+  Mobile · Funding: the dollar wallet's account details, grouped by where the money is sent from. Nigeria
+  opens to its instruction (email support for the details); the US opens to its fee and the bank details,
+  closing Nigeria as it goes; a copy shows the toast; the US closes again. The page is the v1.1 frames in
+  "Wallets - Add Money" (all closed, Nigeria open, the US open) cut at the rows they share, so each route's
+  content unrolls under its header while the rows below slide, as the accordion does. The account number,
+  routing number and address are blurred. Timing as Running short: the file's Smart Animate, ease-in-out,
+  450ms; the toast is the Naira frame's.
+*/
+const MF2 = '/assets/halvest/mobile/flow/funding/';
+const FUND_LOOP = 9000;
+const NG_H = 176, US_H = 460;     // how far each route's content pushes the rows below it
+const FUND_TOUCHES: Touch[] = [
+  { x: 187, y: 270, t: 900 },             // Sending from Nigeria
+  { x: 187, y: 343 + NG_H, t: 2600 },     // Sending from the US, pushed down by Nigeria
+  { x: 329, y: 589, t: 4300 },            // copy the account number
+  { x: 187, y: 343, t: 7100 },            // Sending from the US, to close it
+];
+
+function fund(el: HTMLElement) {
+  const LOOP = FUND_LOOP, tr = (stops: Stop[]) => track(LOOP, stops);
+  el.innerHTML = stage('The dollar wallet\'s account details, grouped by where the money comes from: Sending from Nigeria opens to an instruction to email support; Sending from the US opens to its fee and the bank details, which copy with a tap.', `
+        <div class="of-page fa">
+          <img class="fa-top" src="${MF2}top.webp" alt="" />
+          <img class="fa-ng" src="${MF2}ng.webp" alt="" />
+          <img class="fa-us" src="${MF2}us.webp" alt="" />
+          <div class="fa-mid"><img src="${MF2}mid.webp" alt="" /><img class="fa-ushead" src="${MF2}us-head.webp" alt="" /></div>
+          <img class="fa-bottom" src="${MF2}bottom.webp" alt="" />
+        </div>
+        <img class="fa-toast" src="${MF2}toast.webp" alt="" />
+        <img class="cf-status" src="${MS}status.webp" alt="" />
+        ${FUND_TOUCHES.map(dot).join('')}`, 'ms', LILAC);
+  el.classList.add('fl-lilac');
+  const $ = <T extends Element>(s: string) => el.querySelector<T>(s)!;
+  const opts = { duration: LOOP, iterations: Infinity };
+  const { o } = moves(LOOP);
+  const NG = 1000, SWITCH = 2700, CLOSE = 7200, TOAST = 4400, TOAST_OFF = 6000;
+  // A layer `h` tall moved down by `by`; a route's content shown to fraction `f` of its height, from the top.
+  const shift = (h: number, by: number) => ({ transform: `translateY(${(by / h) * 100}%)` });
+  const shown = (f: number) => ({ clipPath: `inset(0 0 ${(1 - f) * 100}% 0)` });
+  // Nigeria opens, the US opens as Nigeria closes, then the US closes: one move each, on the file's curve.
+  const at = (v: (n: 0 | 1, u: 0 | 1) => Keyframe): Stop[] => [[0, v(0, 0)], [NG, v(0, 0), V1], [NG + V1_MS, v(1, 0)], [SWITCH, v(1, 0), V1], [SWITCH + V1_MS, v(0, 1)], [CLOSE, v(0, 1), V1], [CLOSE + V1_MS, v(0, 0)], [LOOP, v(0, 0)]] as Stop[];
+  return player(el, [
+    $<HTMLElement>('.fa-ng').animate(tr(at((n) => shown(n))), opts),
+    $<HTMLElement>('.fa-mid').animate(tr(at((n) => shift(70, n * NG_H))), opts),
+    $<HTMLElement>('.fa-ushead').animate(tr(at((_, u) => o(u))), opts),
+    $<HTMLElement>('.fa-us').animate(tr(at((n, u) => ({ ...shift(US_H, n * NG_H), ...shown(u) }))), opts),
+    $<HTMLElement>('.fa-bottom').animate(tr(at((n, u) => shift(444, n * NG_H + u * US_H))), opts),
+    // The toast drops in under the status bar, and goes.
+    $<HTMLElement>('.fa-toast').animate(tr([[0, { transform: 'translateY(-160%)', opacity: 0 }], [TOAST, { transform: 'translateY(-160%)', opacity: 0 }, V1], [TOAST + 400, { transform: 'none', opacity: 1 }], [TOAST_OFF, { transform: 'none', opacity: 1 }, V1], [TOAST_OFF + 350, { transform: 'translateY(-160%)', opacity: 0 }], [LOOP, { transform: 'translateY(-160%)', opacity: 0 }]]), opts),
+    ...[...el.querySelectorAll<HTMLElement>('.fl-dot')].map((d, i) => touch(d, FUND_TOUCHES[i], LOOP)),
+  ]);
+}
+
+/*
+  Mobile · Onboarding: the last step of first-time setup, biometric login; Setup lets you in, and Home shows
+  how far along you are (1 of 5). Its card opens the Account Checklist, where each step says how long it
+  takes; Verify my BVN opens the BVN screen, which says why it's needed before you give it. Back, back,
+  and setup comes round again. The layers are the v1.1 frames (First time Setups, the unverified Home, the
+  checklist, Verification · Enter your BVN, whose number is the file's sample). The setup screen is a modal,
+  so it slides away and back; pushes and pops are as in the other flows.
+*/
+const MO = '/assets/halvest/mobile/flow/onboard/';
+const ONBOARD_LOOP = 10400;
+const ONBOARD_TOUCHES: Touch[] = [
+  { x: 187, y: 686, t: 900 },     // Setup
+  { x: 187, y: 165, t: 2400 },    // Verify your account info
+  { x: 187, y: 288, t: 3900 },    // Verify my BVN
+  { x: 33, y: 68, t: 6200 },      // back, to the checklist
+  { x: 33, y: 68, t: 7500 },      // back, to Home
+];
+
+function onboard(el: HTMLElement) {
+  const LOOP = ONBOARD_LOOP, tr = (stops: Stop[]) => track(LOOP, stops);
+  el.innerHTML = stage('First-time setup offers biometric login, then you\'re in: Home shows you\'re one step of five along, its card opens the account checklist with how long each step takes, and Verify my BVN explains why the BVN is needed before asking for it.', `
+        <div class="of-page ob-home"><img src="${MO}home.webp" alt="" /><i class="of-dim"></i></div>
+        <div class="of-page ob-push ob-check"><img src="${MO}checklist.webp" alt="" /><i class="of-dim"></i></div>
+        <div class="of-page ob-push ob-bvn"><img src="${MO}bvn.webp" alt="" /></div>
+        <div class="of-page ob-bio"><img src="${MO}bio.webp" alt="" /></div>
+        <img class="cf-status" src="${MS}status.webp" alt="" />
+        ${ONBOARD_TOUCHES.map(dot).join('')}`, 'ms', LILAC);
+  el.classList.add('fl-lilac');
+  const $ = <T extends Element>(s: string) => el.querySelector<T>(s)!;
+  const opts = { duration: LOOP, iterations: Infinity };
+  const { o, x } = moves(LOOP);
+  const DISMISS = 1000, TO_CHECK = 2500, TO_BVN = 4000, BACK_1 = 6300, BACK_2 = 7600, PRESENT = 9300;
+  const y = (v: number) => ({ transform: `translateY(${v}%)` });
+  // A page pushed at `a` and popped at `b`, and the page under it, a third over and dimmed meanwhile.
+  const pushed = (a: number, b: number): Stop[] => [[0, x(110)], [a, x(110), SHEET], [a + PUSH, x(0)], [b, x(0), SHEET], [b + PUSH, x(110)], [LOOP, x(110)]];
+  const under = (a: number, b: number, v: (k: number) => Keyframe): Stop[] => [[0, v(0)], [a, v(0), SHEET], [a + PUSH, v(1)], [b, v(1), SHEET], [b + PUSH, v(0)], [LOOP, v(0)]] as Stop[];
+  return player(el, [
+    // Setup slides away to Home; at the end it comes back up, as the loop starts again.
+    $<HTMLElement>('.ob-bio').animate(tr([[0, y(0)], [DISMISS, y(0), SHEET], [DISMISS + PUSH, y(100)], [PRESENT, y(100), SHEET], [PRESENT + PUSH, y(0)], [LOOP, y(0)]]), opts),
+    $<HTMLElement>('.ob-home').animate(tr(under(TO_CHECK, BACK_2, (k) => x(-30 * k))), opts),
+    $<HTMLElement>('.ob-home .of-dim').animate(tr(under(TO_CHECK, BACK_2, (k) => o(k))), opts),
+    $<HTMLElement>('.ob-check').animate(tr(pushed(TO_CHECK, BACK_2)), opts),
+    $<HTMLElement>('.ob-check img').animate(tr(under(TO_BVN, BACK_1, (k) => x(-30 * k))), opts),
+    $<HTMLElement>('.ob-check .of-dim').animate(tr(under(TO_BVN, BACK_1, (k) => o(k))), opts),
+    $<HTMLElement>('.ob-bvn').animate(tr(pushed(TO_BVN, BACK_1)), opts),
+    ...[...el.querySelectorAll<HTMLElement>('.fl-dot')].map((d, i) => touch(d, ONBOARD_TOUCHES[i], LOOP)),
+  ]);
+}
+
 export const CASE_LIVE: Record<string, (el: HTMLElement) => () => void> = {
   rolling,
   slider: slider(screens('mobile', ['home', 'login', 'checklist', 'business', 'review', 'wallet'])),
@@ -379,4 +535,7 @@ export const CASE_LIVE: Record<string, (el: HTMLElement) => () => void> = {
   comply,
   orders,
   markets,
+  short,
+  fund,
+  onboard,
 };

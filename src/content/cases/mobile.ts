@@ -46,38 +46,33 @@ export const mobile: CaseStudy = {
     { t: 'chapter', id: 'shipped', eyebrow: 'What shipped', toc: 'What shipped', title: 'An app built around your money',
       text: ['Home shows what you have and what’s live. Invest lists ethically curated businesses, each with its record and its campaigns. A campaign shows how far it’s funded and what happens next, and Portfolio breaks down what you own.'] },
     { t: 'live', frame: 'flush slide', name: 'slider', cap: 'Home, signing in, the setup checklist, a business, an investment review and the wallet.' },
-    { t: 'screens', frame: 'dark', label: 'Up close', items: [
-      { ...S('home', 1322), scroll: true, cap: 'Home: your wealth, and what’s live.' },
-      { ...S('business', 1590), scroll: true, cap: 'A business, its record, and its campaigns.' },
-      { ...S('campaign', 1045), cap: 'A campaign: funding, details and timeline.' },
-      { ...S('portfolio', 859), cap: 'Portfolio: what you own, by type.' }] },
+    { t: 'marked', label: 'Up close', items: [
+      { ...S('home-phone'), cap: 'Home: your wealth, at a glance', loop: [16, 150, 343, 178] },
+      { ...S('business', 1590), cap: 'A business, and how it’s performing', loop: [16, 398, 343, 247] },
+      { ...S('campaign', 1045), cap: 'Campaigns carry the business’s badges', loop: [10, 378, 365, 32] },
+      { ...S('portfolio', 859), cap: 'Portfolio: what you own, by type', loop: [16, 345, 343, 168] }] },
 
     { t: 'chapter', id: 'scope', eyebrow: 'Scope', toc: 'Scope', title: 'Fund, invest, track. The rest could wait.',
       text: ['The website did more than a first app needed to. I designed the first version around one loop: put money in, invest it in a campaign, and watch it work.',
         'Bank transfer and currency conversion came first; funding by card and by USSD were designed in, marked “Soon”. The managed portfolio opened as a waitlist rather than a product.'] },
-    { t: 'screens', frame: 'dark', label: 'What came later', items: [
-      { ...S('add-funds'), cap: 'Card and USSD funding, marked “Soon”.' },
-      { ...S('managed', 1314), cap: 'The managed portfolio, as a waitlist.' }] },
+    { t: 'marked', label: 'What came later', items: [
+      { ...S('add-funds'), cap: 'Card and USSD, marked “Soon”', loop: [16, 690, 343, 78] },
+      { ...S('managed-phone'), cap: 'The managed portfolio, as a waitlist', loop: [16, 662, 343, 60] }] },
     { t: 'decision', title: 'Ship the loop, not the feature list', text: 'Doing the core loop well mattered more than matching every web feature on day one. The “Soon” labels told investors what was coming without building it yet.' },
 
     { t: 'chapter', id: 'onboarding', eyebrow: 'Onboarding', toc: 'Onboarding', title: 'From download to a first investment',
       text: ['Signing up asks only for what an account needs: your country, an email and a password. First-time setup offers a passcode and biometric login, then you’re in.',
         'Verification comes after, as a checklist on Home: verify your BVN, verify your identity, fund your wallet, invest. Each step says how long it takes and why it’s needed.'] },
-    { t: 'screens', frame: 'dark', label: 'Signing up, then setting up', items: [
-      { ...S('biometrics'), cap: 'Biometric login, offered during setup.' },
-      { ...S('home-unverified'), cap: 'Home shows how far along you are.' },
-      { ...S('checklist', 890), cap: 'The checklist: what’s left, and how long it takes.' },
-      { ...S('bvn'), cap: 'Why Halvest asks for a BVN, before you give it.' }] },
+    { t: 'flow', name: 'onboard', label: 'Core flow', title: 'In first, verified after',
+      text: 'Setup ends with biometric login, then you’re in. Home shows how far along you are; the checklist says how long each step takes, and the BVN screen says why it’s needed before you give it.' },
     { t: 'decision', title: 'Let people in before asking for their BVN', text: 'Halvest has to verify investors before they invest, not before they look around. New investors see what Halvest offers first, and the checklist keeps the remaining steps in view.' },
     { t: 'stats', items: [['67%', 'of sign-ups started in the app are finished'], ['20%', 'of sign-ups started on the website are finished']] },
     { t: 'text', text: 'Those figures are from Mixpanel, March to October 2026. Some of the gap is the channel: someone who downloads an app arrives more committed than someone who lands on a website.' },
 
     { t: 'chapter', id: 'short', eyebrow: 'Edge cases', toc: 'Running short', title: 'Running short doesn’t end the investment',
       text: ['If your wallet can’t cover an investment, the app doesn’t stop at an error. It offers to fund the wallet right there, shows the transfer details without leaving the page, and takes you back to review the investment once the money arrives.'] },
-    { t: 'screens', frame: 'dark', label: 'Not enough funds', items: [
-      { ...S('short'), cap: 'Short? Fund the wallet from here.' },
-      { ...S('short-transfer'), cap: 'The transfer details, on the same page.' },
-      { ...S('short-review'), cap: 'Then straight back to review.' }] },
+    { t: 'flow', name: 'short', label: 'Core flow', title: 'Short, but not stopped',
+      text: 'Too little in the wallet opens a sheet, not an error. Fund my wallet grows it into the transfer details on the same page, and once the transfer is made, the investment carries on to review.' },
 
     { t: 'chapter', id: 'testing', eyebrow: 'Testing', toc: 'Testing', title: 'Two investors, a real build',
       text: ['In July 2025, the product manager and I ran two moderated sessions with existing investors on a TestFlight build of the app. Each completed seven of the eight tasks, and both struggled with the same one: making sense of the portfolio.',
@@ -93,17 +88,20 @@ export const mobile: CaseStudy = {
 
     { t: 'chapter', id: 'proof', eyebrow: 'Social proof', toc: 'Social proof', title: 'Proof before you back a business',
       text: ['Beta investors wanted proof before backing a business they didn’t know. I designed two directions for the business page. The second shipped: a performance chart, the business’s category, and how many campaigns it has completed, or “New & promising” for a first-timer. The same badges sit on each campaign, next to its investment memo.'] },
-    { t: 'screens', frame: 'dark', label: 'Two directions', items: [
-      { ...S('business-a', 1095), tag: 'Direction A', cap: 'The business, then its campaigns.' },
-      { ...S('business', 1590), tag: 'Shipped', scroll: true, cap: 'Its record first: performance, category, past campaigns.' },
-      { ...S('campaign', 1045), cap: 'The badges carry onto every campaign.' }] },
+    { t: 'compare', label: 'Two directions',
+      before: { ...S('business-a', 1095), tag: 'Direction A', alt: 'Direction A of the business page', notes: [
+        { text: 'A count, but no category', y: 431, to: [3, 431], loop: [16, 412, 222, 38], bend: -4 },
+        { text: 'Revenue as one number', y: 637, to: [3, 637], loop: [16, 614, 343, 46], bend: -4 },
+        { text: 'Campaigns sideways, one at a time', y: 900, brace: [8, 776, 1080] }] },
+      after: { ...S('business-top', 1095), tag: 'Shipped', alt: 'The business page as shipped', notes: [
+        { text: 'Its category and its record, up front', y: 348, loop: [12, 330, 360, 37] },
+        { text: 'Six months of revenue, charted', y: 520, to: [372, 520], loop: [16, 400, 343, 245], bend: 4 },
+        { text: 'Campaigns in a list', y: 1046, to: [348, 1046], bend: -4 }] } },
 
     { t: 'chapter', id: 'funding', eyebrow: 'Funding', toc: 'Funding', title: 'Instructions for where you’re sending from',
       text: ['Funding the dollar wallet meant one long block of bank details and notes, written for everyone. I grouped it by where the money is coming from, Nigeria, the US or elsewhere, so each investor opens only the instructions that apply, with that route’s fee stated inline.'] },
-    { t: 'screens', frame: 'dark', label: 'Funding the dollar wallet', items: [
-      { ...S('wallet'), cap: 'The wallet, in naira and dollars.' },
-      { ...S('usd'), cap: 'Pick where you’re sending from.' },
-      { ...S('usd-us', 928), cap: 'Only the details for that route, and its fee.' }] },
+    { t: 'flow', name: 'fund', label: 'Core flow', title: 'Only your route',
+      text: 'Each way of sending dollars opens only its own instructions. From Nigeria, an email to support; from the US, the bank details with the $1.5 fee stated inline, each a tap to copy.' },
 
     { t: 'chapter', id: 'impact', eyebrow: 'Impact', toc: 'Impact', title: 'New investors start in the app',
       text: ['A year after the public beta, most new investors start in the app: since March 2026, 83% of sign-ups have happened there, and six in ten investments are made in it. Among investors who sign in, the app overtook the website in September 2026, and its share is still growing.',

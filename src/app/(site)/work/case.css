@@ -67,6 +67,7 @@ html:has(.case) { scroll-behavior: smooth; }
 .case .fig figcaption { max-width: 620px; margin-top: 10px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
 .case .fig .sheet { position: relative; z-index: 1; border-radius: 10px; background: #fff; box-shadow: var(--lift), 0 0 0 1px rgba(20, 18, 40, 0.06); }
 .case .fig-card .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.case .fig-card .pair > img, .case .fig-card .pair > video { width: 100%; height: auto; border-radius: 10px; box-shadow: var(--lift), 0 0 0 1px rgba(20, 18, 40, 0.06); }
 .case .todo-card { display: grid; place-content: center; gap: 6px; min-height: 220px; text-align: center; background: transparent !important;
   border: 1.5px dashed color-mix(in srgb, var(--ink) 18%, transparent); color: var(--ink-3); font-size: 12.5px; }
 .case .todo-card::after { display: none; }
@@ -321,6 +322,28 @@ html:has(.case) { scroll-behavior: smooth; }
     .case .of-page > .mf-body { top: calc(119 * var(--u)); }
     .case .mf-edge { position: absolute; left: 0; right: 0; top: calc(119 * var(--u)); height: calc(24 * var(--u)); background: linear-gradient(#06030c, rgba(6, 3, 12, 0)); }
     .case .of-page > .mf-foot { top: auto; bottom: 0; }
+    /* Mobile · Running short (short in case-live.ts): the v1 app is light; its sheet grows into the transfer details. */
+    .case .fl-screen.ms, .case .ms .of-page { background: #f9f7fd; }
+    .case .flow-panel.fl-lilac { background: #aa9ca3; }
+    .case .fl-lilac .fl-phone { filter: drop-shadow(0 2cqh 4cqh rgba(52, 36, 64, 0.3)); }
+    .case .ms-review { transform: translateX(110%); box-shadow: calc(-8 * var(--u)) 0 calc(24 * var(--u)) rgba(20, 18, 40, 0.18); }
+    .case .ms .of-dim { background: rgba(20, 18, 40, 0.12); }
+    .case .ms-scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.5); opacity: 0; }
+    .case .ms-sheet { position: absolute; left: 0; right: 0; bottom: 0; height: calc(677 * var(--u)); transform: translateY(100%); }
+    .case .ms-sheet img { position: absolute; left: 0; bottom: 0; width: 100%; }
+    .case .ms-transfer { opacity: 0; }
+    /* Mobile · Funding (fund in case-live.ts): the details page in slices, so each route unrolls and the rows below slide. */
+    .case .fa > img, .case .fa-mid { position: absolute; left: 0; width: 100%; }
+    .case .fa > .fa-top { top: 0; }
+    .case .fa > .fa-ng, .case .fa > .fa-mid { top: calc(298 * var(--u)); }
+    .case .fa > .fa-us, .case .fa > .fa-bottom { top: calc(368 * var(--u)); }
+    .case .fa-ng, .case .fa-us { clip-path: inset(0 0 100% 0); }
+    .case .fa-mid img { display: block; width: 100%; }
+    .case .fa-mid .fa-ushead { position: absolute; left: 0; top: calc(9 * var(--u)); opacity: 0; }
+    .case .fa-toast { position: absolute; left: calc(16 * var(--u)); top: calc(53 * var(--u)); width: calc(342 * var(--u)); transform: translateY(-160%); opacity: 0;
+      filter: drop-shadow(0 calc(6 * var(--u)) calc(14 * var(--u)) rgba(56, 30, 120, 0.25)); }
+    /* Mobile · Onboarding (onboard in case-live.ts): pushed pages wait off to the right; setup is a modal over Home. */
+    .case .ob-push { transform: translateX(110%); box-shadow: calc(-8 * var(--u)) 0 calc(24 * var(--u)) rgba(20, 18, 40, 0.18); overflow: hidden; }
     @media (max-width: 640px) {
       .case .flow-row { grid-template-columns: 1fr; gap: 12px; }
     }
@@ -346,8 +369,8 @@ html:has(.case) { scroll-behavior: smooth; }
       transition: stroke-dashoffset var(--len) cubic-bezier(0.45, 0.05, 0.4, 1) calc(var(--wait, 0ms) + var(--d)), visibility 0s linear calc(var(--wait, 0ms) + var(--d)); }
     .case .cmp-g.armed.on .cmp-note { opacity: 1; transform: none;
       transition: opacity 360ms ease-out calc(var(--wait, 0ms) + var(--d)), transform 520ms var(--ease) calc(var(--wait, 0ms) + var(--d)); }
-    /* A row of screens with handwritten captions (the marked block): four across, two by two on a phone. */
-    .case .mk { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 20px; }
+    /* A row of screens with handwritten captions (the marked block): up to four across at most 168 wide, two by two on a phone. */
+    .case .mk { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 168px)); justify-content: center; gap: 20px; }
     .case .mk-g { --u: calc(100cqw / 375); min-width: 0; }
     .case .mk-phone { position: relative; aspect-ratio: 375 / 812; border-radius: 13% / 6%; background: #fff;
       box-shadow: 0 0 0 1px rgba(20, 18, 40, 0.06), 0 0 0 calc(12 * var(--u)) #101016, var(--lift); }

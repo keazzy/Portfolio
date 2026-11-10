@@ -128,8 +128,10 @@ export function Cursor() {
       // A pen or a touch screen on a hybrid laptop gets the native pointer back.
       if (e.pointerType !== 'mouse') { root.classList.remove('has-cursor'); return; }
       root.classList.add('has-cursor');
-      el.classList.remove('away');
       x = e.clientX; y = e.clientY;
+      // Over the page's own scrollbar the browser always draws its arrow, so ours steps aside there.
+      if (x >= root.clientWidth || y >= root.clientHeight) { el.classList.add('away'); return; }
+      el.classList.remove('away');
       label(e.target as Element);
       if (!raf) raf = requestAnimationFrame(place);
     };

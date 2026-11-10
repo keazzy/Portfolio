@@ -312,8 +312,10 @@ html { scroll-behavior: smooth; }
 .draft-badge span { text-decoration: underline; text-underline-offset: 3px; }
 
 /* Cursor: an ink arrow with a white edge, so it reads on the paper and on dark covers.
-   <Cursor> adds .has-cursor on the first mouse move; until then (and on touch) the native pointer shows. */
-html.has-cursor, html.has-cursor * { cursor: none !important; }
+   <Cursor> adds .has-cursor on the first mouse move; until then (and on touch) the native pointer shows.
+   The native one is hidden with an empty image first and `none` after it: some embedded browsers ignore
+   `none` and draw their arrow anyway, but do show a cursor image, and an empty one is nothing. */
+html.has-cursor, html.has-cursor * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/%3E") 0 0, none !important; }
 .cursor { --cursor: var(--ink); position: fixed; left: 0; top: 0; z-index: 10000; pointer-events: none; opacity: 0; will-change: transform; }
 .has-cursor .cursor { opacity: 1; }
 .cursor.away { opacity: 0; }

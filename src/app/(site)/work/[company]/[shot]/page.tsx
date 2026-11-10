@@ -10,6 +10,7 @@ import { getPortfolio } from '@/lib/content';
 import { present } from '@/lib/work/build';
 import { renderCase, type CaseStudy } from '@/lib/work/case';
 import { isUnlocked } from '@/lib/work/lock';
+import { preview } from '@/lib/preview';
 import '../../case.css';
 
 // The handwriting on marked-up figures (compare blocks). Only loaded once one is on the page.
@@ -24,7 +25,9 @@ export const generateStaticParams = () => Object.keys(CASES).map((key) => {
 export async function generateMetadata({ params }: PageProps<'/work/[company]/[shot]'>): Promise<Metadata> {
   const { company, shot } = await params;
   const c = CASES[`${company}/${shot}`];
-  return c ? { title: `${c.title} · Adeleke Abdulazeez`, description: c.description } : {};
+  if (!c) return {};
+  const title = `${c.title} · Adeleke Abdulazeez`;
+  return { title, description: c.description, ...preview({ title, description: c.description, path: `/work/${company}/${shot}` }) };
 }
 
 function CaseNav({ c }: { c: CaseStudy }) {

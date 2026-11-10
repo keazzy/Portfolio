@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Link preview doodle</title>
+<!--
+  The link preview's video (og:video) and still (og:image), drawn as a page. seek(t) draws the frame at t seconds from
+  nothing but t, so scripts/og/render.mjs can step through it frame by frame; still() draws the still. Open it through
+  `node scripts/og/render.mjs --serve` to watch it loop (?play), or to see the still (?still).
+
+  One line that never leaves the paper: a tangle pulls itself into a drawing of one sector after another (SECTORS), then
+  knots back up, and round again. Beside it, the name in Fraunces with the site's ink (src/lib/ink.ts) and the role in
+  Caveat. The paper, grain, ink and accent are the site's (globals.css, work.css); the line wobbles like the pen in
+  src/lib/work/compare.ts, from a seed, so it comes out the same every render.
+-->
+<style>
+  @font-face { font-family: Fraunces; src: url(/fonts/Fraunces.woff2) format('woff2'); font-weight: 100 900; size-adjust: 105%; }
+  @font-face { font-family: Caveat; src: url(/fonts/Caveat.woff2) format('woff2'); font-weight: 400 700; }
+  /* The accent is Iris, as Site settings have it. ?accent=ember or ?accent=claret for the others. */
+  :root { --paper: #f5f3ee; --ink: #1a1c19; --ink-2: rgba(26, 28, 25, 0.66); --accent: #5b3fd0; }
+  :root[data-accent='ember'] { --accent: #b5441b; }
+  :root[data-accent='claret'] { --accent: #8e2a3b; }
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: var(--paper); }
+  body { font-variation-settings: 'SOFT' 53.5, 'WONK' 0; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  #stage { position: relative; width: 1200px; height: 630px; color: var(--ink); }
+  /* The site's grain (work.css body::after), still from frame to frame so it costs the video nothing. */
+  #stage::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.16;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 -0.45'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>") 0 0 / 200px 200px; }
+  .serif { position: absolute; margin: 0; font: 360 66px/1.06 Fraunces, Georgia, serif; letter-spacing: -0.02em; }
+  .l { display: block; white-space: nowrap; }
+  .hand { position: absolute; margin: 0; font: 600 44px/1 Caveat, cursive; white-space: nowrap; }
+  #pen { position: absolute; inset: 0; width: 1200px; height: 630px; overflow: visible; }
+  #pen path { fill: none; stroke: var(--accent); stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="filters"></defs></svg>
+<div id="stage"><div id="scene"></div><svg id="pen" viewBox="0 0 1200 630"></svg></div>
+<script type="module">
+import { at, axes, spread } from '/ink.js';
+
+const q = new URLSearchParams(location.search);
+if (q.get('accent')) document.documentElement.dataset.accent = q.get('accent');
+const NS = 'http://www.w3.org/2000/svg';
+const scene = document.getElementById('scene'), pen = document.getElementById('pen');
+const H = 630;
+
+// ---- Time ------------------------------------------------------------------------------------------------------
+const clamp = (x) => Math.max(0, Math.min(1, x));
+const span = (t, start, dur) => clamp((t - start) / dur);
+const mix = (a, b, p) => a + (b - a) * p;
+function bezier(x1, y1, x2, y2) {
+  const X = (t) => 3 * x1 * t * (1 - t) ** 2 + 3 * x2 * t * t * (1 - t) + t ** 3;
+  const Y = (t) => 3 * y1 * t * (1 - t) ** 2 + 3 * y2 * t * t * (1 - t) + t ** 3;
+  return (x) => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 30; i++) { const m = (lo + hi) / 2; X(m) < x ? (lo = m) : (hi = m); }
+    return Y((lo + hi) / 2);
+  };
+}
+const SMOOTH = bezier(0.65, 0, 0.35, 1);
+
+// ---- Ink (src/lib/ink.ts), one filter per inked element -------------------------------------------------------------
+let filters = 0;
+function inked(el) {
+  const f = document.createElementNS(NS, 'filter');
+  f.id = `ink-${filters++}`;
+  for (const [k, v] of Object.entries({ x: '-20%', y: '-50%', width: '140%', height: '200%', 'color-interpolation-filters': 'sRGB' })) f.setAttribute(k, v);
+  f.innerHTML = '<feGaussianBlur in="SourceGraphic"/><feComponentTransfer><feFuncA type="linear"/></feComponentTransfer>';
+  document.getElementById('filters').appendChild(f);
+  return (level) => {
+    const s = at(level), sp = spread(s, parseFloat(getComputedStyle(el).fontSize), devicePixelRatio || 1);
+    el.style.fontVariationSettings = axes(s);
+    if (!sp) { el.style.filter = 'none'; return; }
+    f.firstElementChild.setAttribute('stdDeviation', sp.sigma.toFixed(3));
+    const a = f.querySelector('feFuncA');
+    a.setAttribute('slope', sp.slope.toFixed(3));
+    a.setAttribute('intercept', sp.intercept.toFixed(4));
+    el.style.filter = `url(#${f.id})`;
+  };
+}
+
+// ---- Pen (after src/lib/work/compare.ts) ---------------------------------------------------------------------------
+function seeded(text) {
+  let h = 2166136261;
+  for (const c of text) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  return () => {
+    h = (h + 0x6d2b79f5) | 0;
+    let t = Math.imul(h ^ (h >>> 15), 1 | h);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296 - 0.5;
+  };
+}
+const n = (v) => +v.toFixed(1);
+function through(pts) {
+  let d = `M${n(pts[0][0])} ${n(pts[0][1])}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i - 1] ?? pts[i], b = pts[i], c = pts[i + 1], e = pts[i + 2] ?? c;
+    d += `C${n(b[0] + (c[0] - a[0]) / 6)} ${n(b[1] + (c[1] - a[1]) / 6)} ${n(c[0] - (e[0] - b[0]) / 6)} ${n(c[1] - (e[1] - b[1]) / 6)} ${n(c[0])} ${n(c[1])}`;
+  }
+  return d;
+}
+const add = (html) => { scene.insertAdjacentHTML('beforeend', html); return scene.lastElementChild; };
+const box = (el) => {
+  const r = el.getBoundingClientRect(), s = document.getElementById('stage').getBoundingClientRect();
+  return { x: r.left - s.left, y: r.top - s.top, w: r.width, h: r.height, r: r.right - s.left, b: r.bottom - s.top };
+};
+// Set the type at its finished ink so it can be measured, then size it to fit.
+function fit(el, ink, level, maxW, maxPx) {
+  ink(level);
+  const base = parseFloat(getComputedStyle(el).fontSize);
+  const widest = Math.max(...[...el.querySelectorAll('.l')].map((l) => l.scrollWidth));
+  el.style.fontSize = `${Math.min(maxPx, (base * maxW) / widest)}px`;
+  ink(level);
+}
+// ---- One line ----------------------------------------------------------------------------------------------------
+// Drawings made of a single stroke, as if the pen never leaves the paper. Each is a list of points around (0, 0), about
+// 300 wide and 250 tall; shape() spaces them evenly along the line, so any one can turn into any other point for point.
+const P = Math.PI;
+const arc = (cx, cy, rx, ry, a0, a1) => {
+  const k = Math.max(2, Math.ceil(Math.abs(a1 - a0) / 0.06));
+  return Array.from({ length: k + 1 }, (_, i) => { const a = a0 + ((a1 - a0) * i) / k; return [cx + rx * Math.cos(a), cy + ry * Math.sin(a)]; });
+};
+// A rounded rectangle, clockwise from the left end of its top edge, back round to it.
+const rrect = (x, y, w, h, r) => [
+  [x + r, y], ...arc(x + w - r, y + r, r, r, -P / 2, 0), ...arc(x + w - r, y + h - r, r, r, 0, P / 2),
+  ...arc(x + r, y + h - r, r, r, P / 2, P), ...arc(x + r, y + r, r, r, P, P * 1.5),
+];
+// The same, starting from the point on it nearest p.
+const rrectFrom = (p, ...a) => {
+  const pts = rrect(...a);
+  const i = pts.reduce((b, q, j) => (Math.hypot(q[0] - p[0], q[1] - p[1]) < Math.hypot(pts[b][0] - p[0], pts[b][1] - p[1]) ? j : b), 0);
+  return [...pts.slice(i), ...pts.slice(0, i + 1)];
+};
+// A smooth curve through the points (Catmull-Rom), as points.
+const curve = (pts, per = 8) => pts.slice(0, -1).flatMap((b, i) => {
+  const a = pts[i - 1] ?? b, c = pts[i + 1], e = pts[i + 2] ?? c;
+  return Array.from({ length: per }, (_, s) => {
+    const t = s / per, t2 = t * t, t3 = t2 * t;
+    const f = (k) => 0.5 * (2 * b[k] + (-a[k] + c[k]) * t + (2 * a[k] - 5 * b[k] + 4 * c[k] - e[k]) * t2 + (-a[k] + 3 * b[k] - 3 * c[k] + e[k]) * t3);
+    return [f(0), f(1)];
+  });
+}).concat([pts.at(-1)]);
+// A four-pointed sparkle, its sides pinched in. It starts at one point (0 bottom, 1 right, 2 top, 3 left) and goes
+// round `sides` sides, so going past four retraces a side to leave from a point nearer the next thing.
+const sparkle = (cx, cy, rx, ry, from = 0, sides = 4) => {
+  const tip = (i) => [[0, ry], [rx, 0], [0, -ry], [-rx, 0]][i % 4];
+  return Array.from({ length: sides }, (_, i) => {
+    const [x0, y0] = tip(from + i), [x1, y1] = tip(from + i + 1), qx = (x0 + x1) * 0.14, qy = (y0 + y1) * 0.14;
+    return Array.from({ length: 12 }, (_, s) => {
+      const t = s / 12;
+      return [cx + (1 - t) ** 2 * x0 + 2 * t * (1 - t) * qx + t * t * x1, cy + (1 - t) ** 2 * y0 + 2 * t * (1 - t) * qy + t * t * y1];
+    });
+  }).flat().concat([[cx + tip(from + sides)[0], cy + tip(from + sides)[1]]]);
+};
+const turn = (pts, deg) => { const a = (deg * P) / 180, c = Math.cos(a), s = Math.sin(a); return pts.map(([x, y]) => [x * c - y * s, x * s + y * c]); };
+
+// The sectors, in the order the line goes through them. The names are only seeds for each drawing's wobble.
+const SECTORS = [
+  // Fintech: a bank card, its chip and its number.
+  ['fintech', () => {
+    const x = -130, y = -84, w = 260, h = 164;
+    const number = Array.from({ length: 121 }, (_, i) => { const a = (i / 120) * P * 2 * 6; return [x + 32 + 4.6 * a - 8 * Math.sin(a), y + 124 - 9 * Math.cos(a)]; });
+    return turn([...rrectFrom([x, y + 58], x, y, w, h, 18), ...rrectFrom([x + 30, y + 58], x + 30, y + 40, 48, 36, 8), ...number], -7);
+  }],
+  // AI: a chat bubble with a sparkle in it.
+  ['AI', () => {
+    const x = -124, y = -96, w = 248, h = 156, a = [x + 96, y + h];
+    return [
+      ...rrectFrom(a, x, y, w, h, 46), [x + 40, y + h + 42], [x + 62, y + h - 2],
+      ...sparkle(x + w * 0.44, y + h * 0.5, 30, 42, 0, 5), ...sparkle(x + w * 0.76, y + h * 0.3, 13, 18, 3),
+    ];
+  }],
+  // Health: a heartbeat that runs into a heart and carries on round it.
+  ['health', () => [
+    [-150, 6], [-62, 6], [-48, 6], [-36, -34], [-20, 52], [-4, -64], [10, 24], [22, 6], [96, 6],
+    ...curve([[96, 6], [72, 40], [36, 74], [0, 104]]),
+    ...curve([[0, 104], [-44, 64], [-84, 20], [-108, -24], [-104, -70], [-62, -98], [-22, -86], [0, -54]]),
+    ...curve([[0, -54], [22, -86], [62, -98], [104, -70], [108, -24], [96, 6]]),
+  ]],
+  // B2B SaaS: a dashboard, its bar chart climbing.
+  ['B2B SaaS', () => {
+    const x = -142, y = -100, w = 284, h = 190, base = y + h - 30, bars = [100, 80, 60, 44, 28];
+    const chart = [[x + w - 1, base], [x + w - 26, base]];
+    bars.forEach((b, i) => {
+      const r = x + w - 26 - i * 46;
+      chart.push([r, base - b], [r - 32, base - b], [r - 32, base], [r - 46, base]);
+    });
+    return [...rrect(x, y, w, h, 14), [x + 1, y + 34], [x + w - 1, y + 34], [x + w - 1, base], ...chart, [x + 1, base]];
+  }],
+  // Commerce: a shopping cart.
+  ['commerce', () => [
+    [-150, -88], [-112, -88], [-72, 40], [112, 40], [134, -50], [-100, -50], [-72, 40], [-60, 66], [-46, 67],
+    ...arc(-46, 82, 15, 15, -P / 2, P * 1.5), [92, 67], ...arc(92, 82, 15, 15, -P / 2, P * 1.5),
+  ]],
+  // Insurance and security: a shield with a check on it.
+  ['insurance', () => [
+    ...curve([[-104, -20], [-106, -64], [-104, -100], [-56, -100], [0, -118], [56, -100], [104, -100], [106, -64], [104, -20], [86, 44], [44, 88], [0, 116]]),
+    ...curve([[0, 116], [-44, 88], [-86, 44], [-104, -20]]),
+    [-50, -4], [-14, 34], [52, -44],
+  ]],
+  // Property: a house, its chimney and its door.
+  ['property', () => [
+    [-100, 112], [-100, -14], [-128, -14], [0, -118], [58, -71], [58, -106], [86, -106], [86, -48], [128, -14],
+    [100, -14], [100, 112], [32, 112], [32, 36], [-32, 36], [-32, 112], [-100, 112],
+  ]],
+  // Startups and venture: a rocket taking off.
+  ['startups', () => turn([
+    ...arc(0, -30, 16, 16, -P / 2, P * 1.5), [0, -98],
+    ...curve([[0, -98], [17, -80], [33, -46], [38, -8], [35, 12]]), [64, 48], [58, 74], [35, 52],
+    [18, 52], ...curve([[18, 52], [14, 80], [0, 112], [-14, 80], [-18, 52]]), [-35, 52], [-58, 74], [-64, 48], [-35, 12],
+    ...curve([[-35, 12], [-38, -8], [-33, -46], [-17, -80], [0, -98]]),
+  ].map(([x, y]) => [x * 1.3, y * 1.3]), 38)],
+];
+
+// A pen going round and round, its loops drifting and changing size, like a ball of scribble.
+function scribble(r) {
+  const drift = [r() * 6, r() * 6, r() * 6];
+  return Array.from({ length: 260 }, (_, i) => {
+    const u = i / 259, a = u * P * 2 * 7.5 + drift[0];
+    const R = 62 + 46 * Math.sin(u * 9.4 + drift[1]) + 20 * Math.sin(u * 23 + drift[2]) + r() * 8;
+    return [70 * Math.sin(u * P * 2 * 1.3 + drift[2]) + R * Math.cos(a) * 1.25, 34 * Math.cos(u * P * 2 * 0.9 + drift[1]) + R * Math.sin(a) * 0.82];
+  });
+}
+
+// Spaced evenly along the line, placed at (cx, cy), and given a hand's slow wobble (seeded, so it's the same each time).
+function shape(pts, cx, cy, count, seed, scale = 1.12) {
+  const d = [0];
+  for (let i = 1; i < pts.length; i++) d.push(d[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  const r = seeded(seed), ph = [r() * 9, r() * 9, r() * 9, r() * 9];
+  let j = 0;
+  return Array.from({ length: count }, (_, k) => {
+    const s = (d.at(-1) * k) / (count - 1);
+    while (j < pts.length - 2 && d[j + 1] < s) j++;
+    const f = (s - d[j]) / (d[j + 1] - d[j] || 1);
+    return [
+      cx + scale * mix(pts[j][0], pts[j + 1][0], f) + 1.6 * Math.sin(k * 0.05 + ph[0]) + 0.8 * Math.sin(k * 0.17 + ph[1]),
+      cy + scale * mix(pts[j][1], pts[j + 1][1], f) + 1.6 * Math.sin(k * 0.06 + ph[2]) + 0.8 * Math.sin(k * 0.21 + ph[3]),
+    ];
+  });
+}
+
+// ---- The composition -------------------------------------------------------------------------------------------
+function compose() {
+  const h = add(`<h1 class="serif"><span class="l">Adeleke</span><span class="l">Abdulazeez</span></h1>`);
+  const ink = inked(h);
+  h.style.left = '92px';
+  fit(h, ink, -20, 470, 92);
+  h.style.top = `${(H - h.offsetHeight) / 2 - 22}px`;
+  const hb = box(h);
+  const role = add(`<p class="hand" style="color:var(--ink-2);transform:rotate(-1.5deg)">product designer</p>`);
+  role.style.left = `${hb.x + 4}px`;
+  role.style.top = `${hb.b + 18}px`;
+
+  // The drawings sit level with the name and role.
+  const cx = 868, cy = Math.round((hb.y + box(role).b) / 2), N = 380;
+  const tangle = { pts: shape(scribble(seeded('tangle')), cx, cy, N, 'tangle'), ink: true, rest: 0.5 };
+  // How long the line rests on each drawing, and how long it takes to become the next. 0.5 + 8 × 0.65 + 9 × 0.8
+  // = 12.9 s: a whole number of frames at 30 fps, so the loop has no seam.
+  const REST = 0.65, MOVE = 0.8;
+  const keys = [tangle, ...SECTORS.map(([seed, draw]) => ({ pts: shape(draw(), cx, cy, N, seed), rest: REST }))];
+  const duration = keys.reduce((s, k) => s + k.rest + MOVE, 0);
+
+  const line = document.createElementNS(NS, 'path');
+  line.style.strokeWidth = '5.5';
+  pen.appendChild(line);
+  // A drawn line never sits quite still: it shivers a little, ten times a second, like hand-drawn animation.
+  const boil = (pts, t) => {
+    const b = Math.floor(t * 10) * 1.7;
+    return pts.map(([x, y], i) => [x + 0.9 * Math.sin(i * 0.23 + b), y + 0.9 * Math.cos(i * 0.19 + b * 1.3)]);
+  };
+  // The tangle is in ink; the drawings come out in the accent.
+  const tint = (p) => `color-mix(in srgb, var(--accent) ${(p * 100).toFixed(1)}%, var(--ink))`;
+  return {
+    duration,
+    // The still, for everywhere that won't play the video: every drawing at once around the knot they come out of.
+    still() {
+      line.remove();
+      const xs = [712, 890, 1068], ys = [cy - 172, cy, cy + 172];
+      const grid = [...SECTORS.slice(0, 4), null, ...SECTORS.slice(4)];
+      grid.forEach((sector, i) => {
+        const x = xs[i % 3], y = ys[Math.floor(i / 3)], p = document.createElementNS(NS, 'path');
+        p.setAttribute('d', through(sector ? shape(sector[1](), x, y, N, sector[0], 0.46) : shape(scribble(seeded('tangle')), x, y, N, 'tangle', 0.36)));
+        p.style.strokeWidth = sector ? '3.8' : '2.8';
+        if (!sector) p.style.stroke = 'var(--ink-2)';
+        pen.appendChild(p);
+      });
+    },
+    seek(t) {
+      t = ((t % duration) + duration) % duration;
+      let at = 0, i = 0;
+      while (t >= at + keys[i].rest + MOVE) at += keys[i++].rest + MOVE;
+      const from = keys[i], to = keys[(i + 1) % keys.length], g = span(t, at + from.rest, MOVE);
+      const pts = from.pts.map((p, j) => {
+        const k = SMOOTH(clamp(g * 1.5 - (j / N) * 0.5));
+        return [mix(p[0], to.pts[j][0], k), mix(p[1], to.pts[j][1], k)];
+      });
+      line.setAttribute('d', through(boil(pts, t)));
+      line.style.stroke = tint(mix(from.ink ? 0 : 1, to.ink ? 0 : 1, SMOOTH(g)));
+    },
+  };
+}
+
+await document.fonts.load('360 66px Fraunces');
+await document.fonts.load('600 44px Caveat');
+await document.fonts.ready;
+const doodle = compose();
+window.seek = doodle.seek;
+window.still = doodle.still;
+window.ready = { duration: doodle.duration };
+if (q.has('still')) doodle.still();
+else doodle.seek(q.has('at') ? +q.get('at') : 0);
+if (q.has('play') && !q.has('still')) {
+  const t0 = performance.now();
+  const frame = (now) => { doodle.seek((now - t0) / 1000); requestAnimationFrame(frame); };
+  requestAnimationFrame(frame);
+}
+</script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import { draftMode } from 'next/headers';
 import { Cursor, DraftModeBadge } from '@/components/client';
 import { Ink } from '@/components/ink';
 import { getPortfolio } from '@/lib/content';
+import { preview, SITE_URL } from '@/lib/preview';
 import { isSanityConfigured } from '@/sanity/env';
 import { SanityLive } from '@/sanity/live';
 import './globals.css';
@@ -27,9 +28,10 @@ const sans = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getPortfolio();
   return {
+    metadataBase: new URL(SITE_URL),
     title: settings.seo.title,
     description: settings.seo.description,
-    openGraph: { title: settings.seo.title, description: settings.seo.description, type: 'website' },
+    ...preview({ title: settings.seo.title, description: settings.seo.description, path: '/' }),
   };
 }
 

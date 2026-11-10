@@ -86,7 +86,7 @@ function block(b: Exclude<Block, { t: 'chapter' }>): string {
     case 'todo': return `<figure class="fig"><div class="fig-card todo-card"><span>Visual needed</span><b>${b.what}</b></div></figure>`;
     case 'decision': return `<aside class="decision"><p class="ch-eyebrow">${b.eyebrow || 'Decision'}</p><h3>${b.title}</h3><p>${fill(b.text)}</p></aside>`;
     case 'stats': return stats(b.items);
-    case 'flow': return `<figure class="flow">${b.label ? `<p class="flow-label">${b.label}</p>` : ''}<div class="flow-row"><div class="flow-panel" data-live="${b.name}"></div><figcaption><b>${b.title}</b><span>${fill(b.text)}</span></figcaption></div></figure>`;
+    case 'flow': return `<figure class="flow">${b.label ? `<p class="flow-label">${b.label}</p>` : ''}<div class="flow-row"><div class="flow-panel" data-live="${b.name}" data-cue="View up close"></div><figcaption><b>${b.title}</b><span>${fill(b.text)}</span></figcaption></div></figure>`;
     case 'reflect': return `<div class="reflect">${b.items.map(([t, d]) => `<div><b>${t}</b>${d ? `<span>${d}</span>` : ''}</div>`).join('')}</div>`;
   }
 }

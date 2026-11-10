@@ -32,6 +32,66 @@ export function CaseEngine() {
       if (mount) cleanup.push(mount(el));
     });
 
+    // A prototype, up close: the same flow mounted again at the size of the window, carrying on from the
+    // moment it was opened, grown out of the panel it came from. Esc, the × or a click outside closes it.
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const GROW = 'cubic-bezier(0.32, 0.72, 0, 1)';
+    let closeUpClose: (() => void) | null = null;
+    const openUpClose = (panel: HTMLElement, from: HTMLElement) => {
+      const name = panel.dataset.live!, mount = CASE_LIVE[name];
+      if (!mount || closeUpClose) return;
+      const now = panel.getAnimations({ subtree: true })[0]?.currentTime;
+      const modal = document.createElement('div');
+      modal.className = 'flow-modal';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.setAttribute('aria-label', 'Prototype, up close');
+      modal.innerHTML = `<i class="flow-backdrop"></i><div class="flow-panel" data-live="${name}"></div>
+        <button type="button" class="flow-close" aria-label="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m4 4 8 8M12 4l-8 8"/></svg></button>`;
+      root.appendChild(modal);
+      const big = modal.querySelector<HTMLElement>('.flow-panel')!, backdrop = modal.querySelector<HTMLElement>('.flow-backdrop')!;
+      const unmount = mount(big);
+      if (typeof now === 'number') big.getAnimations({ subtree: true }).forEach((a) => { a.currentTime = now; });
+      const scroll = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = 'hidden';
+      // From the small panel's place and size to the big one's, and back.
+      const flip = () => {
+        const a = panel.getBoundingClientRect(), b = big.getBoundingClientRect();
+        return [{ transform: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width})`, transformOrigin: '0 0' }, { transform: 'none', transformOrigin: '0 0' }];
+      };
+      if (!reduced) {
+        big.animate(flip(), { duration: 460, easing: GROW });
+        backdrop.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: 'ease-out' });
+      }
+      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+      const onModalClick = (e: MouseEvent) => {
+        const t = e.target as Element;
+        if (t.closest('.flow-close') || t === backdrop) close();
+      };
+      document.addEventListener('keydown', onKey);
+      modal.addEventListener('click', onModalClick);
+      modal.querySelector<HTMLElement>('.flow-close')!.focus();
+      const close = () => {
+        if (!closeUpClose) return;
+        closeUpClose = null;
+        document.removeEventListener('keydown', onKey);
+        const done = () => { unmount(); modal.remove(); document.documentElement.style.overflow = scroll; from.focus({ preventScroll: true }); };
+        if (reduced) return done();
+        backdrop.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, easing: 'ease-in', fill: 'forwards' });
+        big.animate(flip().reverse(), { duration: 320, easing: GROW, fill: 'forwards' }).finished.then(done, done);
+      };
+      closeUpClose = close;
+    };
+    const onPanelClick = (e: MouseEvent) => {
+      const t = e.target as Element, panel = t.closest<HTMLElement>('.flow-panel[data-live]');
+      if (!panel || panel.closest('.flow-modal')) return;
+      const expand = t.closest<HTMLElement>('.fl-expand');
+      if (t.closest('.fl-controls') && !expand) return;   // pause and replay keep their jobs
+      openUpClose(panel, expand ?? panel);
+    };
+    root.addEventListener('click', onPanelClick);
+    cleanup.push(() => { root.removeEventListener('click', onPanelClick); closeUpClose?.(); });
+
     // A tall screen plays like a screen recording: it scrolls down, rests, and comes back up.
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
       root.querySelectorAll<HTMLImageElement>('img[data-scroll]').forEach((img) => {

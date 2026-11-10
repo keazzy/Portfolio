@@ -110,12 +110,13 @@ export function Cursor() {
     let x = -100, y = -100, raf = 0, over: Element | null = null, pillW = 0;
 
     // Over a cover, the arrow carries the card's cue (the cue in the card itself is for keyboard focus).
+    // Over a prototype it carries its own (`data-cue`), but not over its buttons, which say what they do.
     const label = (target: Element | null) => {
-      const box = target?.closest('.wcover') ?? null;
+      const box = target?.closest('.fl-controls') ? null : target?.closest('.wcover, [data-cue]') ?? null;
       if (box === over) return;
       over = box;
-      const cue = box?.querySelector('.wcue');
-      if (cue) { pill.innerHTML = cue.innerHTML; pillW = pill.offsetWidth; }
+      const cue = box?.getAttribute('data-cue') ?? box?.querySelector('.wcue')?.innerHTML;
+      if (cue) { pill.innerHTML = cue; pillW = pill.offsetWidth; }
       el.classList.toggle('labelled', !!cue);
     };
     const place = () => {

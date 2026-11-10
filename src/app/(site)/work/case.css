@@ -344,6 +344,17 @@ html:has(.case) { scroll-behavior: smooth; }
       filter: drop-shadow(0 calc(6 * var(--u)) calc(14 * var(--u)) rgba(56, 30, 120, 0.25)); }
     /* Mobile · Onboarding (onboard in case-live.ts): pushed pages wait off to the right; setup is a modal over Home. */
     .case .ob-push { transform: translateX(110%); box-shadow: calc(-8 * var(--u)) 0 calc(24 * var(--u)) rgba(20, 18, 40, 0.18); overflow: hidden; }
+    /* A prototype, up close (CaseEngine): the same flow over the page, as big as the window allows. */
+    .case .flow-row .flow-panel { cursor: zoom-in; }
+    .case .flow-modal { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; }
+    .case .flow-backdrop { position: absolute; inset: 0; background: rgba(14, 10, 18, 0.8); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+    .case .flow-modal .flow-panel { width: min(86vh, 92vw); border-radius: 10px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45); }
+    .case .flow-modal .fl-expand { display: none; }
+    .case .flow-close { position: absolute; top: 16px; right: 16px; z-index: 1; display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14); color: #fff; cursor: pointer; transition: background 160ms ease; }
+    .case .flow-close:hover { background: rgba(255, 255, 255, 0.24); }
+    .case .flow-close:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .case .flow-close svg { width: 16px; height: 16px; }
     @media (max-width: 640px) {
       .case .flow-row { grid-template-columns: 1fr; gap: 12px; }
     }

@@ -89,6 +89,7 @@ const ICON = {
   pause: '<svg viewBox="0 0 16 16"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor"/><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor"/></svg>',
   play: '<svg viewBox="0 0 16 16"><path d="M5 3.4v9.2a.6.6 0 0 0 .9.5l7.3-4.6a.6.6 0 0 0 0-1L5.9 2.9a.6.6 0 0 0-.9.5Z" fill="currentColor"/></svg>',
   replay: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 8a4.8 4.8 0 1 0 1.5-3.5"/><path d="M3 2.6v2.6h2.6"/></svg>',
+  expand: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.8h3.7v3.7M6.5 13.2H2.8V9.5M13.2 2.8 9 7M2.8 13.2 7 9"/></svg>',
 };
 
 // The room, the phone (screen in the frame's 375-wide units), and the controls.
@@ -99,6 +100,7 @@ const stage = (label: string, screen: string, cls = '', room = `${PF}interior.we
       <img class="fl-frame" src="/assets/halvest/stocks/cover/iphone-air.webp" alt="" />
     </div>
     <div class="fl-controls">
+      <button type="button" class="fl-expand" aria-label="View up close">${ICON.expand}</button>
       <button type="button" class="fl-toggle" aria-label="Pause">${ICON.pause}</button>
       <button type="button" class="fl-replay" aria-label="Play from the start">${ICON.replay}</button>
     </div>`;

@@ -56,6 +56,8 @@ export type Shot = {
   caseStudy?: string;
   /** Behind the case-study password until it's entered. */
   locked?: boolean;
+  /** Shown, but not open yet: the card says "Coming soon" and doesn't open. */
+  soon?: boolean;
   cover?: Cover;
 };
 

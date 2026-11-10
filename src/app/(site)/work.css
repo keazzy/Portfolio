@@ -30,6 +30,7 @@ body::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-eve
 .wcard:focus-visible { outline: none; }
 .wcard:focus-visible .cover { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink); }
 a.wcard { text-decoration: none; cursor: pointer; }
+.wcard.soon { cursor: default; }   /* coming soon: nothing to open yet */
 /* What a click does, said on hover: a light shade over the cover, and a label the cursor carries
    (<Cursor> copies it from .wcue). The .wcue in the card shows, centred, for keyboard focus. */
 .wcover { position: relative; }

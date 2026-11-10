@@ -1,6 +1,7 @@
 import 'server-only';
 import type { Company, Media as FrameMedia, Portfolio, Shot } from '@/lib/types';
 import { seed } from '@/content/seed';
+import { CASES } from '@/content/cases';
 import { esc, mediaHTML } from '@/lib/viewer';
 import { LIVE, liveCover, type LiveName } from './live';
 import { stockCover } from './stock-cover';
@@ -110,7 +111,7 @@ const MODAL = { x: 497, y: 43, w: 474, h: 786 };
 // A frame is a composed stage ({ bg, build }), a photo or video at its own shape ({ photo }), or a live component ({ live }).
 type Frame = { cap?: string; bg?: Bg; build?: Build; photo?: Src; live?: LiveName };
 // `ratio` overrides the card's shape, for a cover drawn to its own (Halal stocks' 4:3).
-type Cfg = { cover: Build; frames: Frame[]; bg: Bg | null; reel?: string; tall?: boolean; ratio?: string };
+type Cfg = { cover: Build; frames: Frame[]; bg: Bg | null; reel?: string; tall?: boolean; ratio?: string; soon?: boolean };
 const stage = (bg: Bg, build: Build, cap: string): Frame => ({ bg, build, cap });
 const asPhoto = (s: Src, cap: string): Frame => ({ photo: s, cap });
 const CFG: Record<string, Cfg> = {
@@ -128,7 +129,8 @@ const CFG: Record<string, Cfg> = {
   'halvest/vest': { bg: null, cover: photo(vestTeaser), frames: [asPhoto(vestTeaser, 'Meet Vest')] },
   'halvest/onboarding': { bg: 'mesh', reel: 'onboarding', cover: pair(phone(h19, steps[0], { inPair: true }), phoneStack(steps.slice(1).map((c) => ({ s: h19, c })), { inPair: true })),
     frames: steps.map((c, i) => stage('tint', phone(h19, c), ['Welcome: the promise in one line', 'Country: search with flags', 'Email: checked as you type', 'Code: resend timer visible', 'Password: strength shown as you type'][i])) },
-  'halvest/v2': { bg: null, reel: 'brandCycle', cover: brand(), frames: [stage('tint', brand({ only: 0 }), 'The new wordmark on the signature gradient'), stage('tint', brandGrid(), 'The logo across the brand gradients'), stage('tint', brand({ only: 4, mark: 'icon' }), 'The new app icon')] },
+  // v2 is unreleased: its card plays the brand and says "Coming soon", and doesn't open.
+  'halvest/v2': { soon: true, bg: null, reel: 'brandCycle', cover: brand(), frames: [stage('tint', brand({ only: 0 }), 'The new wordmark on the signature gradient'), stage('tint', brandGrid(), 'The logo across the brand gradients'), stage('tint', brand({ only: 4, mark: 'icon' }), 'The new app icon')] },
   'halvest/halvest-os': { bg: 'dark', cover: todo('A clean recording of the workspace', true), frames: [stage('dark', todo('A clean recording of the workspace', true), 'Recording to come')] },
   'halvest/admin': { bg: 'tint', cover: todo('Before and after: the dashboard structure'), frames: [stage('tint', todo('Before and after: the dashboard structure'), 'Screens to come')] },
 
@@ -189,7 +191,9 @@ const DESIGNED_FROM = new Map<string, string | undefined>(seed.companies.flatMap
 function presentShot(company: Company, shot: Shot, locked: boolean): Shot {
   const key = `${company.id}/${shot.id}`, first = shot.media[0];
   const cfg = !first?.file || first.file === DESIGNED_FROM.get(key) ? CFG[key] : undefined;
-  const tall = !!CFG[key]?.tall, ratio = CFG[key]?.ratio, bg = CFG[key]?.bg;
+  const tall = !!CFG[key]?.tall, ratio = CFG[key]?.ratio, bg = CFG[key]?.bg, soon = CFG[key]?.soon;
+  // A study written here links its card even when the Studio's copy of the shot doesn't say so.
+  if (!soon && !shot.caseStudy && CASES[key]) shot = { ...shot, caseStudy: `/work/${key}` };
   const background = bg ? BG[company.id][bg] : '#ddd';
   if (locked) {
     return { ...shot, locked: true,
@@ -197,9 +201,9 @@ function presentShot(company: Company, shot: Shot, locked: boolean): Shot {
       media: [toMedia(company.id, stage('dark', todo('Password protected: unlock it from the card', true), 'Protected'))] };
   }
   if (!cfg) {
-    return { ...shot, locked: false, cover: { html: first ? mediaHTML(first, { cls: 'fill', size: 'card' }) : '', background, tall, ratio } };
+    return { ...shot, locked: false, soon, cover: { html: first ? mediaHTML(first, { cls: 'fill', size: 'card' }) : '', background, tall, ratio } };
   }
-  return { ...shot, locked: false,
+  return { ...shot, locked: false, soon,
     cover: { html: cfg.cover(tall ? 5 / 4 : 16 / 9), background, tall, ratio, reel: cfg.reel },
     media: cfg.frames.map((f) => toMedia(company.id, f)) };
 }

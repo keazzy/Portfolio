@@ -2,7 +2,7 @@
   A company's work as two columns of covers (ported from concepts/work-cards.html).
   Covers are built on the server (src/lib/work/build.ts); <WorkEngine> brings them to life.
   Cards carry `data-shot={index}` so the engine can find them without React state.
-  A shot with a case study is a link to it; the rest open the viewer.
+  A shot with a case study is a link to it; one that's coming soon says so and does nothing; the rest open the viewer.
 */
 import Link from 'next/link';
 import { ViewTransition } from 'react';
@@ -18,10 +18,11 @@ const Lock = () => (
 function WorkCard({ shot, index, order }: { shot: Shot; index: number; order: number }) {
   const cover = shot.cover!;
   const meta = [shot.status, shot.year].filter(Boolean).join(' ');
-  const cue = shot.caseStudy ? 'Read case study' : shot.locked ? 'Enter password' : 'View details';
+  const cue = shot.soon ? 'Coming soon' : shot.caseStudy ? 'Read case study' : shot.locked ? 'Enter password' : 'View details';
   const props = {
-    className: `wcard${shot.locked ? ' locked' : ''}`,
-    'data-shot': index,
+    className: `wcard${shot.locked ? ' locked' : ''}${shot.soon ? ' soon' : ''}`,
+    // No shot number, no click: the engine opens the viewer only for numbered cards.
+    'data-shot': shot.soon ? undefined : index,
     'data-reel': !shot.locked ? cover.reel : undefined,
     style: { ['--o' as string]: order },
     'aria-label': `${shot.title}. ${cue}`,
@@ -41,6 +42,7 @@ function WorkCard({ shot, index, order }: { shot: Shot; index: number; order: nu
       </div>
     </>
   );
+  if (shot.soon) return <div role="group" {...props}>{inner}</div>;
   return shot.caseStudy ? <Link href={shot.caseStudy} {...props}>{inner}</Link> : <button {...props}>{inner}</button>;
 }
 

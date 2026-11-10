@@ -238,7 +238,10 @@ export function createViewer(opts: Options) {
   }
   function jump(dir: 1 | -1, frame: number | 'last' = 0) {
     const n = shots.length;
-    state.index = (state.index + dir + n) % n;
+    // Work that's coming soon has nothing to show yet, so stepping passes over it.
+    let i = state.index;
+    do i = (i + dir + n) % n; while (shots[i].soon && i !== state.index);
+    state.index = i;
     state.frame = frame === 'last' ? shot().media.length - 1 : frame;
     render();
     syncHash();
@@ -306,7 +309,7 @@ export function createViewer(opts: Options) {
   function openFromHash() {
     const m = location.hash.match(/^#\/work\/([^/]+)\/([^/]+)/);
     if (!m) return false;
-    const i = shots.findIndex((s) => s.key === `${m[1]}/${m[2]}`);
+    const i = shots.findIndex((s) => s.key === `${m[1]}/${m[2]}` && !s.soon);
     if (i >= 0) { state.prevHash = ''; open(i, null); }
     return i >= 0;
   }

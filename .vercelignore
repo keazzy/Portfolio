@@ -1,8 +1,7 @@
-# Images and videos are served from Sanity's CDN; the originals only feed scripts/import-seed.ts.
-assets
+# The local symlink to assets/. The build copies assets/ into public/assets instead (scripts/copy-assets.mjs).
 public/assets
 
-# Legacy static site (still live from `main`) and the concept prototypes.
+# Legacy static site (on `main`) and the concept prototypes.
 index.html
 impulse.html
 kinfolk.html

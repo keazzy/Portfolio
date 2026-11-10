@@ -303,6 +303,7 @@ export const seed = {
         },
         {
           id: 'applications',
+          hidden: true, // Off for now: switch on for applications that call for it.
           title: 'Founder applications',
           description: 'Real-time status for every application, from submission to first investment, with a shared data room.',
           media: [img('assets/kinfolk/Cuuro 4.png', 1400, 875)],
@@ -311,6 +312,7 @@ export const seed = {
         },
         {
           id: 'transaction-rules',
+          hidden: true, // Off for now: switch on for applications that call for it.
           title: 'Transaction rules',
           description: 'Founders connect their bank; AI categorises transactions and custom rules keep the books transparent for the team and investors.',
           media: [img('assets/kinfolk/Cuuro 5.png', 1400, 875)],
@@ -319,6 +321,7 @@ export const seed = {
         },
         {
           id: 'site',
+          hidden: true, // Off for now: switch on for applications that call for it.
           title: 'Invest with precision',
           description: 'Marketing site for taking Cuuro to other funds.',
           media: [img('assets/kinfolk/Cuuro 1.png', 1400, 904), img('assets/kinfolk/cuuro 6.png', 1400, 706)],

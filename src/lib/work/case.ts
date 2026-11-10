@@ -70,7 +70,8 @@ const screens = (items: Screen[]) => `<div class="screens" style="--n:${items.le
     <div class="phone"><img src="${it.src}" alt="${it.alt || ''}" loading="lazy" width="${it.w || 375}" height="${it.h || 812}"${it.scroll ? ' data-scroll' : ''} /></div>
     ${it.cap ? `<p>${fill(it.cap)}</p>` : ''}</div>`).join('')}</div>`;
 
-const stats = (items: [string, string][]) => `<div class="stats">${items.map(([v, l]) => `<div><b>${fill(v)}</b><span>${l}</span></div>`).join('')}</div>`;
+const stats = (items: [string, string][]) =>
+  `<div class="stats" style="--n:${Math.min(4, items.length)}">${items.map(([v, l]) => `<div><b>${fill(v)}</b><span>${l}</span></div>`).join('')}</div>`;
 
 function block(b: Exclude<Block, { t: 'chapter' }>): string {
   switch (b.t) {

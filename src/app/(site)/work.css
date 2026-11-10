@@ -1,19 +1,17 @@
 /* The work grid, covers, live components and the viewer's story panel (ported from concepts/work-cards.html). */
 
-/* Exposure (205TF) is licensed: the file lives in git-ignored public/fonts, and the stack falls back to Newsreader without it. */
-@font-face { font-family: 'Exposure'; src: url('/fonts/Exposure-Variable.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-/* Exposure's own axis: headlines develop from overexposed to normal, like a print in the tray. */
-@keyframes develop { from { font-variation-settings: 'EXPO' 100; opacity: 0.25; } to { font-variation-settings: 'EXPO' 0; opacity: 1; } }
+/* A case study's title develops like a print in the tray: it fades up here while components/ink.tsx moves it from
+   overexposed into ink over the same 1600ms and curve. */
+@keyframes develop { from { opacity: 0.25; } to { opacity: 1; } }
 @media (prefers-reduced-motion: no-preference) { .develop { animation: develop 1600ms cubic-bezier(0.2, 0.7, 0.2, 1) both; } }
 :root {
-  --serif: 'Exposure', var(--font-serif), Georgia, serif;
   --lift: 0 1px 2px rgba(20, 18, 40, 0.06), 0 22px 44px -20px rgba(20, 18, 40, 0.38);
   --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 /* Grain over the whole page: dark speckles with alpha, so no blend mode is needed while scrolling. */
 body::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.16;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 -0.45'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>") 0 0 / 200px 200px; }
-/* Exposure has no italic, so the product name is set upright rather than in a faux slant. */
+/* The serif loads without its italic, so the product name is set upright rather than in a faux slant. */
 .co__name em { font-style: normal; }
 
 /* ---------- the new work grid ---------- */
@@ -213,7 +211,7 @@ a.wcard { text-decoration: none; cursor: pointer; }
 .lockpill svg { width: 13px; height: 13px; }
 .gate { width: min(400px, calc(100vw - 32px)); padding: 24px; border: 0; border-radius: 16px; background: var(--paper); color: var(--ink); box-shadow: var(--lift); }
 .gate::backdrop { background: rgba(20, 18, 28, 0.45); backdrop-filter: blur(3px); }
-.gate h3 { margin: 0 0 6px; font: 400 23px/1.25 var(--serif); }
+.gate h3 { margin: 0 0 6px; font: 360 23px/1.25 var(--serif); }
 .gate p { margin: 0 0 16px; font-size: 14px; color: var(--ink-2); }
 .gate form { display: flex; gap: 8px; }
 .gate input { flex: 1; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid var(--rule); border-radius: 10px; background: #fff; font: inherit; }
@@ -223,7 +221,7 @@ a.wcard { text-decoration: none; cursor: pointer; }
 /* A cover still waiting for visuals: says what it needs instead of pretending. */
 .todo { position: absolute; inset: 8%; display: grid; place-content: center; gap: 8px; padding: 0 12%; text-align: center; border-radius: 10px;
   border: 1.5px dashed color-mix(in srgb, var(--ink) 20%, transparent); color: var(--ink-3); font-size: 12.5px; }
-.todo b { font: 400 18px/1.35 var(--serif); color: var(--ink-2); text-wrap: balance; }
+.todo b { font: 360 18px/1.35 var(--serif); color: var(--ink-2); text-wrap: balance; }
 .todo.on-dark { color: rgba(255, 255, 255, 0.5); border-color: rgba(255, 255, 255, 0.2); }
 .todo.on-dark b { color: rgba(255, 255, 255, 0.85); }
 .r-ring { position: absolute; z-index: 5; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; pointer-events: none; border: 2px solid rgba(109, 94, 245, 0.55); }
@@ -268,7 +266,7 @@ a.wcard { text-decoration: none; cursor: pointer; }
 .pa-frame { margin: 0 0 22px; padding: 10px 12px; border-radius: 10px; background: var(--paper); font-size: 13.5px; }
 .pa-frame .mono { color: var(--ink-3); margin-right: 6px; }
 .pa-story { margin: 0 0 22px; display: grid; gap: 14px; }
-.pa-story dt { margin-bottom: 4px; font: 500 10.5px/1.2 var(--mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+.pa-story dt { margin-bottom: 4px; font: 500 10.5px/1.2 var(--sans); letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
 .pa-story dd { margin: 0; font-size: 14.5px; line-height: 1.55; text-wrap: pretty; }
 .pa-case { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 22px; padding: 9px 14px; border-radius: 999px; background: var(--ink); color: var(--paper);
   font-size: 13.5px; font-weight: 500; text-decoration: none; transition: transform 200ms var(--ease); }

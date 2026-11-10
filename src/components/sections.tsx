@@ -61,7 +61,7 @@ export function Hero({ settings }: { settings: Settings }) {
           )}
           {settings.summary.map((p, i) => <Rich key={i} paragraph={p} />)}
         </div>
-        <div className="stamp mono">
+        <div className="stamp fine">
           <span>Updated {formatUpdated(settings.updatedAt)}</span>
           <LocalTime timezone={settings.timezone} suffix={settings.location ? ` in ${settings.location}` : ''} />
         </div>
@@ -103,7 +103,7 @@ export function CompanySection({ company, indexOf }: { company: Company; indexOf
               {company.product && <> <em>· {company.product}</em></>}
             </h2>
             <div className="co__role">{company.role}</div>
-            <div className="co__meta mono">
+            <div className="co__meta fine">
               {company.tags.length > 0 && <span>{company.tags.join(' · ')}</span>}
               <span>{company.years}</span>
             </div>

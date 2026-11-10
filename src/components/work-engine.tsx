@@ -24,7 +24,7 @@ function renderPanel(s: ViewerShot, _index: number, frame: number) {
     ${s.description ? `<p class="pa-desc">${esc(s.description)}</p>` : ''}
     ${story ? `<dl class="pa-story">${story}</dl>` : ''}
     ${s.caseStudy ? `<a class="pa-case" href="${esc(s.caseStudy)}">Read the case study →</a>` : ''}
-    <p class="pa-frame"><span class="mono">${n > 1 ? `<span data-frame-num>${frame + 1}</span> / ${n}` : 'Frame'}</span><span data-frame-cap>${esc(s.media[frame]?.caption)}</span></p>
+    <p class="pa-frame"><span class="fine">${n > 1 ? `<span data-frame-num>${frame + 1}</span> / ${n}` : 'Frame'}</span><span data-frame-cap>${esc(s.media[frame]?.caption)}</span></p>
     <dl class="spec">
       ${specRow(s.story ? 'Role' : 'Contribution', s.contributions.join(', '))}
       ${specRow('Methods', s.methods?.join(', '))}

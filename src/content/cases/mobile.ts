@@ -74,18 +74,6 @@ export const mobile: CaseStudy = {
     { t: 'flow', name: 'short', label: 'Core flow', title: 'Short, but not stopped',
       text: 'Too little in the wallet opens a sheet, not an error. Fund my wallet grows it into the transfer details on the same page, and once the transfer is made, the investment carries on to review.' },
 
-    { t: 'chapter', id: 'testing', eyebrow: 'Testing', toc: 'Testing', title: 'Two investors, a real build',
-      text: ['In July 2025, the product manager and I ran two moderated sessions with existing investors on a TestFlight build of the app. Each completed seven of the eight tasks, and both struggled with the same one: making sense of the portfolio.',
-        'Two sessions can’t tell you how common a problem is, but they showed us where to look.'] },
-    { t: 'html', label: 'From finding to the app', html: study },
-    { t: 'quote', text: 'The fee part is confusing. Just say ‘Transaction Fee.’', who: 'Usability participant, an existing Halvest investor' },
-
-    { t: 'chapter', id: 'beta', eyebrow: 'Closed beta', toc: 'Closed beta', title: 'Every change, with its reason',
-      text: ['In the closed beta, investors told us what wasn’t working in a WhatsApp group and in support tickets. Beside every part of the app in Figma, I kept a changelog: what changed, when, and why. Most of the reasons came straight from investors.'] },
-    { t: 'figure', label: 'The changelog beside Home', src: A('halvest/mobile/changelog.webp'), w: 800, h: 1457, cap: 'Every part of the app has one, from sign-up to Profile.' },
-    { t: 'html', label: 'Eight changes, and why', html: log },
-    { t: 'decision', title: 'Take out what we can’t stand behind', text: 'We couldn’t keep the portfolio’s key financials accurate, and investors had noticed. Rather than show figures we weren’t sure of, I took them out until the data is right, and laid the portfolio out as a vertical list to fill the space.' },
-
     { t: 'chapter', id: 'proof', eyebrow: 'Social proof', toc: 'Social proof', title: 'Proof before you back a business',
       text: ['Beta investors wanted proof before backing a business they didn’t know. I designed two directions for the business page. The second shipped: a performance chart, the business’s category, and how many campaigns it has completed, or “New & promising” for a first-timer. The same badges sit on each campaign, next to its investment memo.'] },
     { t: 'compare', label: 'Two directions',
@@ -102,6 +90,18 @@ export const mobile: CaseStudy = {
       text: ['Funding the dollar wallet meant one long block of bank details and notes, written for everyone. I grouped it by where the money is coming from, Nigeria, the US or elsewhere, so each investor opens only the instructions that apply, with that route’s fee stated inline.'] },
     { t: 'flow', name: 'fund', label: 'Core flow', title: 'Only your route',
       text: 'Each way of sending dollars opens only its own instructions. From Nigeria, an email to support; from the US, the bank details with the $1.5 fee stated inline, each a tap to copy.' },
+
+    { t: 'chapter', id: 'beta', eyebrow: 'Closed beta', toc: 'Closed beta', title: 'Every change, with its reason',
+      text: ['In the closed beta, investors told us what wasn’t working in a WhatsApp group and in support tickets. Beside every part of the app in Figma, I kept a changelog: what changed, when, and why. Most of the reasons came straight from investors.'] },
+    { t: 'figure', label: 'The changelog beside Home', src: A('halvest/mobile/changelog.webp'), w: 800, h: 1457, cap: 'Every part of the app has one, from sign-up to Profile.' },
+    { t: 'html', label: 'Eight changes, and why', html: log },
+    { t: 'decision', title: 'Take out what we can’t stand behind', text: 'We couldn’t keep the portfolio’s key financials accurate, and investors had noticed. Rather than show figures we weren’t sure of, I took them out until the data is right, and laid the portfolio out as a vertical list to fill the space.' },
+
+    { t: 'chapter', id: 'testing', eyebrow: 'Testing', toc: 'Testing', title: 'Two investors, a real build',
+      text: ['In July 2025, the product manager and I ran two moderated sessions with existing investors on a TestFlight build of the app. Each completed seven of the eight tasks, and both struggled with the same one: making sense of the portfolio.',
+        'Two sessions can’t tell you how common a problem is, but they showed us where to look.'] },
+    { t: 'html', label: 'From finding to the app', html: study },
+    { t: 'quote', text: 'The fee part is confusing. Just say ‘Transaction Fee.’', who: 'Usability participant, an existing Halvest investor' },
 
     { t: 'chapter', id: 'impact', eyebrow: 'Impact', toc: 'Impact', title: 'New investors start in the app',
       text: ['A year after the public beta, most new investors start in the app: since March 2026, 83% of sign-ups have happened there, and six in ten investments are made in it. Among investors who sign in, the app overtook the website in September 2026, and its share is still growing.',

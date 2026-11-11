@@ -83,11 +83,11 @@ export const seed = {
       years: '2024—now',
       tags: ['Fintech', 'Mobile', 'B2C'],
       url: 'https://halvestco.com',
-      summary: 'Sole product designer at Halvest, a halal investment platform. I took it from web to a mobile-led product, launched halal US and NGX stocks, and built Vest, the design system we design and ship from. Now leading v2, which opens ethical investing to everyday investors under Halvest’s new SEC licence.',
+      summary: 'Sole product designer at Halvest, a halal investment platform. I took it from web to a mobile-led product, launched halal US and NGX stocks, and built Vest, the design system we design and ship from. Now leading the next version of the app.',
       impact: [
-        { value: '$2.06M', label: 'AUM growth since mobile launch' },
-        { value: '145%', label: 'Revenue increase' },
-        { value: '950+', label: 'Registered investors' },
+        { value: '0 → 1', label: 'First mobile app, shipped in six months' },
+        { value: '2', label: 'Stock markets launched: US and NGX' },
+        { value: '346', label: 'Design tokens synced from Figma to code' },
       ],
       // Projects, strongest first. `story` feeds the viewer sidebar; [brackets] are numbers still to fill in.
       shots: [
@@ -99,7 +99,7 @@ export const seed = {
             problem: 'Halvest ran on a responsive website: usable on a phone, but never designed for one, and the phone is where investors were.',
             did: 'Designed the app end to end: funding the wallet, investing, the portfolio, and edge cases like a short balance. Built interactive prototypes in code so engineering could feel the interactions before building them.',
             decision: 'Ship the core loop first (fund, invest, track) instead of matching every web feature on day one.',
-            result: '83% of new sign-ups now happen in the app, and six in ten investments are made in it. Since launch, AUM grew by $2.06M and registered investors passed 950.',
+            result: 'Eight in ten new sign-ups now happen in the app, and six in ten investments are made in it.',
           },
           media: [img('assets/halvest/mockups/portfolio-pink.webp', 1000, 666), img('assets/halvest/Halvest Video.mp4', 956, 720), img('assets/halvest/image 20.png', 1392, 1048), img('assets/halvest/image 5.png', 1392, 894), img('assets/halvest/image 2.png', 1392, 1044)],
           caseStudy: '/work/halvest/mobile',
@@ -157,9 +157,9 @@ export const seed = {
         {
           id: 'v2',
           title: 'Halvest v2: ethical investing for everyone',
-          description: 'A new brand and a new app as Halvest’s SEC licence opens it to everyday investors, not only the wealthy.',
+          description: 'A new brand and a new app that open Halvest to everyday investors, not only the wealthy.',
           story: {
-            problem: 'Halvest was built for high-net-worth investors. The new SEC licence means it now has to welcome someone investing for the first time.',
+            problem: 'Halvest was built for high-net-worth investors. The next version has to welcome someone investing for the first time.',
             did: 'Leading the v2 app, and led the brand refresh with a contract brand designer: logo, illustration, iconography and photography.',
             decision: 'Keep the trust wealthy investors expect while feeling approachable to someone starting small.',
             result: 'Shipping 2027. More to show at launch.',

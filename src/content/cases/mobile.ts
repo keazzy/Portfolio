@@ -35,7 +35,7 @@ export const mobile: CaseStudy = {
   title: 'Halvest goes mobile: an app investors helped shape',
   description: 'I designed Halvest’s first mobile app, from May 2025 to its public beta that November, then reshaped it through a closed beta with the reason for every change written down. Most new investors now sign up in the app.',
   meta: [['Role', 'Sole product designer'], ['With', 'A product manager and 3 engineers'], ['When', 'May–November 2025'], ['Platform', 'iOS and Android']],
-  results: [['83%', 'of new sign-ups happen in the app'], ['6 in 10', 'investments are made in the app'], ['67%', 'of sign-ups started in the app are finished, against 20% on the web']],
+  results: [['8 in 10', 'new sign-ups happen in the app'], ['6 in 10', 'investments are made in the app'], ['3×', 'as likely to finish signing up in the app as on the web']],
   next: { href: '/work/halvest/stocks', label: 'Next', title: 'Halal stocks, bought with peace of mind' },
   blocks: [
     { t: 'chapter', id: 'overview', eyebrow: 'Overview', title: 'A website that happened to work on a phone',
@@ -66,8 +66,8 @@ export const mobile: CaseStudy = {
     { t: 'flow', name: 'onboard', label: 'Core flow', title: 'In first, verified after',
       text: 'Setup ends with biometric login, then you’re in. Home shows how far along you are; the checklist says how long each step takes, and the BVN screen says why it’s needed before you give it.' },
     { t: 'decision', title: 'Let people in before asking for their BVN', text: 'Halvest has to verify investors before they invest, not before they look around. New investors see what Halvest offers first, and the checklist keeps the remaining steps in view.' },
-    { t: 'stats', items: [['67%', 'of sign-ups started in the app are finished'], ['20%', 'of sign-ups started on the website are finished']] },
-    { t: 'text', text: 'Those figures are from Mixpanel, March to October 2026. Some of the gap is the channel: someone who downloads an app arrives more committed than someone who lands on a website.' },
+    { t: 'stats', items: [['2 in 3', 'sign-ups started in the app are finished'], ['1 in 5', 'sign-ups started on the website are finished']] },
+    { t: 'text', text: 'Those figures are from Mixpanel, March to October 2026, rounded down. Some of the gap is the channel: someone who downloads an app arrives more committed than someone who lands on a website.' },
 
     { t: 'chapter', id: 'short', eyebrow: 'Edge cases', toc: 'Running short', title: 'Running short doesn’t end the investment',
       text: ['If your wallet can’t cover an investment, the app doesn’t stop at an error. It offers to fund the wallet right there, shows the transfer details without leaving the page, and takes you back to review the investment once the money arrives.'] },
@@ -104,9 +104,9 @@ export const mobile: CaseStudy = {
     { t: 'quote', text: 'The fee part is confusing. Just say ‘Transaction Fee.’', who: 'Usability participant, an existing Halvest investor' },
 
     { t: 'chapter', id: 'impact', eyebrow: 'Impact', toc: 'Impact', title: 'New investors start in the app',
-      text: ['A year after the public beta, most new investors start in the app: since March 2026, 83% of sign-ups have happened there, and six in ten investments are made in it. Among investors who sign in, the app overtook the website in September 2026, and its share is still growing.',
-        'All figures are from Mixpanel, which has tracked the app since February 2026.'] },
-    { t: 'stats', items: [['47%', 'of signed-in investors used the app in August 2026'], ['56%', 'did by October']] },
+      text: ['A year after the public beta, most new investors start in the app: since March 2026, eight in ten sign-ups have happened there, and six in ten investments are made in it. Among investors who sign in, the app overtook the website in September 2026, and its share is still growing.',
+        'All figures are from Mixpanel, which has tracked the app since February 2026, and are rounded down.'] },
+    { t: 'stats', items: [['Under half', 'of signed-in investors used the app in August 2026'], ['Over half', 'did by October']] },
 
     { t: 'chapter', id: 'reflection', eyebrow: 'Reflection', toc: 'Reflection', title: 'What I’d keep doing' },
     { t: 'reflect', items: [['Write the reason down.', 'A changelog with a “why” on every change made each decision easy to explain, and easy to revisit when the feedback or the data changed.'],

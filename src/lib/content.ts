@@ -2,7 +2,7 @@ import { cache } from 'react';
 import { seed, type SeedCompany, type SeedMedia, type SeedProject } from '@/content/seed';
 import { stegaClean } from 'next-sanity';
 import { imageUrl } from '@/sanity/client';
-import { isSanityConfigured } from '@/sanity/env';
+import { contentTag, isSanityConfigured } from '@/sanity/env';
 import { sanityFetch } from '@/sanity/live';
 import { PORTFOLIO_QUERY } from '@/sanity/queries';
 import { parseMarkdownLinks, portableTextToParagraphs, splitHeadline } from './text';
@@ -14,7 +14,7 @@ import type { Accent, Company, HistoryRow, Media, Portfolio, ProjectLink, Sectio
 */
 export const getPortfolio = cache(async function getPortfolio(): Promise<Portfolio> {
   if (!isSanityConfigured) return fromSeed();
-  const { data } = (await sanityFetch({ query: PORTFOLIO_QUERY })) as { data: Raw | null };
+  const { data } = (await sanityFetch({ query: PORTFOLIO_QUERY, tags: [contentTag] })) as { data: Raw | null };
   if (!data?.settings || !data?.home) return fromSeed(); // empty dataset: keep the site up until the import runs
   return fromSanity(data);
 });
